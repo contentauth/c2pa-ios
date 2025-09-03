@@ -2,7 +2,7 @@
 
 # GitHub Release Configuration
 GITHUB_ORG := contentauth
-C2PA_VERSION := v0.58.0
+C2PA_VERSION := v0.60.1
 
 # Directories
 ROOT_DIR := $(shell pwd)
