@@ -98,7 +98,7 @@ public final class Stream {
                 let remain = data.count - cursor
                 guard remain > 0 else { return 0 }
                 let n = Swift.min(remain, count)
-                _ = data.withUnsafeBytes {  // Silence "unused result" warning
+                _ = data.withUnsafeBytes { // Silence "unused result" warning
                     memcpy(buffer, $0.baseAddress!.advanced(by: cursor), n)
                 }
                 cursor += n
@@ -129,8 +129,7 @@ public final class Stream {
 
 // MARK: - File-based stream helper ------------------------------------------
 
-extension Stream {
-
+public extension Stream {
     /**
      Fully-featured *read/write* stream backed by a file on disk.
 
@@ -138,10 +137,10 @@ extension Stream {
 
      - attention: This will overwrite existing files!
      */
-    public class func write(to url: URL) throws -> Stream {
+    class func write(to url: URL) throws -> Stream {
         try Data().write(to: url, options: .atomic)
 
-        return Self(try .init(forUpdating: url), write: true)
+        return try Self(.init(forUpdating: url), write: true)
     }
 
     /**
@@ -151,8 +150,8 @@ extension Stream {
 
      - throws: when file does not exist.
           */
-    public class func update(_ url: URL) throws -> Stream {
-        return Self(try .init(forUpdating: url), write: true)
+    class func update(_ url: URL) throws -> Stream {
+        return try Self(.init(forUpdating: url), write: true)
     }
 
     /**
@@ -162,8 +161,8 @@ extension Stream {
 
      - throws: when file does not exist.
       */
-    public class func read(from url: URL) throws -> Stream {
-        return Self(try .init(forReadingFrom: url), write: false)
+    class func read(from url: URL) throws -> Stream {
+        return try Self(.init(forReadingFrom: url), write: false)
     }
 
     private convenience init(_ fh: FileHandle, write: Bool) {
@@ -184,8 +183,7 @@ extension Stream {
 
                 return 0
             }
-        }
-        else {
+        } else {
             writer = nil
             flusher = nil
         }
@@ -196,7 +194,8 @@ extension Stream {
 
                 data.copyBytes(
                     to: buffer.assumingMemoryBound(to: UInt8.self),
-                    count: data.count)
+                    count: data.count
+                )
 
                 return data.count
             },
@@ -227,24 +226,22 @@ extension Stream {
 
                     try fhBox.fh.seek(toOffset: newPos)
 
-                    return Int(newPos)  // Return Int as per Seeker typealias
-                }
-                catch {
+                    return Int(newPos) // Return Int as per Seeker typealias
+                } catch {
                     return -1
                 }
             },
             w: writer,
             f: flusher,
-            fileHandleBox: fhBox))
+            fileHandleBox: fhBox
+        ))
     }
 }
-
 
 /**
  Box to manage FileHandle lifetime, will be stored in the ``StreamProvider``.
   */
 final class FileHandleBox {
-
     let fh: FileHandle
 
     init(_ fh: FileHandle) {
