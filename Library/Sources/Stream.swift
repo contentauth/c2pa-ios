@@ -130,35 +130,74 @@ public final class Stream {
 // MARK: - File-based stream helper ------------------------------------------
 
 extension Stream {
-    // Fully-featured stream backed by a file on disk.
-    // The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's FileHandleBox.
-    public convenience init(
-        fileURL url: URL,
-        truncate: Bool = true,
-        createIfNeeded: Bool = true
-    ) throws {
-        if createIfNeeded, !FileManager.default.fileExists(atPath: url.path) {
-            FileManager.default.createFile(atPath: url.path, contents: nil)
-        }
 
-        let fh = try FileHandle(forUpdating: url)
-        if truncate { try fh.truncate(atOffset: 0) }
+    /**
+     Fully-featured *read/write* stream backed by a file on disk.
 
-        // Box to manage FileHandle lifetime, will be stored in the StreamProvider
-        final class FileHandleBox {
-            let fh: FileHandle
-            init(_ fh: FileHandle) { self.fh = fh }
-            deinit { try? fh.close() }
-        }
+     The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
+
+     - attention: This will overwrite existing files!
+     */
+    public class func write(to url: URL) throws -> Stream {
+        try Data().write(to: url, options: .atomic)
+
+        return Self(try .init(forUpdating: url), write: true)
+    }
+
+    /**
+     Fully-featured *read/write* stream backed by a file on disk.
+
+     The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
+
+     - throws: when file does not exist.
+          */
+    public class func update(_ url: URL) throws -> Stream {
+        return Self(try .init(forUpdating: url), write: true)
+    }
+
+    /**
+     Fully-featured *read-only* stream backed by a file on disk.
+
+     The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
+
+     - throws: when file does not exist.
+      */
+    public class func read(from url: URL) throws -> Stream {
+        return Self(try .init(forReadingFrom: url), write: false)
+    }
+
+    private convenience init(_ fh: FileHandle, write: Bool) {
         let fhBox = FileHandleBox(fh)
 
-        let streamProvider = StreamProvider(
+        let writer: Writer?
+        let flusher: Flusher?
+
+        if write {
+            writer = { buffer, count in
+                try? fhBox.fh.write(contentsOf: Data(bytes: buffer, count: count))
+
+                return count
+            }
+
+            flusher = {
+                try? fhBox.fh.synchronize()
+
+                return 0
+            }
+        }
+        else {
+            writer = nil
+            flusher = nil
+        }
+
+        self.init(streamProvider: .init(
             r: { buffer, count in
-                let data: Data
-                data = (try? fhBox.fh.read(upToCount: count)) ?? Data()
+                let data = (try? fhBox.fh.read(upToCount: count)) ?? Data()
+
                 data.copyBytes(
                     to: buffer.assumingMemoryBound(to: UInt8.self),
                     count: data.count)
+
                 return data.count
             },
             s: { offset, mode in
@@ -169,35 +208,50 @@ extension Stream {
                     switch mode {
                     case Start:
                         newPos = UInt64(max(0, off))
+
                     case Current:
                         let currentOffset = Int64(fhBox.fh.offsetInFile)
-                        var targetOffset = currentOffset + off
-                        if targetOffset < 0 { targetOffset = 0 }
+                        let targetOffset = max(0, currentOffset + off)
+
                         newPos = UInt64(targetOffset)
+
                     case End:
                         let end = try fhBox.fh.seekToEnd()
-                        var targetOffset = Int64(end) + off
-                        if targetOffset < 0 { targetOffset = 0 }
+                        let targetOffset = max(0, Int64(end) + off)
+
                         newPos = UInt64(targetOffset)
+
                     default:
                         return -1
                     }
+
                     try fhBox.fh.seek(toOffset: newPos)
+
                     return Int(newPos)  // Return Int as per Seeker typealias
-                } catch { return -1 }
+                }
+                catch {
+                    return -1
+                }
             },
-            w: { buffer, count in
-                try? fhBox.fh.write(contentsOf: Data(bytes: buffer, count: count))
+            w: writer,
+            f: flusher,
+            fileHandleBox: fhBox))
+    }
+}
 
-                return count
-            },
-            f: {
-                try? fhBox.fh.synchronize()
 
-                return 0
-            },
-            fileHandleBox: fhBox
-        )
-        self.init(streamProvider: streamProvider)
+/**
+ Box to manage FileHandle lifetime, will be stored in the ``StreamProvider``.
+  */
+final class FileHandleBox {
+
+    let fh: FileHandle
+
+    init(_ fh: FileHandle) {
+        self.fh = fh
+    }
+
+    deinit {
+        try? fh.close()
     }
 }
