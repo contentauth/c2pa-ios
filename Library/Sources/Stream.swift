@@ -135,12 +135,14 @@ public extension Stream {
 
      The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
 
+     - parameter url: The file to write to. Does not need to exist. Will be overwritten.
+
      - attention: This will overwrite existing files!
      */
-    class func write(to url: URL) throws -> Stream {
+    convenience init(writeTo url: URL) throws {
         try Data().write(to: url, options: .atomic)
 
-        return try Self(.init(forUpdating: url), write: true)
+        try self.init(.init(forUpdating: url), write: true)
     }
 
     /**
@@ -148,10 +150,12 @@ public extension Stream {
 
      The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
 
+     - parameter url: The file to write to. Needs to exist.
+
      - throws: when file does not exist.
           */
-    class func update(_ url: URL) throws -> Stream {
-        return try Self(.init(forUpdating: url), write: true)
+    convenience init(update url: URL) throws {
+        try self.init(.init(forUpdating: url), write: true)
     }
 
     /**
@@ -159,10 +163,12 @@ public extension Stream {
 
      The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
 
+     - parameter url: The file to write to. Needs to exist.
+
      - throws: when file does not exist.
       */
-    class func read(from url: URL) throws -> Stream {
-        return try Self(.init(forReadingFrom: url), write: false)
+    convenience init(readFrom url: URL) throws {
+        try self.init(.init(forReadingFrom: url), write: false)
     }
 
     private convenience init(_ fh: FileHandle, write: Bool) {

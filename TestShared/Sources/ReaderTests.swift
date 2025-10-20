@@ -18,7 +18,7 @@ public final class ReaderTests: TestImplementation {
             defer { try? FileManager.default.removeItem(at: tempFile) }
 
             try imageData.write(to: tempFile)
-            let stream = try Stream.read(from: tempFile)
+            let stream = try Stream(readFrom: tempFile)
             let reader = try Reader(format: "image/jpeg", stream: stream)
 
             // Try to get resources that might not exist
@@ -311,7 +311,7 @@ public final class ReaderTests: TestImplementation {
             defer { try? FileManager.default.removeItem(at: tempFile) }
 
             try imageData.write(to: tempFile)
-            let stream = try Stream.read(from: tempFile)
+            let stream = try Stream(readFrom: tempFile)
             let reader = try Reader(format: "image/jpeg", stream: stream)
             let json = try reader.json()
 
