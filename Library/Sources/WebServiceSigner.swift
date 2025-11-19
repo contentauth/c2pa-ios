@@ -4,18 +4,75 @@ import Foundation
 import SwiftASN1
 import X509
 
+/// A signer that delegates cryptographic operations to a remote web service.
+///
+/// `WebServiceSigner` enables signing scenarios where the private key is managed
+/// by a remote server rather than on the client device. This is useful for:
+///
+/// - Centralized key management
+/// - Cloud-based signing services
+/// - Enterprise signing workflows
+/// - Multi-device signing with consistent credentials
+///
+/// The web service must implement the C2PA signing service protocol, providing
+/// endpoints for configuration and signing operations.
+///
+/// ## Topics
+///
+/// ### Creating a Web Service Signer
+/// - ``init(configurationURL:bearerToken:headers:)``
+/// - ``createSigner()``
+///
+/// ## Example
+///
+/// ```swift
+/// let webServiceSigner = WebServiceSigner(
+///     configurationURL: "https://signing.example.com/config",
+///     bearerToken: "your-auth-token"
+/// )
+///
+/// let signer = try await webServiceSigner.createSigner()
+///
+/// let builder = try Builder(manifestJSON: manifestJSON)
+/// try builder.sign(
+///     format: "image/jpeg",
+///     source: sourceStream,
+///     destination: destStream,
+///     signer: signer
+/// )
+/// ```
+///
+/// - SeeAlso: ``Signer``, ``SignerError``
 public final class WebServiceSigner: @unchecked Sendable {
     private let configurationURL: String
     private let bearerToken: String?
     private let customHeaders: [String: String]
     private var signingURL: String?
 
+    /// Creates a new web service signer client.
+    ///
+    /// - Parameters:
+    ///   - configurationURL: The URL of the signing service configuration endpoint.
+    ///   - bearerToken: Optional bearer token for authentication.
+    ///   - headers: Additional custom HTTP headers to include in requests.
     public init(configurationURL: String, bearerToken: String? = nil, headers: [String: String] = [:]) {
         self.configurationURL = configurationURL
         self.bearerToken = bearerToken
         self.customHeaders = headers
     }
 
+    /// Creates a ``Signer`` instance configured to use this web service.
+    ///
+    /// This method fetches the signing configuration from the remote service,
+    /// including the certificate chain, timestamp URL, and signing algorithm.
+    /// The returned signer will delegate all signing operations to the web service.
+    ///
+    /// - Returns: A configured ``Signer`` instance ready for use.
+    ///
+    /// - Throws: ``SignerError`` if the configuration cannot be fetched, is invalid,
+    ///   or if the signing service is unavailable.
+    ///
+    /// - Note: This method must be called from the main actor.
     @MainActor
     public func createSigner() async throws -> Signer {
         let configuration = try await fetchConfiguration()
@@ -183,16 +240,37 @@ private struct SignResponse: Codable {
     let signature: String
 }
 
+/// Errors that can occur during web service signing operations.
 public enum SignerError: LocalizedError {
+    /// The provided URL is invalid or malformed.
     case invalidURL
+
+    /// The server returned an invalid or unexpected response.
     case invalidResponse
+
+    /// An HTTP error occurred.
+    ///
+    /// - Parameter statusCode: The HTTP status code returned by the server.
     case httpError(statusCode: Int)
+
+    /// The signing algorithm is not supported.
+    ///
+    /// - Parameter algorithm: The unsupported algorithm name.
     case unsupportedAlgorithm(String)
+
+    /// The certificate chain returned by the server is invalid.
     case invalidCertificateChain
+
+    /// No certificates were found in the certificate chain.
     case noCertificatesFound
+
+    /// The signature returned by the server is invalid or cannot be decoded.
     case invalidSignature
+
+    /// The web service signer was deallocated before the operation completed.
     case signerDeallocated
 
+    /// A human-readable description of the error.
     public var errorDescription: String? {
         switch self {
         case .invalidURL:
@@ -215,10 +293,25 @@ public enum SignerError: LocalizedError {
     }
 }
 
-// MARK: - Convenience Extensions for Signer
-
 extension Signer {
-    /// Convenience initializer for async signing operations
+    /// Creates a signer with an asynchronous signing closure.
+    ///
+    /// This initializer enables signing scenarios that require asynchronous operations,
+    /// such as network requests to remote signing services. The closure can perform
+    /// async/await operations and will be properly bridged to the synchronous C API.
+    ///
+    /// - Parameters:
+    ///   - algorithm: The signing algorithm.
+    ///   - certificateChainPEM: The certificate chain in PEM format.
+    ///   - tsaURL: Optional URL of a timestamp authority.
+    ///   - asyncSigner: An async closure that accepts data to sign and returns the signature.
+    ///
+    /// - Throws: ``C2PAError`` if the signer cannot be created.
+    ///
+    /// - Note: This is used internally by ``WebServiceSigner`` but can be used for
+    ///   other custom async signing implementations.
+    ///
+    /// - SeeAlso: ``WebServiceSigner``
     public convenience init(
         algorithm: SigningAlgorithm,
         certificateChainPEM: String,

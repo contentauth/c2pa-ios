@@ -2,7 +2,7 @@
         run-test-app run-example-app signing-server-start signing-server-stop signing-server-status \
         tests-with-server workspace-build test-library lint signing-server-wait signing-server-verify \
         test-summary coverage-lcov ios-framework validate-version release-tests \
-        package-swift update-package-swift create-release-tag
+        package-swift update-package-swift create-release-tag docs
 
 # Build configuration
 CONFIGURATION := Release
@@ -369,6 +369,18 @@ clean:
 	@$(MAKE) clean-coverage
 	@echo "Clean complete."
 
+# Build documentation using xcodebuild
+docs:
+	@echo "Building documentation..."
+	@xcodebuild docbuild \
+		-workspace C2PA.xcworkspace \
+		-scheme Library \
+		-destination '$(DESTINATION)' \
+		-derivedDataPath .build/DerivedData
+	@echo "Documentation built successfully."
+	@echo "To view the documentation, open:"
+	@echo ".build/DerivedData/Build/Products/Debug-iphonesimulator/C2PA.doccarchive"
+
 # Help target
 help:
 	@echo "Available targets:"
@@ -402,4 +414,5 @@ help:
 	@echo "  make tests-with-server - Run tests with signing server"
 	@echo "  make clean-coverage - Clean test and coverage artifacts"
 	@echo "  make clean        - Clean all build artifacts"
+	@echo "  make docs         - Build API documentation"
 	@echo "  make help         - Show this help message"

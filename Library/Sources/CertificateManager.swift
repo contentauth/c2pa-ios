@@ -8,8 +8,29 @@ import Security
 import SwiftASN1
 import X509
 
+/// A utility class for managing X.509 certificates and certificate signing requests.
+///
+/// `CertificateManager` provides methods for creating self-signed certificate chains
+/// and certificate signing requests (CSRs), particularly for use with Secure Enclave
+/// and keychain-stored keys.
+///
+/// ## Topics
+///
+/// ### Creating Certificates
+/// - ``createSelfSignedCertificateChain(for:config:)``
+///
+/// ### Creating Certificate Signing Requests
+/// - ``createCSR(for:config:)``
+/// - ``createCSR(keyTag:config:)``
+///
+/// ### Configuration
+/// - ``CertificateConfig``
+///
+/// ### Errors
+/// - ``CertificateError``
 public class CertificateManager {
 
+    /// Errors that can occur during certificate operations.
     public enum CertificateError: LocalizedError {
         case invalidKeyData
         case unsupportedAlgorithm
@@ -30,16 +51,46 @@ public class CertificateManager {
         }
     }
 
+    /// Configuration for creating X.509 certificates.
+    ///
+    /// This structure contains the distinguished name fields and validity period
+    /// used when generating certificates or certificate signing requests.
     public struct CertificateConfig {
+        /// The common name (CN) field, typically the name of the entity.
         public let commonName: String
+
+        /// The organization (O) field.
         public let organization: String
+
+        /// The organizational unit (OU) field.
         public let organizationalUnit: String
+
+        /// The country (C) field, as a two-letter ISO code.
         public let country: String
+
+        /// The state or province (ST) field.
         public let state: String
+
+        /// The locality or city (L) field.
         public let locality: String
+
+        /// Optional email address for the certificate.
         public let emailAddress: String?
+
+        /// The number of days the certificate should be valid.
         public let validityDays: Int
 
+        /// Creates a new certificate configuration.
+        ///
+        /// - Parameters:
+        ///   - commonName: The common name for the certificate.
+        ///   - organization: The organization name.
+        ///   - organizationalUnit: The organizational unit.
+        ///   - country: The two-letter country code.
+        ///   - state: The state or province.
+        ///   - locality: The city or locality.
+        ///   - emailAddress: Optional email address.
+        ///   - validityDays: Number of days the certificate is valid. Defaults to 365.
         public init(
             commonName: String,
             organization: String,
@@ -61,9 +112,43 @@ public class CertificateManager {
         }
     }
 
-    // MARK: - Public Methods
-
-    // Creates a self-signed certificate chain suitable for C2PA signing
+    /// Creates a self-signed certificate chain for testing purposes.
+    ///
+    /// This method generates a complete three-tier certificate chain (root CA,
+    /// intermediate CA, and end-entity certificate) suitable for C2PA signing.
+    /// The chain is self-signed and should only be used for testing and development.
+    ///
+    /// - Parameters:
+    ///   - publicKey: The public key for which to create the certificate chain.
+    ///   - config: The certificate configuration containing distinguished name fields.
+    ///
+    /// - Returns: A PEM-encoded string containing the complete certificate chain
+    ///   (end-entity, intermediate, and root certificates).
+    ///
+    /// - Throws: ``CertificateError`` if certificate generation fails.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let config = CertificateManager.CertificateConfig(
+    ///     commonName: "Test Signer",
+    ///     organization: "Example Inc",
+    ///     organizationalUnit: "Engineering",
+    ///     country: "US",
+    ///     state: "California",
+    ///     locality: "San Francisco"
+    /// )
+    ///
+    /// let certChain = try CertificateManager.createSelfSignedCertificateChain(
+    ///     for: publicKey,
+    ///     config: config
+    /// )
+    /// ```
+    ///
+    /// - Important: This creates self-signed certificates that are not trusted by default.
+    ///   For production use, obtain certificates from a trusted Certificate Authority.
+    ///
+    /// - SeeAlso: ``createCSR(for:config:)``
     public static func createSelfSignedCertificateChain(
         for publicKey: SecKey,
         config: CertificateConfig
@@ -119,7 +204,44 @@ public class CertificateManager {
         return endEntity + "\n" + intermediate + "\n" + root
     }
 
-    // Creates a Certificate Signing Request (CSR) for a secure enclave key
+    /// Creates a Certificate Signing Request (CSR) for a public key.
+    ///
+    /// This method generates a PKCS#10 certificate signing request that can be
+    /// submitted to a Certificate Authority (CA) to obtain a signed certificate.
+    /// It works with Secure Enclave keys and regular keychain keys.
+    ///
+    /// - Parameters:
+    ///   - publicKey: The public key for which to create the CSR.
+    ///   - config: The certificate configuration containing subject information.
+    ///
+    /// - Returns: A PEM-encoded certificate signing request.
+    ///
+    /// - Throws: ``CertificateError`` if the CSR cannot be created.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let config = CertificateManager.CertificateConfig(
+    ///     commonName: "My Signing Key",
+    ///     organization: "Example Inc",
+    ///     organizationalUnit: "Security",
+    ///     country: "US",
+    ///     state: "California",
+    ///     locality: "San Francisco",
+    ///     emailAddress: "security@example.com"
+    /// )
+    ///
+    /// let csrPEM = try CertificateManager.createCSR(
+    ///     for: publicKey,
+    ///     config: config
+    /// )
+    /// // Submit csrPEM to your CA
+    /// ```
+    ///
+    /// - Note: For Secure Enclave keys, the private key never leaves the hardware.
+    ///   The CSR is signed using the Secure Enclave's signing capabilities.
+    ///
+    /// - SeeAlso: ``createCSR(keyTag:config:)``
     public static func createCSR(
         for publicKey: SecKey,
         config: CertificateConfig
@@ -146,7 +268,30 @@ public class CertificateManager {
         )
     }
 
-    // Creates a CSR for a keychain key by tag
+    /// Creates a Certificate Signing Request (CSR) for a keychain-stored key.
+    ///
+    /// This convenience method creates a CSR for a key stored in the keychain,
+    /// identified by its tag. The key is retrieved from the keychain and a CSR
+    /// is generated using its public key component.
+    ///
+    /// - Parameters:
+    ///   - keyTag: The keychain tag identifying the private key.
+    ///   - config: The certificate configuration containing subject information.
+    ///
+    /// - Returns: A PEM-encoded certificate signing request.
+    ///
+    /// - Throws: ``CertificateError`` if the key cannot be found or the CSR cannot be created.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let csrPEM = try CertificateManager.createCSR(
+    ///     keyTag: "com.example.signing.key",
+    ///     config: config
+    /// )
+    /// ```
+    ///
+    /// - SeeAlso: ``createCSR(for:config:)``
     public static func createCSR(
         keyTag: String,
         config: CertificateConfig

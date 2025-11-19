@@ -5,19 +5,76 @@
 import C2PAC
 import Foundation
 
+/// A cryptographic signer for creating C2PA signatures.
+///
+/// `Signer` encapsulates the signing credentials and algorithm needed to
+/// cryptographically sign C2PA manifests. It supports multiple initialization
+/// methods for different credential sources:
+///
+/// - PEM-encoded certificates and private keys
+/// - Custom signing closures (for hardware keys or remote signing)
+/// - ``SignerInfo`` convenience wrapper
+///
+/// ## Topics
+///
+/// ### Creating a Signer
+/// - ``init(certsPEM:privateKeyPEM:algorithm:tsaURL:)``
+/// - ``init(info:)``
+/// - ``init(algorithm:certificateChainPEM:tsaURL:sign:)``
+///
+/// ### Signing Operations
+/// - ``reserveSize()``
+///
+/// ### Keychain Utilities
+/// - ``exportPublicKeyPEM(fromKeychainTag:)``
+///
+/// ## Example with PEM Credentials
+///
+/// ```swift
+/// let signer = try Signer(
+///     certsPEM: certificateChainPEM,
+///     privateKeyPEM: privateKeyPEM,
+///     algorithm: .es256,
+///     tsaURL: "http://timestamp.digicert.com"
+/// )
+/// ```
+///
+/// ## Example with Custom Signing Closure
+///
+/// ```swift
+/// let signer = try Signer(
+///     algorithm: .es256,
+///     certificateChainPEM: certChainPEM,
+///     tsaURL: "http://timestamp.digicert.com"
+/// ) { dataToSign in
+///     // Custom signing logic (e.g., hardware key, remote service)
+///     return try signWithHardwareKey(dataToSign)
+/// }
+/// ```
+///
+/// - SeeAlso: ``KeychainSigner``, ``SecureEnclaveSigner``, ``WebServiceSigner``
 public final class Signer {
-    // raw pointer owned
     let ptr: UnsafeMutablePointer<C2paSigner>
     private var retainedContext: Unmanaged<AnyObject>?
 
-    // internal designated init
     private init(ptr: UnsafeMutablePointer<C2paSigner>) {
         self.ptr = ptr
     }
 
-    // --------------------------------------------------------------------
-    // 1) PEM-based convenience
-    // --------------------------------------------------------------------
+    /// Creates a signer with PEM-encoded certificates and private key.
+    ///
+    /// This is the most common initialization method for signers using
+    /// standard PEM-encoded credentials.
+    ///
+    /// - Parameters:
+    ///   - certsPEM: The certificate chain in PEM format.
+    ///   - privateKeyPEM: The private key in PEM format.
+    ///   - algorithm: The signing algorithm to use.
+    ///   - tsaURL: Optional URL of a timestamp authority for trusted timestamps.
+    ///
+    /// - Throws: ``C2PAError`` if the credentials are invalid or incompatible.
+    ///
+    /// - SeeAlso: ``init(info:)``
     public convenience init(
         certsPEM: String,
         privateKeyPEM: String,
@@ -41,6 +98,16 @@ public final class Signer {
         self.init(ptr: raw)
     }
 
+    /// Creates a signer from a ``SignerInfo`` struct.
+    ///
+    /// This convenience initializer accepts a ``SignerInfo`` struct containing
+    /// all necessary signing credentials.
+    ///
+    /// - Parameter info: The signing credentials and configuration.
+    ///
+    /// - Throws: ``C2PAError`` if the credentials are invalid or incompatible.
+    ///
+    /// - SeeAlso: ``SignerInfo``
     public convenience init(info: SignerInfo) throws {
         try self.init(
             certsPEM: info.certificatePEM,
@@ -49,9 +116,46 @@ public final class Signer {
             tsaURL: info.tsaURL)
     }
 
-    // --------------------------------------------------------------------
-    // 2) Swift-native closure  (Data in → Data out)
-    // --------------------------------------------------------------------
+    /// Creates a signer with a custom signing closure.
+    ///
+    /// This initializer enables advanced signing scenarios where the private key
+    /// is not directly accessible as PEM data. Common use cases include:
+    ///
+    /// - Hardware security modules (HSM)
+    /// - Secure Enclave on iOS devices
+    /// - Remote signing services
+    /// - Keychain-stored keys
+    ///
+    /// The signing closure receives the data to be signed and must return the
+    /// signature bytes. The closure is called during the signing operation.
+    ///
+    /// - Parameters:
+    ///   - algorithm: The signing algorithm that matches your closure's implementation.
+    ///   - certificateChainPEM: The certificate chain in PEM format.
+    ///   - tsaURL: Optional URL of a timestamp authority for trusted timestamps.
+    ///   - sign: A closure that accepts data to sign and returns the signature.
+    ///
+    /// - Throws: ``C2PAError`` if the signer cannot be created.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let signer = try Signer(
+    ///     algorithm: .es256,
+    ///     certificateChainPEM: certChain,
+    ///     tsaURL: "http://timestamp.digicert.com"
+    /// ) { dataToSign in
+    ///     let signature = try SecKeyCreateSignature(
+    ///         privateKeyRef,
+    ///         .ecdsaSignatureMessageX962SHA256,
+    ///         dataToSign as CFData,
+    ///         nil
+    ///     )
+    ///     return signature as Data
+    /// }
+    /// ```
+    ///
+    /// - SeeAlso: ``SecureEnclaveSigner``, ``KeychainSigner``
     public convenience init(
         algorithm: SigningAlgorithm,
         certificateChainPEM: String,
@@ -107,12 +211,42 @@ public final class Signer {
         retainedContext?.release()
     }
 
+    /// Returns the expected signature size in bytes for this signer.
+    ///
+    /// This method is used internally to allocate buffer space for the signature.
+    /// The size depends on the signing algorithm configured for this signer.
+    ///
+    /// - Returns: The signature size in bytes.
+    ///
+    /// - Throws: ``C2PAError`` if the size cannot be determined.
     public func reserveSize() throws -> Int {
         try Int(guardNonNegative(c2pa_signer_reserve_size(ptr)))
     }
 }
 
 extension Signer {
+    /// Exports the public key from a keychain-stored key as PEM format.
+    ///
+    /// This utility method retrieves a private key from the iOS/macOS keychain
+    /// and exports its corresponding public key in PEM format. This is useful
+    /// when working with keychain-stored keys that need to be shared or
+    /// included in certificate signing requests.
+    ///
+    /// - Parameter keyTag: The keychain tag identifying the private key.
+    ///
+    /// - Returns: The public key in PEM format.
+    ///
+    /// - Throws: ``C2PAError`` if the key cannot be found or exported.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let publicKeyPEM = try Signer.exportPublicKeyPEM(
+    ///     fromKeychainTag: "com.example.signing.key"
+    /// )
+    /// ```
+    ///
+    /// - SeeAlso: ``KeychainSigner``, ``SecureEnclaveSigner``
     public static func exportPublicKeyPEM(fromKeychainTag keyTag: String) throws -> String {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,

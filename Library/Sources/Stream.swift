@@ -5,17 +5,95 @@
 import C2PAC
 import Foundation
 
+/// Options for configuring stream read/write capabilities.
 public struct StreamOptions: OptionSet, Sendable {
     public let rawValue: UInt8
+
+    /// The stream supports read operations.
     public static let read = StreamOptions(rawValue: 1 << 0)
+
+    /// The stream supports write operations.
     public static let write = StreamOptions(rawValue: 1 << 1)
+
     public init(rawValue: UInt8) { self.rawValue = rawValue }
 }
 
+/// A generic stream abstraction for reading and writing C2PA data.
+///
+/// `Stream` provides a flexible interface for I/O operations with C2PA libraries,
+/// supporting both file-based and in-memory streaming. It bridges Swift's native
+/// I/O mechanisms with the underlying C API.
+///
+/// ## Topics
+///
+/// ### Creating Streams
+/// - ``init(read:seek:write:flush:)``
+/// - ``init(data:)``
+/// - ``init(fileURL:truncate:createIfNeeded:)``
+///
+/// ### Stream Callbacks
+/// - ``Reader``
+/// - ``Seeker``
+/// - ``Writer``
+/// - ``Flusher``
+///
+/// ## Examples
+///
+/// ### File-based Stream
+///
+/// ```swift
+/// let stream = try Stream(fileURL: fileURL)
+/// ```
+///
+/// ### In-memory Stream
+///
+/// ```swift
+/// let data = Data(/* ... */)
+/// let stream = try Stream(data: data)
+/// ```
+///
+/// ### Custom Stream
+///
+/// ```swift
+/// var buffer = Data()
+/// let stream = try Stream(
+///     write: { pointer, count in
+///         let data = Data(bytes: pointer, count: count)
+///         buffer.append(data)
+///         return count
+///     }
+/// )
+/// ```
+///
+/// - SeeAlso: ``Reader``, ``Builder``
 public final class Stream {
+    /// A closure that reads data from the stream into a buffer.
+    ///
+    /// - Parameters:
+    ///   - buffer: The buffer to read data into.
+    ///   - count: The number of bytes to read.
+    /// - Returns: The number of bytes actually read, or -1 on error.
     public typealias Reader = (_ buffer: UnsafeMutableRawPointer, _ count: Int) -> Int
+
+    /// A closure that seeks to a position in the stream.
+    ///
+    /// - Parameters:
+    ///   - offset: The offset to seek to.
+    ///   - origin: The origin for the seek operation (start, current, or end).
+    /// - Returns: The new position in the stream, or -1 on error.
     public typealias Seeker = (_ offset: Int, _ origin: C2paSeekMode) -> Int
+
+    /// A closure that writes data from a buffer to the stream.
+    ///
+    /// - Parameters:
+    ///   - buffer: The buffer containing data to write.
+    ///   - count: The number of bytes to write.
+    /// - Returns: The number of bytes actually written, or -1 on error.
     public typealias Writer = (_ buffer: UnsafeRawPointer, _ count: Int) -> Int
+
+    /// A closure that flushes any buffered data to the stream.
+    ///
+    /// - Returns: 0 on success, or -1 on error.
     public typealias Flusher = () -> Int
 
     private final class StreamProvider {
@@ -67,7 +145,6 @@ public final class Stream {
     private let contextPtr: UnsafeMutablePointer<StreamContext>
     private let streamPtr: UnsafeMutablePointer<C2paStream>
 
-    // generic constructor for user-provided callbacks
     private init(streamProvider: StreamProvider) {
         streamProviderRef = .passRetained(streamProvider)
         contextPtr = asStreamCtx(streamProviderRef.toOpaque())
@@ -81,6 +158,35 @@ public final class Stream {
         )
     }
 
+    /// Creates a custom stream with user-provided callbacks.
+    ///
+    /// This initializer allows complete control over stream behavior by providing
+    /// custom closures for read, seek, write, and flush operations.
+    ///
+    /// - Parameters:
+    ///   - read: Optional closure for reading data.
+    ///   - seek: Optional closure for seeking within the stream.
+    ///   - write: Optional closure for writing data.
+    ///   - flush: Optional closure for flushing buffered data.
+    ///
+    /// - Throws: ``C2PAError`` if the stream cannot be created.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// var buffer = Data()
+    /// let stream = try Stream(
+    ///     write: { pointer, count in
+    ///         let data = Data(bytes: pointer, count: count)
+    ///         buffer.append(data)
+    ///         return count
+    ///     },
+    ///     flush: {
+    ///         // Perform any necessary flush operations
+    ///         return 0
+    ///     }
+    /// )
+    /// ```
     public convenience init(
         read: Reader? = nil,
         seek: Seeker? = nil,
@@ -90,7 +196,17 @@ public final class Stream {
         self.init(streamProvider: StreamProvider(r: read, s: seek, w: write, f: flush))
     }
 
-    // Data → read-only stream
+    /// Creates a read-only stream from in-memory data.
+    ///
+    /// This convenience initializer creates a stream that reads from a `Data` object.
+    /// The stream supports both reading and seeking, but not writing.
+    ///
+    /// - Parameter data: The data to read from.
+    ///
+    /// - Throws: ``C2PAError`` if the stream cannot be created.
+    ///
+    /// - Note: The data is copied internally, so modifications to the original
+    ///   `Data` object after creating the stream will not affect the stream.
     public convenience init(data: Data) throws {
         var cursor = 0
         let streamProvider = StreamProvider(
