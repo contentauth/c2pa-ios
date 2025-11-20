@@ -151,6 +151,16 @@ final class ReaderTests: XCTestCase {
         let result = tests.testReaderWithMultipleStreams()
         XCTAssertTrue(result.passed, result.message)
     }
+
+    func testReaderRemoteURL() throws {
+        let result = tests.testReaderRemoteURL()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderIsEmbedded() throws {
+        let result = tests.testReaderIsEmbedded()
+        XCTAssertTrue(result.passed, result.message)
+    }
 }
 
 // MARK: - Signing Tests

@@ -30,6 +30,8 @@ import Foundation
 ///
 /// ### Reading Manifest Data
 /// - ``json()``
+/// - ``remoteURL()``
+/// - ``isEmbedded()``
 ///
 /// ### Extracting Resources
 /// - ``resource(uri:to:)``
@@ -96,6 +98,59 @@ public final class Reader {
     /// - Throws: ``C2PAError`` if the manifest cannot be read or is invalid.
     public func json() throws -> String {
         try stringFromC(c2pa_reader_json(ptr))
+    }
+
+    /// Returns the remote URL where the manifest is hosted, if available.
+    ///
+    /// This method returns the URL specified when the manifest was created with
+    /// ``Builder/setNoEmbed()`` and ``Builder/setRemoteURL(_:)``. The URL indicates
+    /// where the manifest can be retrieved separately from the media file.
+    ///
+    /// - Returns: The remote URL string, or `nil` if the manifest is embedded.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let stream = try Stream(fileURL: imageURL)
+    /// let reader = try Reader(format: "image/jpeg", stream: stream)
+    /// if let remoteURL = reader.remoteURL() {
+    ///     print("Manifest hosted at: \(remoteURL)")
+    /// } else {
+    ///     print("Manifest is embedded")
+    /// }
+    /// ```
+    ///
+    /// - SeeAlso: ``isEmbedded()``
+    public func remoteURL() -> String? {
+        guard let cString = c2pa_reader_remote_url(ptr) else {
+            return nil
+        }
+        defer { c2pa_string_free(UnsafeMutablePointer(mutating: cString)) }
+        return String(cString: cString)
+    }
+
+    /// Returns whether the manifest is embedded in the media file.
+    ///
+    /// This method checks if the manifest data is stored directly within the
+    /// media file or if it is stored remotely and referenced via URL.
+    ///
+    /// - Returns: `true` if the manifest is embedded, `false` if it is remote.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let stream = try Stream(fileURL: imageURL)
+    /// let reader = try Reader(format: "image/jpeg", stream: stream)
+    /// if reader.isEmbedded() {
+    ///     print("Manifest is embedded in the file")
+    /// } else {
+    ///     print("Manifest is stored remotely at: \(reader.remoteURL() ?? "unknown")")
+    /// }
+    /// ```
+    ///
+    /// - SeeAlso: ``remoteURL()``
+    public func isEmbedded() -> Bool {
+        c2pa_reader_is_embedded(ptr)
     }
 
     /// Extracts a resource from the manifest to a stream.

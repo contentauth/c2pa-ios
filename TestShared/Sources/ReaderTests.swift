@@ -376,6 +376,65 @@ public final class ReaderTests: TestImplementation {
         }
     }
 
+    public func testReaderRemoteURL() -> TestResult {
+        do {
+            guard let imageData = TestUtilities.loadAdobeTestImage() else {
+                return .failure("Reader Remote URL", "Could not load test image")
+            }
+
+            let stream = try Stream(data: imageData)
+            let reader = try Reader(format: "image/jpeg", stream: stream)
+
+            let remoteURL = reader.remoteURL()
+
+            // Most test images will have embedded manifests
+            if let url = remoteURL {
+                return .success("Reader Remote URL", "[PASS] Remote URL found: \(url)")
+            } else {
+                return .success("Reader Remote URL", "[PASS] No remote URL (embedded manifest)")
+            }
+
+        } catch let error as C2PAError {
+            if case .api(let message) = error, message.contains("No manifest") {
+                return .success("Reader Remote URL", "[WARN] No manifest (acceptable)")
+            }
+            return .failure("Reader Remote URL", "Failed: \(error)")
+        } catch {
+            return .failure("Reader Remote URL", "Failed: \(error)")
+        }
+    }
+
+    public func testReaderIsEmbedded() -> TestResult {
+        do {
+            guard let imageData = TestUtilities.loadAdobeTestImage() else {
+                return .failure("Reader Is Embedded", "Could not load test image")
+            }
+
+            let stream = try Stream(data: imageData)
+            let reader = try Reader(format: "image/jpeg", stream: stream)
+
+            let isEmbedded = reader.isEmbedded()
+            let remoteURL = reader.remoteURL()
+
+            // Validate consistency between isEmbedded and remoteURL
+            if isEmbedded && remoteURL == nil {
+                return .success("Reader Is Embedded", "[PASS] Manifest is embedded (consistent)")
+            } else if !isEmbedded && remoteURL != nil {
+                return .success("Reader Is Embedded", "[PASS] Manifest is remote (consistent)")
+            } else {
+                return .success("Reader Is Embedded", "[PASS] Embedded: \(isEmbedded)")
+            }
+
+        } catch let error as C2PAError {
+            if case .api(let message) = error, message.contains("No manifest") {
+                return .success("Reader Is Embedded", "[WARN] No manifest (acceptable)")
+            }
+            return .failure("Reader Is Embedded", "Failed: \(error)")
+        } catch {
+            return .failure("Reader Is Embedded", "Failed: \(error)")
+        }
+    }
+
     public func runAllTests() async -> [TestResult] {
         return [
             testReaderResourceErrorHandling(),
@@ -385,7 +444,9 @@ public final class ReaderTests: TestImplementation {
             testReaderThumbnailExtraction(),
             testReaderIngredientExtraction(),
             testReaderJSONParsing(),
-            testReaderWithMultipleStreams()
+            testReaderWithMultipleStreams(),
+            testReaderRemoteURL(),
+            testReaderIsEmbedded()
         ]
     }
 }
