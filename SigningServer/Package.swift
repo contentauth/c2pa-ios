@@ -1,3 +1,5 @@
+// swift-tools-version:5.9
+
 // This file is licensed to you under the Apache License, Version 2.0 
 // (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
 // (http://opensource.org/licenses/MIT), at your option.
@@ -7,7 +9,7 @@
 // ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
 // files for the specific language governing permissions and limitations under
 // each license.
-// swift-tools-version:5.9
+
 import PackageDescription
 
 let package = Package(
