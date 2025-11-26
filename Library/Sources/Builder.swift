@@ -28,6 +28,7 @@ import Foundation
 /// - ``init(archiveStream:)``
 ///
 /// ### Configuring the Manifest
+/// - ``setIntent(_:)``
 /// - ``setNoEmbed()``
 /// - ``setRemoteURL(_:)``
 ///
@@ -43,6 +44,7 @@ import Foundation
 ///
 /// ```swift
 /// let builder = try Builder(manifestJSON: manifestJSON)
+/// try builder.setIntent(.edit)
 /// builder.setNoEmbed()
 /// try builder.setRemoteURL("https://example.com/manifest.c2pa")
 /// try builder.addIngredient(
@@ -81,6 +83,36 @@ public final class Builder {
     }
 
     deinit { c2pa_builder_free(ptr) }
+
+    /// Sets the builder intent, specifying what kind of manifest to create.
+    ///
+    /// The intent determines whether this is a new creation, an edit of existing content,
+    /// or a metadata-only update. This affects what assertions are automatically added
+    /// and what ingredients are required.
+    ///
+    /// - Parameter intent: The ``BuilderIntent`` specifying the type of manifest.
+    ///
+    /// - Throws: ``C2PAError`` if the intent cannot be set.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let builder = try Builder(manifestJSON: manifestJSON)
+    /// try builder.setIntent(.create(.digitalCapture))
+    /// ```
+    ///
+    /// ```swift
+    /// let builder = try Builder(manifestJSON: manifestJSON)
+    /// try builder.setIntent(.edit)
+    /// ```
+    ///
+    /// - SeeAlso: ``BuilderIntent``, ``DigitalSourceType``
+    public func setIntent(_ intent: BuilderIntent) throws {
+        let (cIntent, cSourceType) = intent.toCIntent()
+        _ = try guardNonNegative(
+            Int64(c2pa_builder_set_intent(ptr, cIntent, cSourceType))
+        )
+    }
 
     /// Configures the builder to not embed the manifest in the output file.
     ///

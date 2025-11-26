@@ -273,6 +273,102 @@ public final class BuilderTests: TestImplementation {
         }
     }
 
+    public func testBuilderSetIntentCreate() -> TestResult {
+        let manifestJSON = """
+            {
+                "claim_generator": "test_app/1.0",
+                "title": "Test Create Intent",
+                "assertions": []
+            }
+            """
+
+        do {
+            let builder = try Builder(manifestJSON: manifestJSON)
+            try builder.setIntent(.create(.digitalCapture))
+
+            let archiveFile = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "intent_create_\(UUID().uuidString).c2pa")
+            defer {
+                try? FileManager.default.removeItem(at: archiveFile)
+            }
+
+            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            try builder.writeArchive(to: archiveStream)
+
+            let fileExists = FileManager.default.fileExists(atPath: archiveFile.path)
+            return fileExists
+                ? .success("Builder Set Intent Create", "[PASS] Builder with create intent created archive")
+                : .failure("Builder Set Intent Create", "Archive not created")
+
+        } catch {
+            return .failure("Builder Set Intent Create", "Failed: \(error)")
+        }
+    }
+
+    public func testBuilderSetIntentEdit() -> TestResult {
+        let manifestJSON = """
+            {
+                "claim_generator": "test_app/1.0",
+                "title": "Test Edit Intent",
+                "assertions": []
+            }
+            """
+
+        do {
+            let builder = try Builder(manifestJSON: manifestJSON)
+            try builder.setIntent(.edit)
+
+            let archiveFile = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "intent_edit_\(UUID().uuidString).c2pa")
+            defer {
+                try? FileManager.default.removeItem(at: archiveFile)
+            }
+
+            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            try builder.writeArchive(to: archiveStream)
+
+            let fileExists = FileManager.default.fileExists(atPath: archiveFile.path)
+            return fileExists
+                ? .success("Builder Set Intent Edit", "[PASS] Builder with edit intent created archive")
+                : .failure("Builder Set Intent Edit", "Archive not created")
+
+        } catch {
+            return .failure("Builder Set Intent Edit", "Failed: \(error)")
+        }
+    }
+
+    public func testBuilderSetIntentUpdate() -> TestResult {
+        let manifestJSON = """
+            {
+                "claim_generator": "test_app/1.0",
+                "title": "Test Update Intent",
+                "assertions": []
+            }
+            """
+
+        do {
+            let builder = try Builder(manifestJSON: manifestJSON)
+            try builder.setIntent(.update)
+
+            let archiveFile = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "intent_update_\(UUID().uuidString).c2pa")
+            defer {
+                try? FileManager.default.removeItem(at: archiveFile)
+            }
+
+            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            try builder.writeArchive(to: archiveStream)
+
+            let fileExists = FileManager.default.fileExists(atPath: archiveFile.path)
+            return fileExists
+                ? .success("Builder Set Intent Update", "[PASS] Builder with update intent created archive")
+                : .failure("Builder Set Intent Update", "Archive not created")
+
+        } catch {
+            return .failure("Builder Set Intent Update", "Failed: \(error)")
+        }
+    }
+
     public func testReadIngredient() -> TestResult {
         let testFile = FileManager.default.temporaryDirectory.appendingPathComponent(
             "ingredient_test_\(UUID().uuidString).jpg")
@@ -328,6 +424,9 @@ public final class BuilderTests: TestImplementation {
             testBuilderAddIngredient(),
             testBuilderFromArchive(),
             testBuilderRemoteURL(),
+            testBuilderSetIntentCreate(),
+            testBuilderSetIntentEdit(),
+            testBuilderSetIntentUpdate(),
             testReadIngredient()
         ]
     }
