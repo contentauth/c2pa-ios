@@ -30,6 +30,7 @@ import Foundation
 ///
 /// ### Reading Manifest Data
 /// - ``json()``
+/// - ``detailedJSON()``
 /// - ``remoteURL()``
 /// - ``isEmbedded()``
 ///
@@ -96,8 +97,39 @@ public final class Reader {
     /// - Returns: A JSON string containing the manifest data.
     ///
     /// - Throws: ``C2PAError`` if the manifest cannot be read or is invalid.
+    ///
+    /// - SeeAlso: ``detailedJSON()``
     public func json() throws -> String {
         try stringFromC(c2pa_reader_json(ptr))
+    }
+
+    /// Returns detailed manifest data as a JSON string.
+    ///
+    /// This method returns a more comprehensive JSON representation of the manifest
+    /// that includes additional internal fields not present in the standard ``json()``
+    /// output. Use this when you need access to all manifest details for debugging
+    /// or advanced processing.
+    ///
+    /// - Returns: A JSON string containing the detailed manifest data.
+    ///
+    /// - Throws: ``C2PAError`` if the manifest cannot be read or is invalid.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let stream = try Stream(fileURL: imageURL)
+    /// let reader = try Reader(format: "image/jpeg", stream: stream)
+    ///
+    /// // Standard JSON for typical use
+    /// let standardJSON = try reader.json()
+    ///
+    /// // Detailed JSON for debugging or advanced analysis
+    /// let detailedJSON = try reader.detailedJSON()
+    /// ```
+    ///
+    /// - SeeAlso: ``json()``
+    public func detailedJSON() throws -> String {
+        try stringFromC(c2pa_reader_detailed_json(ptr))
     }
 
     /// Returns the remote URL where the manifest is hosted, if available.

@@ -176,6 +176,16 @@ final class ReaderTests: XCTestCase {
         let result = tests.testReaderIsEmbedded()
         XCTAssertTrue(result.passed, result.message)
     }
+
+    func testReaderDetailedJSON() throws {
+        let result = tests.testReaderDetailedJSON()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderDetailedJSONComparison() throws {
+        let result = tests.testReaderDetailedJSONComparison()
+        XCTAssertTrue(result.passed, result.message)
+    }
 }
 
 // MARK: - Signing Tests
