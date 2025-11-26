@@ -39,8 +39,8 @@ public final class BuilderTests: TestImplementation {
             try imageData.write(to: sourceFile)
 
             // Create streams
-            let sourceStream = try Stream(fileURL: sourceFile, truncate: false, createIfNeeded: false)
-            let destStream = try Stream(fileURL: destFile, truncate: true, createIfNeeded: true)
+            let sourceStream = try Stream(readFrom: sourceFile)
+            let destStream = try Stream(writeTo: destFile)
 
             let signer = try TestUtilities.createTestSigner()
 
@@ -93,7 +93,7 @@ public final class BuilderTests: TestImplementation {
                 try? FileManager.default.removeItem(at: archiveFile)
             }
 
-            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            let archiveStream = try Stream(writeTo: archiveFile)
             try builder.writeArchive(to: archiveStream)
 
             let fileExists = FileManager.default.fileExists(atPath: archiveFile.path)
@@ -141,7 +141,7 @@ public final class BuilderTests: TestImplementation {
                 try? FileManager.default.removeItem(at: archiveFile)
             }
 
-            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            let archiveStream = try Stream(writeTo: archiveFile)
             try builder.writeArchive(to: archiveStream)
 
             let fileExists = FileManager.default.fileExists(atPath: archiveFile.path)
@@ -179,7 +179,7 @@ public final class BuilderTests: TestImplementation {
             }
 
             // Try to add ingredient
-            let ingredientStream = try Stream(fileURL: ingredientFile, truncate: false, createIfNeeded: false)
+            let ingredientStream = try Stream(readFrom: ingredientFile)
             let ingredientJSON = """
                 {"title": "Test Ingredient", "format": "image/jpeg"}
                 """
@@ -219,7 +219,7 @@ public final class BuilderTests: TestImplementation {
                 try? FileManager.default.removeItem(at: archiveFile)
             }
 
-            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            let archiveStream = try Stream(writeTo: archiveFile)
             try firstBuilder.writeArchive(to: archiveStream)
 
             // Check archive was created
@@ -260,7 +260,7 @@ public final class BuilderTests: TestImplementation {
                 try? FileManager.default.removeItem(at: archiveFile)
             }
 
-            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            let archiveStream = try Stream(writeTo: archiveFile)
             try builder.writeArchive(to: archiveStream)
 
             let fileExists = FileManager.default.fileExists(atPath: archiveFile.path)
