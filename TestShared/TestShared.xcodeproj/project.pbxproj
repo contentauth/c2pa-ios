@@ -21,6 +21,7 @@
 		95C99A5A2E695DF100C54D0E /* SigningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A532E695DF100C54D0E /* SigningTests.swift */; };
 		95C99A692E696CBF00C54D0E /* TestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A622E696CBF00C54D0E /* TestResult.swift */; };
 		95F2712B2E72CD5800A6A88D /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 95F271292E72CD5800A6A88D /* Base.xcconfig */; };
+		A0B3CF4F2E96AC2C00F2F938 /* ManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -52,6 +53,7 @@
 		95C99A542E695DF100C54D0E /* StreamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTests.swift; sourceTree = "<group>"; };
 		95C99A622E696CBF00C54D0E /* TestResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestResult.swift; sourceTree = "<group>"; };
 		95F271292E72CD5800A6A88D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 				95C99A4F2E695DF100C54D0E /* BuilderTests.swift */,
 				95C99A502E695DF100C54D0E /* ComprehensiveTests.swift */,
 				95A782472E6F0BB8001E9748 /* HardwareSigningTests.swift */,
+				A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */,
 				95C99A522E695DF100C54D0E /* ReaderTests.swift */,
 				95C99A532E695DF100C54D0E /* SigningTests.swift */,
 				95C99A542E695DF100C54D0E /* StreamTests.swift */,
@@ -213,6 +216,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0B3CF4F2E96AC2C00F2F938 /* ManifestTests.swift in Sources */,
 				95C99A552E695DF100C54D0E /* StreamTests.swift in Sources */,
 				95A782492E6F0BB8001E9748 /* HardwareSigningTests.swift in Sources */,
 				95C99A562E695DF100C54D0E /* ComprehensiveTests.swift in Sources */,
