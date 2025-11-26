@@ -311,6 +311,157 @@ public final class SigningTests: TestImplementation {
         }
     }
 
+    public func testSignerFromSettings() -> TestResult {
+        let bundle = Bundle(for: type(of: self))
+        var results: [String] = []
+        var passCount = 0
+
+        // Test TOML format
+        if let tomlURL = bundle.url(forResource: "test_settings_cawg_signer", withExtension: "toml") {
+            do {
+                let settingsTOML = try String(contentsOf: tomlURL, encoding: .utf8)
+                let signer = try Signer(settingsTOML: settingsTOML)
+                _ = signer
+                results.append("TOML: Created CAWG signer successfully")
+                passCount += 1
+            } catch let error as C2PAError {
+                results.append("TOML: Failed - \(error)")
+            } catch {
+                results.append("TOML: Failed - \(error)")
+            }
+        } else {
+            results.append("TOML: Fixture not found")
+        }
+
+        // Test JSON format
+        if let jsonURL = bundle.url(forResource: "test_settings_cawg_signer", withExtension: "json") {
+            do {
+                let settingsJSON = try String(contentsOf: jsonURL, encoding: .utf8)
+                let signer = try Signer(settingsJSON: settingsJSON)
+                _ = signer
+                results.append("JSON: Created CAWG signer successfully")
+                passCount += 1
+            } catch let error as C2PAError {
+                results.append("JSON: Failed - \(error)")
+            } catch {
+                results.append("JSON: Failed - \(error)")
+            }
+        } else {
+            results.append("JSON: Fixture not found")
+        }
+
+        if passCount == 2 {
+            return .success(
+                "Signer From Settings", "[PASS] Both TOML and JSON formats work\n" + results.joined(separator: "\n"))
+        } else if passCount == 1 {
+            return .failure(
+                "Signer From Settings", "Only one format works (\(passCount)/2)\n" + results.joined(separator: "\n"))
+        } else {
+            return .failure("Signer From Settings", "Both formats failed\n" + results.joined(separator: "\n"))
+        }
+    }
+
+
+    public func testLocalSignerWithCAWGSettings() -> TestResult {
+        // This test attempts to:
+        // 1. Load only CAWG settings (without the main signer section)
+        // 2. Create a regular signer from bundled test certs
+        // 3. Sign an image and check if CAWG identity assertions are included
+        //
+        // This is experimental - it may not work if the C2PA library requires
+        // both signer and cawg_x509_signer to come from the same settings.
+
+        let bundle = Bundle(for: type(of: self))
+        var steps: [String] = []
+
+        // Step 1: Load CAWG-only settings
+        guard let cawgSettingsURL = bundle.url(forResource: "test_settings_cawg_only", withExtension: "json") else {
+            return .failure("Local Signer With CAWG Settings", "Could not find test_settings_cawg_only.json fixture")
+        }
+
+        do {
+            let cawgSettingsJSON = try String(contentsOf: cawgSettingsURL, encoding: .utf8)
+            try Signer.loadSettings(cawgSettingsJSON, format: "json")
+            steps.append("Loaded CAWG-only settings")
+        } catch {
+            return .failure("Local Signer With CAWG Settings", "Failed to load CAWG settings: \(error)")
+        }
+
+        // Step 2: Create a regular signer from test certs
+        let signer: Signer
+        do {
+            signer = try Signer(
+                certsPEM: TestUtilities.testCertsPEM,
+                privateKeyPEM: TestUtilities.testPrivateKeyPEM,
+                algorithm: .es256,
+                tsaURL: nil
+            )
+            steps.append("Created local signer from test certs")
+        } catch {
+            return .failure("Local Signer With CAWG Settings", "Failed to create local signer: \(error)")
+        }
+
+        // Step 3: Sign an image
+        guard let sourceData = TestUtilities.loadPexelsTestImage() else {
+            return .failure("Local Signer With CAWG Settings", "Could not load test image")
+        }
+
+        let tempDir = FileManager.default.temporaryDirectory
+        let sourceFile = tempDir.appendingPathComponent("cawg_source_\(UUID().uuidString).jpg")
+        let destFile = tempDir.appendingPathComponent("cawg_dest_\(UUID().uuidString).jpg")
+
+        defer {
+            try? FileManager.default.removeItem(at: sourceFile)
+            try? FileManager.default.removeItem(at: destFile)
+        }
+
+        do {
+            try sourceData.write(to: sourceFile)
+
+            let manifestJSON = TestUtilities.createTestManifestJSON()
+            let builder = try Builder(manifestJSON: manifestJSON)
+
+            let sourceStream = try Stream(fileURL: sourceFile, truncate: false, createIfNeeded: false)
+            let destStream = try Stream(fileURL: destFile, truncate: true, createIfNeeded: true)
+
+            _ = try builder.sign(
+                format: "image/jpeg",
+                source: sourceStream,
+                destination: destStream,
+                signer: signer
+            )
+            steps.append("Signed image successfully")
+
+            // Step 4: Read the signed image and check for CAWG assertions
+            let signedData = try Data(contentsOf: destFile)
+            let signedStream = try Stream(data: signedData)
+            let reader = try Reader(format: "image/jpeg", stream: signedStream)
+            let resultJSON = try reader.json()
+
+            steps.append("Read signed manifest")
+
+            // Check if CAWG identity assertion is present
+            if resultJSON.contains("cawg.identity") || resultJSON.contains("cawg.training-mining") {
+                steps.append("CAWG assertions found in manifest")
+                return .success(
+                    "Local Signer With CAWG Settings",
+                    "[PASS] Local signer with separate CAWG settings works\n" + steps.joined(separator: "\n")
+                )
+            } else {
+                steps.append("No CAWG assertions found (settings may not apply to separate signer)")
+                return .failure(
+                    "Local Signer With CAWG Settings",
+                    "Signed successfully but no CAWG assertions found\n" + steps.joined(separator: "\n")
+                )
+            }
+        } catch {
+            steps.append("Error: \(error)")
+            return .failure(
+                "Local Signer With CAWG Settings",
+                "Failed during signing/verification: \(error)\n" + steps.joined(separator: "\n")
+            )
+        }
+    }
 
     public func runAllTests() async -> [TestResult] {
         return [
@@ -319,7 +470,9 @@ public final class SigningTests: TestImplementation {
             testSigningAlgorithms(),
             testSignerWithTimestampAuthority(),
             await testWebServiceSignerCreation(),
-            testSignerWithActualSigning()
+            testSignerWithActualSigning(),
+            testSignerFromSettings(),
+            testLocalSignerWithCAWGSettings()
         ]
     }
 }

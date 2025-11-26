@@ -222,6 +222,17 @@ final class SigningTests: XCTestCase {
         let result = tests.testSignerWithActualSigning()
         XCTAssertTrue(result.passed, result.message)
     }
+
+    func testSignerFromSettings() throws {
+        let result = tests.testSignerFromSettings()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testLocalSignerWithCAWGSettings() throws {
+        let result = tests.testLocalSignerWithCAWGSettings()
+        print("Test result: \(result.message)")
+        XCTAssertTrue(result.passed, result.message)
+    }
 }
 
 // MARK: - Comprehensive Tests

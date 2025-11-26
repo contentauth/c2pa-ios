@@ -125,6 +125,144 @@ public final class Signer {
             tsaURL: info.tsaURL)
     }
 
+    /// Creates a signer from JSON settings configuration.
+    ///
+    /// This initializer creates a signer from a JSON settings object that can
+    /// include certificate paths, private keys, algorithm selection, and other
+    /// configuration options. This is useful for loading signer configuration
+    /// from external sources, configuration files, or for CAWG (Coalition for
+    /// Content Provenance and Authenticity Working Group) signers.
+    ///
+    /// - Parameter settingsJSON: A JSON string containing signer configuration.
+    ///
+    /// - Throws: ``C2PAError`` if the settings are invalid or the signer cannot be created.
+    ///
+    /// ## Settings Format
+    ///
+    /// The JSON should follow the C2PA settings format. For a CAWG signer:
+    ///
+    /// ```json
+    /// {
+    ///     "version": 1,
+    ///     "cawg_x509_signer": {
+    ///         "local": {
+    ///             "alg": "es256",
+    ///             "sign_cert": "-----BEGIN CERTIFICATE-----\n...",
+    ///             "private_key": "-----BEGIN PRIVATE KEY-----\n...",
+    ///             "tsa_url": "http://timestamp.digicert.com"
+    ///         }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let settingsJSON = """
+    /// {
+    ///     "version": 1,
+    ///     "cawg_x509_signer": {
+    ///         "local": {
+    ///             "alg": "es256",
+    ///             "sign_cert": "\(certPEM)",
+    ///             "private_key": "\(keyPEM)",
+    ///             "tsa_url": "http://timestamp.digicert.com"
+    ///         }
+    ///     }
+    /// }
+    /// """
+    ///
+    /// let signer = try Signer(settingsJSON: settingsJSON)
+    /// ```
+    ///
+    /// - Note: This method requires C2PAC framework v0.71.0 or later.
+    ///
+    /// - SeeAlso: ``init(certsPEM:privateKeyPEM:algorithm:tsaURL:)``
+    public convenience init(settingsJSON: String) throws {
+        try self.init(settings: settingsJSON, format: "json")
+    }
+
+    /// Creates a signer from TOML settings configuration.
+    ///
+    /// This initializer creates a signer from a TOML settings string. TOML format
+    /// supports additional features like CAWG (Creator Assertions Working Group)
+    /// X.509 signers that generate identity assertions.
+    ///
+    /// - Parameter settingsTOML: A TOML string containing signer configuration.
+    ///
+    /// - Throws: ``C2PAError`` if the settings are invalid or the signer cannot be created.
+    ///
+    /// ## CAWG Signer Example
+    ///
+    /// ```swift
+    /// let settingsTOML = """
+    /// version = 1
+    ///
+    /// [cawg_x509_signer.local]
+    /// alg = "es256"
+    /// sign_cert = \"\"\"-----BEGIN CERTIFICATE-----
+    /// ...certificate chain...
+    /// -----END CERTIFICATE-----
+    /// \"\"\"
+    /// private_key = \"\"\"-----BEGIN PRIVATE KEY-----
+    /// ...private key...
+    /// -----END PRIVATE KEY-----
+    /// \"\"\"
+    /// tsa_url = "http://timestamp.digicert.com"
+    /// referenced_assertions = ["cawg.training-mining"]
+    /// """
+    ///
+    /// let signer = try Signer(settingsTOML: settingsTOML)
+    /// ```
+    ///
+    /// - Note: This method requires C2PAC framework v0.72.0 or later.
+    ///
+    /// - SeeAlso: ``init(settingsJSON:)``
+    public convenience init(settingsTOML: String) throws {
+        try self.init(settings: settingsTOML, format: "toml")
+    }
+
+    /// Creates a signer from settings configuration in the specified format.
+    ///
+    /// - Parameters:
+    ///   - settings: The settings string in the specified format.
+    ///   - format: The format of the settings string ("json" or "toml").
+    ///
+    /// - Throws: ``C2PAError`` if the settings are invalid or the signer cannot be created.
+    private convenience init(settings: String, format: String) throws {
+        let raw = try settings.withCString { settingsPtr in
+            try format.withCString { formatPtr in
+                let result = c2pa_load_settings(settingsPtr, formatPtr)
+                guard result == 0 else {
+                    throw C2PAError.api(lastC2PAError())
+                }
+                return try guardNotNull(c2pa_signer_from_settings())
+            }
+        }
+        self.init(ptr: raw)
+    }
+
+    /// Loads global C2PA settings without creating a signer.
+    ///
+    /// This method loads settings that will be used by subsequent signing operations.
+    /// Use this to load CAWG identity assertion settings separately from the main signer.
+    ///
+    /// - Parameters:
+    ///   - settings: The settings string in the specified format.
+    ///   - format: The format of the settings string ("json" or "toml").
+    ///
+    /// - Throws: ``C2PAError`` if the settings are invalid.
+    public static func loadSettings(_ settings: String, format: String) throws {
+        try settings.withCString { settingsPtr in
+            try format.withCString { formatPtr in
+                let result = c2pa_load_settings(settingsPtr, formatPtr)
+                guard result == 0 else {
+                    throw C2PAError.api(lastC2PAError())
+                }
+            }
+        }
+    }
+
     /// Creates a signer with a custom signing closure.
     ///
     /// This initializer enables advanced signing scenarios where the private key
