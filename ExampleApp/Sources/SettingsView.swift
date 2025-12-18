@@ -589,11 +589,6 @@ struct SettingsView: View {
                     emailAddress: nil,
                     validityDays: 365
                 )
-
-                let certificateChain = try CertificateManager.createSelfSignedCertificateChain(
-                    for: publicKey,
-                    config: config
-                    )
     
                     // Mark that we have a Secure Enclave key (certificate chain is not stored here anymore)
                     UserDefaults.standard.set(true, forKey: "hasSecureEnclaveKey")
