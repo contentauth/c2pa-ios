@@ -8,7 +8,7 @@
 CONFIGURATION := Release
 SDK := iphoneos
 # Default destination - can be overridden from command line
-DESTINATION ?= platform=iOS Simulator,name=iPhone 16 Pro
+DESTINATION ?= platform=iOS Simulator,name=iPhone 17 Pro
 
 # Default target
 all: workspace-build
@@ -226,16 +226,16 @@ update-package-swift:
 	fi
 
 # Tests with signing server
-tests-with-server: signing-server-start tests signing-server-stop
+tests-with-server: signing-server-start signing-server-wait test-library signing-server-stop
 	@echo "Tests with server completed."
 
 # Start the signing server (setup is handled by Xcode scheme)
 signing-server-start:
 	@echo "Building and starting signing server..."
 	@xcodebuild -workspace C2PA.xcworkspace -scheme SigningServer -configuration Debug build
-	@cd SigningServer && SIGNING_SERVER_URL=http://localhost:8080 SIGNING_SERVER_TOKEN=test-bearer-token-12345 nohup swift run SigningServer > ../signing-server.log 2>&1 &
-	@echo "Signing server started with PID $$!"
-	@echo "Server running at http://localhost:8080 with bearer token authentication"
+	@cd SigningServer && SIGNING_SERVER_URL=http://127.0.0.1:8080 SIGNING_SERVER_TOKEN=test-bearer-token-12345 nohup .build/debug/SigningServer > ../signing-server.log 2>&1 &
+	@echo "Signing server started"
+	@echo "Server running at http://127.0.0.1:8080 with bearer token authentication"
 
 # Stop the signing server
 signing-server-stop:

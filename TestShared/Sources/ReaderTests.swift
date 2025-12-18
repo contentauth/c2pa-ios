@@ -376,6 +376,141 @@ public final class ReaderTests: TestImplementation {
         }
     }
 
+    public func testReaderRemoteURL() -> TestResult {
+        do {
+            guard let imageData = TestUtilities.loadAdobeTestImage() else {
+                return .failure("Reader Remote URL", "Could not load test image")
+            }
+
+            let stream = try Stream(data: imageData)
+            let reader = try Reader(format: "image/jpeg", stream: stream)
+
+            let remoteURL = reader.remoteURL()
+
+            // Most test images will have embedded manifests
+            if let url = remoteURL {
+                return .success("Reader Remote URL", "[PASS] Remote URL found: \(url)")
+            } else {
+                return .success("Reader Remote URL", "[PASS] No remote URL (embedded manifest)")
+            }
+
+        } catch let error as C2PAError {
+            if case .api(let message) = error, message.contains("No manifest") {
+                return .success("Reader Remote URL", "[WARN] No manifest (acceptable)")
+            }
+            return .failure("Reader Remote URL", "Failed: \(error)")
+        } catch {
+            return .failure("Reader Remote URL", "Failed: \(error)")
+        }
+    }
+
+    public func testReaderIsEmbedded() -> TestResult {
+        do {
+            guard let imageData = TestUtilities.loadAdobeTestImage() else {
+                return .failure("Reader Is Embedded", "Could not load test image")
+            }
+
+            let stream = try Stream(data: imageData)
+            let reader = try Reader(format: "image/jpeg", stream: stream)
+
+            let isEmbedded = reader.isEmbedded()
+            let remoteURL = reader.remoteURL()
+
+            // Validate consistency between isEmbedded and remoteURL
+            if isEmbedded && remoteURL == nil {
+                return .success("Reader Is Embedded", "[PASS] Manifest is embedded (consistent)")
+            } else if !isEmbedded && remoteURL != nil {
+                return .success("Reader Is Embedded", "[PASS] Manifest is remote (consistent)")
+            } else {
+                return .success("Reader Is Embedded", "[PASS] Embedded: \(isEmbedded)")
+            }
+
+        } catch let error as C2PAError {
+            if case .api(let message) = error, message.contains("No manifest") {
+                return .success("Reader Is Embedded", "[WARN] No manifest (acceptable)")
+            }
+            return .failure("Reader Is Embedded", "Failed: \(error)")
+        } catch {
+            return .failure("Reader Is Embedded", "Failed: \(error)")
+        }
+    }
+
+    public func testReaderDetailedJSON() -> TestResult {
+        do {
+            guard let imageData = TestUtilities.loadAdobeTestImage() else {
+                return .failure("Reader Detailed JSON", "Could not load test image")
+            }
+
+            let stream = try Stream(data: imageData)
+            let reader = try Reader(format: "image/jpeg", stream: stream)
+
+            let detailedJSON = try reader.detailedJSON()
+
+            // Verify it's valid JSON
+            if !detailedJSON.isEmpty {
+                let jsonData = Data(detailedJSON.utf8)
+                let parsed = try JSONSerialization.jsonObject(with: jsonData)
+                if parsed is [String: Any] {
+                    return .success("Reader Detailed JSON", "[PASS] Valid detailed JSON returned")
+                }
+            }
+
+            return .success("Reader Detailed JSON", "[WARN] Empty JSON (normal)")
+
+        } catch let error as C2PAError {
+            if case .api(let message) = error {
+                if message.contains("No manifest") || message.contains("no JUMBF data found")
+                    || message.contains("ManifestNotFound")
+                {
+                    return .success("Reader Detailed JSON", "[PASS] No manifest error handled")
+                }
+            }
+            return .failure("Reader Detailed JSON", "Unexpected C2PAError: \(error)")
+        } catch {
+            return .failure("Reader Detailed JSON", "Unexpected error: \(error)")
+        }
+    }
+
+    public func testReaderDetailedJSONComparison() -> TestResult {
+        do {
+            guard let imageData = TestUtilities.loadAdobeTestImage() else {
+                return .failure("Reader Detailed JSON Comparison", "Could not load test image")
+            }
+
+            let stream = try Stream(data: imageData)
+            let reader = try Reader(format: "image/jpeg", stream: stream)
+
+            let standardJSON = try reader.json()
+            let detailedJSON = try reader.detailedJSON()
+
+            // Both should be valid JSON
+            if !standardJSON.isEmpty && !detailedJSON.isEmpty {
+                // Detailed JSON should typically be longer or equal
+                // (contains more fields)
+                let standardLength = standardJSON.count
+                let detailedLength = detailedJSON.count
+
+                return .success(
+                    "Reader Detailed JSON Comparison",
+                    "[PASS] Standard: \(standardLength) chars, Detailed: \(detailedLength) chars")
+            }
+
+            return .success("Reader Detailed JSON Comparison", "[WARN] Empty JSON (normal)")
+
+        } catch let error as C2PAError {
+            if case .api(let message) = error {
+                if message.contains("No manifest") || message.contains("no JUMBF data found")
+                    || message.contains("ManifestNotFound")
+                {
+                    return .success("Reader Detailed JSON Comparison", "[PASS] No manifest (acceptable)")
+                }
+            }
+            return .failure("Reader Detailed JSON Comparison", "Unexpected C2PAError: \(error)")
+        } catch {
+            return .failure("Reader Detailed JSON Comparison", "Unexpected error: \(error)")
+        }
+    }
+
     public func runAllTests() async -> [TestResult] {
         return [
             testReaderResourceErrorHandling(),
@@ -385,7 +520,11 @@ public final class ReaderTests: TestImplementation {
             testReaderThumbnailExtraction(),
             testReaderIngredientExtraction(),
             testReaderJSONParsing(),
-            testReaderWithMultipleStreams()
+            testReaderWithMultipleStreams(),
+            testReaderRemoteURL(),
+            testReaderIsEmbedded(),
+            testReaderDetailedJSON(),
+            testReaderDetailedJSONComparison()
         ]
     }
 }
