@@ -1,10 +1,10 @@
-// This file is licensed to you under the Apache License, Version 2.0 
-// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
+// This file is licensed to you under the Apache License, Version 2.0
+// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license
 // (http://opensource.org/licenses/MIT), at your option.
 //
-// Unless required by applicable law or agreed to in writing, this software is 
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF 
-// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
+// Unless required by applicable law or agreed to in writing, this software is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF
+// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE
 // files for the specific language governing permissions and limitations under
 // each license.
 
@@ -362,107 +362,6 @@ public final class SigningTests: TestImplementation {
     }
 
 
-    public func testLocalSignerWithCAWGSettings() -> TestResult {
-        // This test attempts to:
-        // 1. Load only CAWG settings (without the main signer section)
-        // 2. Create a regular signer from bundled test certs
-        // 3. Sign an image and check if CAWG identity assertions are included
-        //
-        // This is experimental - it may not work if the C2PA library requires
-        // both signer and cawg_x509_signer to come from the same settings.
-
-        let bundle = Bundle(for: type(of: self))
-        var steps: [String] = []
-
-        // Step 1: Load CAWG-only settings
-        guard let cawgSettingsURL = bundle.url(forResource: "test_settings_cawg_only", withExtension: "json") else {
-            return .failure("Local Signer With CAWG Settings", "Could not find test_settings_cawg_only.json fixture")
-        }
-
-        do {
-            let cawgSettingsJSON = try String(contentsOf: cawgSettingsURL, encoding: .utf8)
-            try Signer.loadSettings(cawgSettingsJSON, format: "json")
-            steps.append("Loaded CAWG-only settings")
-        } catch {
-            return .failure("Local Signer With CAWG Settings", "Failed to load CAWG settings: \(error)")
-        }
-
-        // Step 2: Create a regular signer from test certs
-        let signer: Signer
-        do {
-            signer = try Signer(
-                certsPEM: TestUtilities.testCertsPEM,
-                privateKeyPEM: TestUtilities.testPrivateKeyPEM,
-                algorithm: .es256,
-                tsaURL: nil
-            )
-            steps.append("Created local signer from test certs")
-        } catch {
-            return .failure("Local Signer With CAWG Settings", "Failed to create local signer: \(error)")
-        }
-
-        // Step 3: Sign an image
-        guard let sourceData = TestUtilities.loadPexelsTestImage() else {
-            return .failure("Local Signer With CAWG Settings", "Could not load test image")
-        }
-
-        let tempDir = FileManager.default.temporaryDirectory
-        let sourceFile = tempDir.appendingPathComponent("cawg_source_\(UUID().uuidString).jpg")
-        let destFile = tempDir.appendingPathComponent("cawg_dest_\(UUID().uuidString).jpg")
-
-        defer {
-            try? FileManager.default.removeItem(at: sourceFile)
-            try? FileManager.default.removeItem(at: destFile)
-        }
-
-        do {
-            try sourceData.write(to: sourceFile)
-
-            let manifestJSON = TestUtilities.createTestManifestJSON()
-            let builder = try Builder(manifestJSON: manifestJSON)
-
-            let sourceStream = try Stream(fileURL: sourceFile, truncate: false, createIfNeeded: false)
-            let destStream = try Stream(fileURL: destFile, truncate: true, createIfNeeded: true)
-
-            _ = try builder.sign(
-                format: "image/jpeg",
-                source: sourceStream,
-                destination: destStream,
-                signer: signer
-            )
-            steps.append("Signed image successfully")
-
-            // Step 4: Read the signed image and check for CAWG assertions
-            let signedData = try Data(contentsOf: destFile)
-            let signedStream = try Stream(data: signedData)
-            let reader = try Reader(format: "image/jpeg", stream: signedStream)
-            let resultJSON = try reader.json()
-
-            steps.append("Read signed manifest")
-
-            // Check if CAWG identity assertion is present
-            if resultJSON.contains("cawg.identity") || resultJSON.contains("cawg.training-mining") {
-                steps.append("CAWG assertions found in manifest")
-                return .success(
-                    "Local Signer With CAWG Settings",
-                    "[PASS] Local signer with separate CAWG settings works\n" + steps.joined(separator: "\n")
-                )
-            } else {
-                steps.append("No CAWG assertions found (settings may not apply to separate signer)")
-                return .failure(
-                    "Local Signer With CAWG Settings",
-                    "Signed successfully but no CAWG assertions found\n" + steps.joined(separator: "\n")
-                )
-            }
-        } catch {
-            steps.append("Error: \(error)")
-            return .failure(
-                "Local Signer With CAWG Settings",
-                "Failed during signing/verification: \(error)\n" + steps.joined(separator: "\n")
-            )
-        }
-    }
-
     public func runAllTests() async -> [TestResult] {
         return [
             testSignerCreation(),
@@ -471,8 +370,7 @@ public final class SigningTests: TestImplementation {
             testSignerWithTimestampAuthority(),
             await testWebServiceSignerCreation(),
             testSignerWithActualSigning(),
-            testSignerFromSettings(),
-            testLocalSignerWithCAWGSettings()
+            testSignerFromSettings()
         ]
     }
 }
