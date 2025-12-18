@@ -223,8 +223,13 @@ final class SigningTests: XCTestCase {
         XCTAssertTrue(result.passed, result.message)
     }
 
-    func testSignerFromSettings() throws {
-        let result = tests.testSignerFromSettings()
+    func testSignerFromSettingsTOML() throws {
+        let result = tests.testSignerFromSettingsTOML()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testSignerFromSettingsJSON() throws {
+        let result = tests.testSignerFromSettingsJSON()
         XCTAssertTrue(result.passed, result.message)
     }
 }

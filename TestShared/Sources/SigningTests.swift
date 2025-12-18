@@ -311,56 +311,43 @@ public final class SigningTests: TestImplementation {
         }
     }
 
-    public func testSignerFromSettings() -> TestResult {
+    public func testSignerFromSettingsTOML() -> TestResult {
         let bundle = Bundle(for: type(of: self))
-        var results: [String] = []
-        var passCount = 0
 
-        // Test TOML format
-        if let tomlURL = bundle.url(forResource: "test_settings_cawg_signer", withExtension: "toml") {
-            do {
-                let settingsTOML = try String(contentsOf: tomlURL, encoding: .utf8)
-                let signer = try Signer(settingsTOML: settingsTOML)
-                _ = signer
-                results.append("TOML: Created CAWG signer successfully")
-                passCount += 1
-            } catch let error as C2PAError {
-                results.append("TOML: Failed - \(error)")
-            } catch {
-                results.append("TOML: Failed - \(error)")
-            }
-        } else {
-            results.append("TOML: Fixture not found")
+        guard let tomlURL = bundle.url(forResource: "test_settings_cawg_signer", withExtension: "toml") else {
+            return .failure("Signer From Settings (TOML)", "Fixture not found: test_settings_cawg_signer.toml")
         }
 
-        // Test JSON format
-        if let jsonURL = bundle.url(forResource: "test_settings_cawg_signer", withExtension: "json") {
-            do {
-                let settingsJSON = try String(contentsOf: jsonURL, encoding: .utf8)
-                let signer = try Signer(settingsJSON: settingsJSON)
-                _ = signer
-                results.append("JSON: Created CAWG signer successfully")
-                passCount += 1
-            } catch let error as C2PAError {
-                results.append("JSON: Failed - \(error)")
-            } catch {
-                results.append("JSON: Failed - \(error)")
-            }
-        } else {
-            results.append("JSON: Fixture not found")
-        }
-
-        if passCount == 2 {
-            return .success(
-                "Signer From Settings", "[PASS] Both TOML and JSON formats work\n" + results.joined(separator: "\n"))
-        } else if passCount == 1 {
-            return .failure(
-                "Signer From Settings", "Only one format works (\(passCount)/2)\n" + results.joined(separator: "\n"))
-        } else {
-            return .failure("Signer From Settings", "Both formats failed\n" + results.joined(separator: "\n"))
+        do {
+            let settingsTOML = try String(contentsOf: tomlURL, encoding: .utf8)
+            let signer = try Signer(settingsTOML: settingsTOML)
+            _ = signer
+            return .success("Signer From Settings (TOML)", "Created CAWG signer successfully from TOML settings")
+        } catch let error as C2PAError {
+            return .failure("Signer From Settings (TOML)", "Failed - \(error)")
+        } catch {
+            return .failure("Signer From Settings (TOML)", "Failed - \(error)")
         }
     }
 
+    public func testSignerFromSettingsJSON() -> TestResult {
+        let bundle = Bundle(for: type(of: self))
+
+        guard let jsonURL = bundle.url(forResource: "test_settings_cawg_signer", withExtension: "json") else {
+            return .failure("Signer From Settings (JSON)", "Fixture not found: test_settings_cawg_signer.json")
+        }
+
+        do {
+            let settingsJSON = try String(contentsOf: jsonURL, encoding: .utf8)
+            let signer = try Signer(settingsJSON: settingsJSON)
+            _ = signer
+            return .success("Signer From Settings (JSON)", "Created CAWG signer successfully from JSON settings")
+        } catch let error as C2PAError {
+            return .failure("Signer From Settings (JSON)", "Failed - \(error)")
+        } catch {
+            return .failure("Signer From Settings (JSON)", "Failed - \(error)")
+        }
+    }
 
     public func runAllTests() async -> [TestResult] {
         return [
@@ -370,7 +357,8 @@ public final class SigningTests: TestImplementation {
             testSignerWithTimestampAuthority(),
             await testWebServiceSignerCreation(),
             testSignerWithActualSigning(),
-            testSignerFromSettings()
+            testSignerFromSettingsTOML(),
+            testSignerFromSettingsJSON()
         ]
     }
 }
