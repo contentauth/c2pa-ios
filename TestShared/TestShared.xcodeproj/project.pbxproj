@@ -13,9 +13,7 @@
 		95BBD7C12E6EE13D00F0BC7C /* es256_certs.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95BBD7BB2E6EDDF700F0BC7C /* es256_certs.pem */; };
 		95BBD7C22E6EE13D00F0BC7C /* es256_private.key in Resources */ = {isa = PBXBuildFile; fileRef = 95BBD7BC2E6EDDF700F0BC7C /* es256_private.key */; };
 		95BBD7C32E6EE13D00F0BC7C /* pexels-asadphoto-457882.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 95BBD7BD2E6EDDF700F0BC7C /* pexels-asadphoto-457882.jpg */; };
-		95BBD7C42E6EE13D00F0BC7C /* test_settings_cawg_signer.toml in Resources */ = {isa = PBXBuildFile; fileRef = 95BBD7C52E6EDDF700F0BC7C /* test_settings_cawg_signer.toml */; };
-		95BBD7C62E6EE13D00F0BC7C /* test_settings_cawg_signer.json in Resources */ = {isa = PBXBuildFile; fileRef = 95BBD7C72E6EDDF700F0BC7C /* test_settings_cawg_signer.json */; };
-		95BBD7C82E6EE13D00F0BC7C /* test_settings_cawg_only.json in Resources */ = {isa = PBXBuildFile; fileRef = 95BBD7C92E6EDDF700F0BC7C /* test_settings_cawg_only.json */; };
+
 		95C99A3C2E68D83F00C54D0E /* C2PA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C99A3B2E68D83F00C54D0E /* C2PA.framework */; };
 		95C99A552E695DF100C54D0E /* StreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A542E695DF100C54D0E /* StreamTests.swift */; };
 		95C99A562E695DF100C54D0E /* ComprehensiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A502E695DF100C54D0E /* ComprehensiveTests.swift */; };
@@ -23,6 +21,8 @@
 		95C99A592E695DF100C54D0E /* ReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A522E695DF100C54D0E /* ReaderTests.swift */; };
 		95C99A5A2E695DF100C54D0E /* SigningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A532E695DF100C54D0E /* SigningTests.swift */; };
 		95C99A692E696CBF00C54D0E /* TestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A622E696CBF00C54D0E /* TestResult.swift */; };
+		95CAWG012E6EE13D00F0BC7C /* test_settings_with_cawg_signing.toml in Resources */ = {isa = PBXBuildFile; fileRef = 95CAWG022E6EDDF700F0BC7C /* test_settings_with_cawg_signing.toml */; };
+		95CAWG032E6EE13D00F0BC7C /* test_settings_with_cawg_signing.json in Resources */ = {isa = PBXBuildFile; fileRef = 95CAWG042E6EDDF700F0BC7C /* test_settings_with_cawg_signing.json */; };
 		95F2712B2E72CD5800A6A88D /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 95F271292E72CD5800A6A88D /* Base.xcconfig */; };
 		A0B3CF4F2E96AC2C00F2F938 /* ManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */; };
 /* End PBXBuildFile section */
@@ -48,9 +48,7 @@
 		95BBD7BB2E6EDDF700F0BC7C /* es256_certs.pem */ = {isa = PBXFileReference; lastKnownFileType = text; path = es256_certs.pem; sourceTree = "<group>"; };
 		95BBD7BC2E6EDDF700F0BC7C /* es256_private.key */ = {isa = PBXFileReference; lastKnownFileType = text; path = es256_private.key; sourceTree = "<group>"; };
 		95BBD7BD2E6EDDF700F0BC7C /* pexels-asadphoto-457882.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "pexels-asadphoto-457882.jpg"; sourceTree = "<group>"; };
-		95BBD7C52E6EDDF700F0BC7C /* test_settings_cawg_signer.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = "test_settings_cawg_signer.toml"; sourceTree = "<group>"; };
-		95BBD7C72E6EDDF700F0BC7C /* test_settings_cawg_signer.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test_settings_cawg_signer.json"; sourceTree = "<group>"; };
-		95BBD7C92E6EDDF700F0BC7C /* test_settings_cawg_only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test_settings_cawg_only.json"; sourceTree = "<group>"; };
+
 		95C99A3B2E68D83F00C54D0E /* C2PA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = C2PA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95C99A4F2E695DF100C54D0E /* BuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuilderTests.swift; sourceTree = "<group>"; };
 		95C99A502E695DF100C54D0E /* ComprehensiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComprehensiveTests.swift; sourceTree = "<group>"; };
@@ -58,6 +56,8 @@
 		95C99A532E695DF100C54D0E /* SigningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningTests.swift; sourceTree = "<group>"; };
 		95C99A542E695DF100C54D0E /* StreamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTests.swift; sourceTree = "<group>"; };
 		95C99A622E696CBF00C54D0E /* TestResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestResult.swift; sourceTree = "<group>"; };
+		95CAWG022E6EDDF700F0BC7C /* test_settings_with_cawg_signing.toml */ = {isa = PBXFileReference; lastKnownFileType = text; path = test_settings_with_cawg_signing.toml; sourceTree = "<group>"; };
+		95CAWG042E6EDDF700F0BC7C /* test_settings_with_cawg_signing.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_settings_with_cawg_signing.json; sourceTree = "<group>"; };
 		95F271292E72CD5800A6A88D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,9 +116,8 @@
 				95BBD7BB2E6EDDF700F0BC7C /* es256_certs.pem */,
 				95BBD7BC2E6EDDF700F0BC7C /* es256_private.key */,
 				95BBD7BD2E6EDDF700F0BC7C /* pexels-asadphoto-457882.jpg */,
-				95BBD7C52E6EDDF700F0BC7C /* test_settings_cawg_signer.toml */,
-				95BBD7C72E6EDDF700F0BC7C /* test_settings_cawg_signer.json */,
-				95BBD7C92E6EDDF700F0BC7C /* test_settings_cawg_only.json */,
+				95CAWG022E6EDDF700F0BC7C /* test_settings_with_cawg_signing.toml */,
+				95CAWG042E6EDDF700F0BC7C /* test_settings_with_cawg_signing.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -214,9 +213,8 @@
 				95BBD7C12E6EE13D00F0BC7C /* es256_certs.pem in Resources */,
 				95BBD7C22E6EE13D00F0BC7C /* es256_private.key in Resources */,
 				95BBD7C32E6EE13D00F0BC7C /* pexels-asadphoto-457882.jpg in Resources */,
-				95BBD7C42E6EE13D00F0BC7C /* test_settings_cawg_signer.toml in Resources */,
-				95BBD7C62E6EE13D00F0BC7C /* test_settings_cawg_signer.json in Resources */,
-				95BBD7C82E6EE13D00F0BC7C /* test_settings_cawg_only.json in Resources */,
+				95CAWG012E6EE13D00F0BC7C /* test_settings_with_cawg_signing.toml in Resources */,
+				95CAWG032E6EE13D00F0BC7C /* test_settings_with_cawg_signing.json in Resources */,
 				95F2712B2E72CD5800A6A88D /* Base.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

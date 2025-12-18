@@ -1,6 +1,8 @@
+# c2pa-rs Configuration File with CAWG Signing
+# This settings file has BOTH a main signer AND a CAWG signer
+
 version = 1
 
-# Regular signer for C2PA claim generator signature
 [signer.local]
 alg = "es256"
 sign_cert = """-----BEGIN CERTIFICATE-----
@@ -43,8 +45,6 @@ iMrbvbI8fG7w2Bbl9otNG/cch3DAw5rGAPV7NWkyl3QGuV/wt0MrAPDo
 """
 tsa_url = "http://timestamp.digicert.com"
 
-# CAWG X.509 signer for identity assertions
-# Uses the same credentials as the regular signer for simplicity
 [cawg_x509_signer.local]
 alg = "es256"
 sign_cert = """-----BEGIN CERTIFICATE-----
