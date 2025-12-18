@@ -61,102 +61,44 @@ public enum BuilderIntent {
     }
 }
 
-/// Defines the digital source type for content created by the builder.
-///
-/// Digital source types classify how the original content was generated,
-/// which is important for provenance and authenticity claims.
-///
-/// ## Topics
-///
-/// ### Human-Created Content
-/// - ``digitalCapture``
-/// - ``negativeFilm``
-/// - ``positiveFilm``
-/// - ``print``
-/// - ``humanEdits``
-///
-/// ### Algorithmically-Created Content
-/// - ``trainedAlgorithmicData``
-/// - ``trainedAlgorithmicMedia``
-/// - ``algorithmicMedia``
-/// - ``dataDrivenMedia``
-/// - ``algorithmicallyEnhanced``
-///
-/// ### Composite Content
-/// - ``composite``
-/// - ``compositeCapture``
-/// - ``compositeSynthetic``
-/// - ``compositeWithTrainedAlgorithmicMedia``
-///
-/// ### Other Types
-/// - ``empty``
-/// - ``computationalCapture``
-/// - ``digitalCreation``
-/// - ``screenCapture``
-/// - ``virtualRecording``
-///
-/// - SeeAlso: ``BuilderIntent/create(_:)``
-public enum DigitalSourceType {
-    case empty
-    case trainedAlgorithmicData
-    case digitalCapture
-    case computationalCapture
-    case negativeFilm
-    case positiveFilm
-    case print
-    case humanEdits
-    case compositeWithTrainedAlgorithmicMedia
-    case algorithmicallyEnhanced
-    case digitalCreation
-    case dataDrivenMedia
-    case trainedAlgorithmicMedia
-    case algorithmicMedia
-    case screenCapture
-    case virtualRecording
-    case composite
-    case compositeCapture
-    case compositeSynthetic
+// MARK: - DigitalSourceType C API Conversion
 
+extension DigitalSourceType {
+    /// Converts this digital source type to the corresponding C API type.
     internal func toCType() -> C2paDigitalSourceType {
         switch self {
-        case .empty:
-            return Empty
-        case .trainedAlgorithmicData:
-            return TrainedAlgorithmicData
-        case .digitalCapture:
-            return DigitalCapture
-        case .computationalCapture:
-            return ComputationalCapture
-        case .negativeFilm:
-            return NegativeFilm
-        case .positiveFilm:
-            return PositiveFilm
-        case .print:
-            return Print
-        case .humanEdits:
-            return HumanEdits
-        case .compositeWithTrainedAlgorithmicMedia:
-            return CompositeWithTrainedAlgorithmicMedia
         case .algorithmicallyEnhanced:
             return AlgorithmicallyEnhanced
-        case .digitalCreation:
-            return DigitalCreation
-        case .dataDrivenMedia:
-            return DataDrivenMedia
-        case .trainedAlgorithmicMedia:
-            return TrainedAlgorithmicMedia
         case .algorithmicMedia:
             return AlgorithmicMedia
-        case .screenCapture:
-            return ScreenCapture
-        case .virtualRecording:
-            return VirtualRecording
         case .composite:
             return Composite
         case .compositeCapture:
             return CompositeCapture
         case .compositeSynthetic:
             return CompositeSynthetic
+        case .compositeWithTrainedAlgorithmicMedia:
+            return CompositeWithTrainedAlgorithmicMedia
+        case .dataDrivenMedia:
+            return DataDrivenMedia
+        case .digitalCreation:
+            return DigitalCreation
+        case .digitalCapture:
+            return DigitalCapture
+        case .humanEdits:
+            return HumanEdits
+        case .negativeFilm:
+            return NegativeFilm
+        case .positiveFilm:
+            return PositiveFilm
+        case .print:
+            return Print
+        case .screenCapture:
+            return ScreenCapture
+        case .trainedAlgorithmicMedia:
+            return TrainedAlgorithmicMedia
+        case .virtualRecording:
+            return VirtualRecording
         }
     }
 }
