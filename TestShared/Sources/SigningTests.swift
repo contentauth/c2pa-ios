@@ -80,8 +80,8 @@ public final class SigningTests: TestImplementation {
 
             try imageData.write(to: sourceFile)
 
-            let sourceStream = try Stream(fileURL: sourceFile, truncate: false, createIfNeeded: false)
-            let destStream = try Stream(fileURL: destFile, truncate: true, createIfNeeded: true)
+            let sourceStream = try Stream(readFrom: sourceFile)
+            let destStream = try Stream(writeTo: destFile)
 
             _ = try builder.sign(
                 format: "image/jpeg",
@@ -218,8 +218,8 @@ public final class SigningTests: TestImplementation {
 
                 try testImageData.write(to: sourceFile)
 
-                let sourceStream = try Stream(fileURL: sourceFile, truncate: false, createIfNeeded: false)
-                let destStream = try Stream(fileURL: destFile, truncate: true, createIfNeeded: true)
+                let sourceStream = try Stream(readFrom: sourceFile)
+                let destStream = try Stream(writeTo: destFile)
 
                 _ = try builder.sign(
                     format: "image/jpeg",
@@ -292,9 +292,8 @@ public final class SigningTests: TestImplementation {
             try sourceData.write(to: sourceFile)
 
             // Create file-based streams
-            let sourceStream = try Stream(
-                fileURL: sourceFile, truncate: false, createIfNeeded: false)
-            let destStream = try Stream(fileURL: destFile, truncate: true, createIfNeeded: true)
+            let sourceStream = try Stream(readFrom: sourceFile)
+            let destStream = try Stream(writeTo: destFile)
 
             let signer = try TestUtilities.createTestSigner()
 

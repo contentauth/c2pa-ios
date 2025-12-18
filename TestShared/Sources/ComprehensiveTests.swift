@@ -98,7 +98,7 @@ public final class ComprehensiveTests: TestImplementation {
                 try? FileManager.default.removeItem(at: tempURL)
             }
 
-            let stream = try Stream(fileURL: tempURL, truncate: false, createIfNeeded: false)
+            let stream = try Stream(readFrom: tempURL)
             _ = stream
             return .success("Stream From File", "[PASS] Created stream from file")
         } catch {
@@ -143,7 +143,7 @@ public final class ComprehensiveTests: TestImplementation {
                 try? FileManager.default.removeItem(at: archiveFile)
             }
 
-            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            let archiveStream = try Stream(writeTo: archiveFile)
             try builder.writeArchive(to: archiveStream)
 
             if FileManager.default.fileExists(atPath: archiveFile.path) {
@@ -317,8 +317,8 @@ public final class ComprehensiveTests: TestImplementation {
             }
             try imageData.write(to: sourceFile)
 
-            let sourceStream = try Stream(fileURL: sourceFile, truncate: false, createIfNeeded: false)
-            let destStream = try Stream(fileURL: destFile, truncate: true, createIfNeeded: true)
+            let sourceStream = try Stream(readFrom: sourceFile)
+            let destStream = try Stream(writeTo: destFile)
 
             let signer = try Signer(
                 certsPEM: TestUtilities.testCertsPEM,
@@ -477,7 +477,7 @@ public final class ComprehensiveTests: TestImplementation {
 
         do {
             // Test 1: Create new file with stream
-            let createStream = try Stream(fileURL: tempFile, truncate: true, createIfNeeded: true)
+            let createStream = try Stream(writeTo: tempFile)
             _ = createStream
             testSteps.append("✓ Created new file with stream")
 
@@ -491,7 +491,7 @@ public final class ComprehensiveTests: TestImplementation {
             try testData.write(to: tempFile)
 
             // Test 2: Open existing file without truncation
-            let readStream = try Stream(fileURL: tempFile, truncate: false, createIfNeeded: false)
+            let readStream = try Stream(update: tempFile)
             _ = readStream
             testSteps.append("✓ Opened existing file without truncation")
 
@@ -502,7 +502,7 @@ public final class ComprehensiveTests: TestImplementation {
             }
 
             // Test 3: Open with truncation
-            let truncateStream = try Stream(fileURL: tempFile, truncate: true, createIfNeeded: false)
+            let truncateStream = try Stream(writeTo: tempFile)
             _ = truncateStream
             testSteps.append("✓ Opened file with truncation")
 
@@ -510,7 +510,7 @@ public final class ComprehensiveTests: TestImplementation {
             let nonExistentFile = FileManager.default.temporaryDirectory
                 .appendingPathComponent("non_existent_\(UUID().uuidString).dat")
             do {
-                _ = try Stream(fileURL: nonExistentFile, truncate: false, createIfNeeded: false)
+                _ = try Stream(update: nonExistentFile)
                 testSteps.append("✗ Should have failed for non-existent file")
             } catch {
                 testSteps.append("✓ Correctly failed for non-existent file")

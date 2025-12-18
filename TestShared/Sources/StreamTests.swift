@@ -37,14 +37,14 @@ public final class StreamTests: TestImplementation {
             defer { try? FileManager.default.removeItem(at: tempURL) }
 
             // Test read mode
-            let readStream = try Stream(fileURL: tempURL, truncate: false, createIfNeeded: false)
+            let readStream = try Stream(readFrom: tempURL)
             _ = readStream
 
             // Test write mode
             let writeURL = tempURL.appendingPathExtension("write")
             defer { try? FileManager.default.removeItem(at: writeURL) }
 
-            let writeStream = try Stream(fileURL: writeURL, truncate: true, createIfNeeded: true)
+            let writeStream = try Stream(writeTo: writeURL)
             _ = writeStream
 
             return .success("Stream File Operations", "[PASS] File streams created successfully")
@@ -81,7 +81,7 @@ public final class StreamTests: TestImplementation {
                 "archive_\(UUID().uuidString).c2pa")
             defer { try? FileManager.default.removeItem(at: archiveFile) }
 
-            let archiveStream = try Stream(fileURL: archiveFile, truncate: true, createIfNeeded: true)
+            let archiveStream = try Stream(writeTo: archiveFile)
             try builder.writeArchive(to: archiveStream)
 
             let fileExists = FileManager.default.fileExists(atPath: archiveFile.path)
@@ -172,7 +172,7 @@ public final class StreamTests: TestImplementation {
 
         do {
             // Test create if needed
-            let createStream = try Stream(fileURL: tempFile, truncate: false, createIfNeeded: true)
+            let createStream = try Stream(writeTo: tempFile)
             _ = createStream
 
             let fileExists = FileManager.default.fileExists(atPath: tempFile.path)
@@ -186,7 +186,7 @@ public final class StreamTests: TestImplementation {
             try "test content".write(to: tempFile, atomically: true, encoding: .utf8)
 
             // Test truncate
-            let truncateStream = try Stream(fileURL: tempFile, truncate: true, createIfNeeded: false)
+            let truncateStream = try Stream(writeTo: tempFile)
             _ = truncateStream
 
             return .success("File Stream Options", "[PASS] File stream options working")
@@ -242,8 +242,8 @@ public final class StreamTests: TestImplementation {
             try sourceData.write(to: sourceFile)
 
             // Create file-based streams
-            let sourceStream = try Stream(fileURL: sourceFile, truncate: false, createIfNeeded: false)
-            let destStream = try Stream(fileURL: destFile, truncate: true, createIfNeeded: true)
+            let sourceStream = try Stream(readFrom: sourceFile)
+            let destStream = try Stream(writeTo: destFile)
 
             let manifestJSON = """
                 {"claim_generator": "StreamTest/1.0", "assertions": []}

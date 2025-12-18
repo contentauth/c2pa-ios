@@ -223,7 +223,7 @@ public final class Stream {
                 let remain = data.count - cursor
                 guard remain > 0 else { return 0 }
                 let n = Swift.min(remain, count)
-                _ = data.withUnsafeBytes {  // Silence "unused result" warning
+                _ = data.withUnsafeBytes { // Silence "unused result" warning
                     memcpy(buffer, $0.baseAddress!.advanced(by: cursor), n)
                 }
                 cursor += n
@@ -252,59 +252,82 @@ public final class Stream {
     var rawPtr: UnsafeMutablePointer<C2paStream> { streamPtr }
 }
 
-extension Stream {
-    /// Creates a file-based stream for reading and writing.
-    ///
-    /// This convenience initializer creates a fully-featured stream backed by a file
-    /// on disk, supporting read, write, seek, and flush operations. The file handle
-    /// is managed automatically and will be closed when the stream is deallocated.
-    ///
-    /// - Parameters:
-    ///   - url: The file URL to open.
-    ///   - truncate: If `true`, truncates the file to zero length. Defaults to `true`.
-    ///   - createIfNeeded: If `true`, creates the file if it doesn't exist. Defaults to `true`.
-    ///
-    /// - Throws: ``C2PAError`` if the file cannot be opened or created.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// // Create a stream for writing
-    /// let outputStream = try Stream(fileURL: outputURL)
-    ///
-    /// // Create a stream for reading (don't truncate)
-    /// let inputStream = try Stream(fileURL: inputURL, truncate: false)
-    /// ```
-    ///
-    /// - Note: The file is opened for both reading and writing. The stream manages
-    ///   the file handle lifecycle automatically.
-    public convenience init(
-        fileURL url: URL,
-        truncate: Bool = true,
-        createIfNeeded: Bool = true
-    ) throws {
-        if createIfNeeded, !FileManager.default.fileExists(atPath: url.path) {
-            FileManager.default.createFile(atPath: url.path, contents: nil)
-        }
+// MARK: - File-based stream helper ------------------------------------------
 
-        let fh = try FileHandle(forUpdating: url)
-        if truncate { try fh.truncate(atOffset: 0) }
+public extension Stream {
+    /**
+     Fully-featured *read/write* stream backed by a file on disk.
 
-        // Box to manage FileHandle lifetime, will be stored in the StreamProvider
-        final class FileHandleBox {
-            let fh: FileHandle
-            init(_ fh: FileHandle) { self.fh = fh }
-            deinit { try? fh.close() }
-        }
+     The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
+
+     - parameter url: The file to write to. Does not need to exist. Will be overwritten.
+
+     - attention: This will overwrite existing files!
+     */
+    convenience init(writeTo url: URL) throws {
+        try Data().write(to: url, options: .atomic)
+
+        try self.init(.init(forUpdating: url), write: true)
+    }
+
+    /**
+     Fully-featured *read/write* stream backed by a file on disk.
+
+     The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
+
+     - parameter url: The file to write to. Needs to exist.
+
+     - throws: when file does not exist.
+          */
+    convenience init(update url: URL) throws {
+        try self.init(.init(forUpdating: url), write: true)
+    }
+
+    /**
+     Fully-featured *read-only* stream backed by a file on disk.
+
+     The wrapper owns the `FileHandle` and closes it automatically via the StreamProvider's ``FileHandleBox``.
+
+     - parameter url: The file to write to. Needs to exist.
+
+     - throws: when file does not exist.
+      */
+    convenience init(readFrom url: URL) throws {
+        try self.init(.init(forReadingFrom: url), write: false)
+    }
+
+    private convenience init(_ fh: FileHandle, write: Bool) {
         let fhBox = FileHandleBox(fh)
 
-        let streamProvider = StreamProvider(
+        let writer: Writer?
+        let flusher: Flusher?
+
+        if write {
+            writer = { buffer, count in
+                try? fhBox.fh.write(contentsOf: Data(bytes: buffer, count: count))
+
+                return count
+            }
+
+            flusher = {
+                try? fhBox.fh.synchronize()
+
+                return 0
+            }
+        } else {
+            writer = nil
+            flusher = nil
+        }
+
+        self.init(streamProvider: .init(
             r: { buffer, count in
-                let data: Data
-                data = (try? fhBox.fh.read(upToCount: count)) ?? Data()
+                let data = (try? fhBox.fh.read(upToCount: count)) ?? Data()
+
                 data.copyBytes(
                     to: buffer.assumingMemoryBound(to: UInt8.self),
-                    count: data.count)
+                    count: data.count
+                )
+
                 return data.count
             },
             s: { offset, mode in
@@ -315,35 +338,48 @@ extension Stream {
                     switch mode {
                     case Start:
                         newPos = UInt64(max(0, off))
+
                     case Current:
                         let currentOffset = Int64(fhBox.fh.offsetInFile)
-                        var targetOffset = currentOffset + off
-                        if targetOffset < 0 { targetOffset = 0 }
+                        let targetOffset = max(0, currentOffset + off)
+
                         newPos = UInt64(targetOffset)
+
                     case End:
                         let end = try fhBox.fh.seekToEnd()
-                        var targetOffset = Int64(end) + off
-                        if targetOffset < 0 { targetOffset = 0 }
+                        let targetOffset = max(0, Int64(end) + off)
+
                         newPos = UInt64(targetOffset)
+
                     default:
                         return -1
                     }
+
                     try fhBox.fh.seek(toOffset: newPos)
-                    return Int(newPos)  // Return Int as per Seeker typealias
-                } catch { return -1 }
-            },
-            w: { buffer, count in
-                try? fhBox.fh.write(contentsOf: Data(bytes: buffer, count: count))
 
-                return count
+                    return Int(newPos) // Return Int as per Seeker typealias
+                } catch {
+                    return -1
+                }
             },
-            f: {
-                try? fhBox.fh.synchronize()
-
-                return 0
-            },
+            w: writer,
+            f: flusher,
             fileHandleBox: fhBox
-        )
-        self.init(streamProvider: streamProvider)
+        ))
+    }
+}
+
+/**
+ Box to manage FileHandle lifetime, will be stored in the ``StreamProvider``.
+  */
+final class FileHandleBox {
+    let fh: FileHandle
+
+    init(_ fh: FileHandle) {
+        self.fh = fh
+    }
+
+    deinit {
+        try? fh.close()
     }
 }
