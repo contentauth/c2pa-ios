@@ -1,10 +1,10 @@
-// This file is licensed to you under the Apache License, Version 2.0 
-// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
+// This file is licensed to you under the Apache License, Version 2.0
+// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license
 // (http://opensource.org/licenses/MIT), at your option.
 //
-// Unless required by applicable law or agreed to in writing, this software is 
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF 
-// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
+// Unless required by applicable law or agreed to in writing, this software is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF
+// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE
 // files for the specific language governing permissions and limitations under
 // each license.
 
@@ -101,6 +101,21 @@ final class BuilderTests: XCTestCase {
         XCTAssertTrue(result.passed, result.message)
     }
 
+    func testBuilderSetIntentCreate() throws {
+        let result = tests.testBuilderSetIntentCreate()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testBuilderSetIntentEdit() throws {
+        let result = tests.testBuilderSetIntentEdit()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testBuilderSetIntentUpdate() throws {
+        let result = tests.testBuilderSetIntentUpdate()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
     func testReadIngredient() throws {
         let result = tests.testReadIngredient()
         XCTAssertTrue(result.passed, result.message)
@@ -151,6 +166,26 @@ final class ReaderTests: XCTestCase {
         let result = tests.testReaderWithMultipleStreams()
         XCTAssertTrue(result.passed, result.message)
     }
+
+    func testReaderRemoteURL() throws {
+        let result = tests.testReaderRemoteURL()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderIsEmbedded() throws {
+        let result = tests.testReaderIsEmbedded()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderDetailedJSON() throws {
+        let result = tests.testReaderDetailedJSON()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderDetailedJSONComparison() throws {
+        let result = tests.testReaderDetailedJSONComparison()
+        XCTAssertTrue(result.passed, result.message)
+    }
 }
 
 // MARK: - Signing Tests
@@ -185,6 +220,16 @@ final class SigningTests: XCTestCase {
 
     func testSignerWithActualSigning() throws {
         let result = tests.testSignerWithActualSigning()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testSignerFromSettingsTOML() throws {
+        let result = tests.testSignerFromSettingsTOML()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testSignerFromSettingsJSON() throws {
+        let result = tests.testSignerFromSettingsJSON()
         XCTAssertTrue(result.passed, result.message)
     }
 }
@@ -302,6 +347,52 @@ final class HardwareSigningTests: XCTestCase {
 
     func testKeychainSignerCreation() throws {
         let result = tests.testKeychainSignerCreation()
+        XCTAssertTrue(result.passed, result.message)
+    }
+}
+
+// MARK: - Manifest Tests
+
+final class ManifestTests: XCTestCase {
+    private let tests = TestShared.ManifestTests()
+
+    func testMinimal() throws {
+        let result = tests.testMinimal()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testCreated() throws {
+        let result = tests.testCreated()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testEnumRendering() throws {
+        let result = tests.testEnumRendering()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testRegionOfInterest() throws {
+        let result = tests.testRegionOfInterest()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testResourceRef() throws {
+        let result = tests.testResourceRef()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testHashedUri() throws {
+        let result = tests.testHashedUri()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testUriOrResource() throws {
+        let result = tests.testUriOrResource()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testMassInit() throws {
+        let result = tests.testMassInit()
         XCTAssertTrue(result.passed, result.message)
     }
 }

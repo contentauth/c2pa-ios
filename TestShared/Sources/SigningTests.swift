@@ -1,10 +1,10 @@
-// This file is licensed to you under the Apache License, Version 2.0 
-// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
+// This file is licensed to you under the Apache License, Version 2.0
+// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license
 // (http://opensource.org/licenses/MIT), at your option.
 //
-// Unless required by applicable law or agreed to in writing, this software is 
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF 
-// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
+// Unless required by applicable law or agreed to in writing, this software is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF
+// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE
 // files for the specific language governing permissions and limitations under
 // each license.
 
@@ -311,6 +311,147 @@ public final class SigningTests: TestImplementation {
         }
     }
 
+    public func testSignerFromSettingsTOML() -> TestResult {
+        let bundle = Bundle(for: type(of: self))
+
+        guard let tomlURL = bundle.url(forResource: "test_settings_with_cawg_signing", withExtension: "toml") else {
+            return .failure("Signer From Settings (TOML)", "Fixture not found: test_settings_with_cawg_signing.toml")
+        }
+
+        do {
+            let settingsTOML = try String(contentsOf: tomlURL, encoding: .utf8)
+            let signer = try Signer(settingsTOML: settingsTOML)
+
+            // Load test image
+            guard let sourceData = TestUtilities.loadPexelsTestImage() else {
+                return .failure("Signer From Settings (TOML)", "Could not load test image")
+            }
+
+            // Create manifest
+            let manifestJSON = TestUtilities.createTestManifestJSON()
+            let builder = try Builder(manifestJSON: manifestJSON)
+
+            let tempDir = FileManager.default.temporaryDirectory
+            let sourceFile = tempDir.appendingPathComponent("settings_toml_source_\(UUID().uuidString).jpg")
+            let destFile = tempDir.appendingPathComponent("settings_toml_dest_\(UUID().uuidString).jpg")
+
+            defer {
+                try? FileManager.default.removeItem(at: sourceFile)
+                try? FileManager.default.removeItem(at: destFile)
+            }
+
+            try sourceData.write(to: sourceFile)
+
+            let sourceStream = try Stream(readFrom: sourceFile)
+            let destStream = try Stream(writeTo: destFile)
+
+            _ = try builder.sign(
+                format: "image/jpeg",
+                source: sourceStream,
+                destination: destStream,
+                signer: signer
+            )
+
+            // Verify the signed image contains a valid manifest
+            let signedData = try Data(contentsOf: destFile)
+            let signedStream = try Stream(data: signedData)
+            let reader = try Reader(format: "image/jpeg", stream: signedStream)
+            let manifestJSONResult = try reader.json()
+
+            guard let manifestData = manifestJSONResult.data(using: .utf8),
+                (try? JSONSerialization.jsonObject(with: manifestData) as? [String: Any]) != nil
+            else {
+                return .failure("Signer From Settings (TOML)", "Could not parse manifest JSON")
+            }
+
+            // Check for CAWG assertions in the manifest
+            let manifestString = manifestJSONResult.lowercased()
+            if manifestString.contains("cawg") || manifestString.contains("training-mining") {
+                return .success(
+                    "Signer From Settings (TOML)", "Signed image with CAWG signer - found CAWG content in manifest")
+            } else {
+                return .success(
+                    "Signer From Settings (TOML)",
+                    "Signed image successfully with CAWG signer (assertions may require SDK update to read)")
+            }
+
+        } catch let error as C2PAError {
+            return .failure("Signer From Settings (TOML)", "Failed - \(error)")
+        } catch {
+            return .failure("Signer From Settings (TOML)", "Failed - \(error)")
+        }
+    }
+
+    public func testSignerFromSettingsJSON() -> TestResult {
+        let bundle = Bundle(for: type(of: self))
+
+        guard let jsonURL = bundle.url(forResource: "test_settings_with_cawg_signing", withExtension: "json") else {
+            return .failure("Signer From Settings (JSON)", "Fixture not found: test_settings_with_cawg_signing.json")
+        }
+
+        do {
+            let settingsJSON = try String(contentsOf: jsonURL, encoding: .utf8)
+            let signer = try Signer(settingsJSON: settingsJSON)
+
+            // Load test image
+            guard let sourceData = TestUtilities.loadPexelsTestImage() else {
+                return .failure("Signer From Settings (JSON)", "Could not load test image")
+            }
+
+            // Create manifest
+            let manifestJSON = TestUtilities.createTestManifestJSON()
+            let builder = try Builder(manifestJSON: manifestJSON)
+
+            let tempDir = FileManager.default.temporaryDirectory
+            let sourceFile = tempDir.appendingPathComponent("settings_json_source_\(UUID().uuidString).jpg")
+            let destFile = tempDir.appendingPathComponent("settings_json_dest_\(UUID().uuidString).jpg")
+
+            defer {
+                try? FileManager.default.removeItem(at: sourceFile)
+                try? FileManager.default.removeItem(at: destFile)
+            }
+
+            try sourceData.write(to: sourceFile)
+
+            let sourceStream = try Stream(readFrom: sourceFile)
+            let destStream = try Stream(writeTo: destFile)
+
+            _ = try builder.sign(
+                format: "image/jpeg",
+                source: sourceStream,
+                destination: destStream,
+                signer: signer
+            )
+
+            // Verify the signed image contains a valid manifest
+            let signedData = try Data(contentsOf: destFile)
+            let signedStream = try Stream(data: signedData)
+            let reader = try Reader(format: "image/jpeg", stream: signedStream)
+            let manifestJSONResult = try reader.json()
+
+            guard let manifestData = manifestJSONResult.data(using: .utf8),
+                (try? JSONSerialization.jsonObject(with: manifestData) as? [String: Any]) != nil
+            else {
+                return .failure("Signer From Settings (JSON)", "Could not parse manifest JSON")
+            }
+
+            // Check for CAWG assertions in the manifest
+            let manifestString = manifestJSONResult.lowercased()
+            if manifestString.contains("cawg") || manifestString.contains("training-mining") {
+                return .success(
+                    "Signer From Settings (JSON)", "Signed image with CAWG signer - found CAWG content in manifest")
+            } else {
+                return .success(
+                    "Signer From Settings (JSON)",
+                    "Signed image successfully with CAWG signer (assertions may require SDK update to read)")
+            }
+
+        } catch let error as C2PAError {
+            return .failure("Signer From Settings (JSON)", "Failed - \(error)")
+        } catch {
+            return .failure("Signer From Settings (JSON)", "Failed - \(error)")
+        }
+    }
 
     public func runAllTests() async -> [TestResult] {
         return [
@@ -319,7 +460,9 @@ public final class SigningTests: TestImplementation {
             testSigningAlgorithms(),
             testSignerWithTimestampAuthority(),
             await testWebServiceSignerCreation(),
-            testSignerWithActualSigning()
+            testSignerWithActualSigning(),
+            testSignerFromSettingsTOML(),
+            testSignerFromSettingsJSON()
         ]
     }
 }

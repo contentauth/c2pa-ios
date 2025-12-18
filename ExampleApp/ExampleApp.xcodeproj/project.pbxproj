@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		953415FA2E6EB43800A97957 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 953415F82E6EB43800A97957 /* Base.xcconfig */; };
-		953415FB2E6EB43800A97957 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 953415F82E6EB43800A97957 /* Base.xcconfig */; };
 		9553B1B42E4B31250088E976 /* C2PA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9553B19D2E4B2FB10088E976 /* C2PA.framework */; };
 		9553B1B52E4B31250088E976 /* C2PA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9553B19D2E4B2FB10088E976 /* C2PA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		95A1B2C32E4F3A0100000001 /* default_certs.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95A1B2C12E4F3A0100000001 /* default_certs.pem */; };
@@ -177,7 +175,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1640;
-				LastUpgradeCheck = 1640;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					959206082DD9F0B800E0E44B = {
 						CreatedOnToolsVersion = 16.3;
@@ -217,7 +215,6 @@
 			files = (
 				95A1B2C32E4F3A0100000001 /* default_certs.pem in Resources */,
 				95A1B2C42E4F3A0100000002 /* default_private.key in Resources */,
-				953415FA2E6EB43800A97957 /* Base.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,7 +222,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				953415FB2E6EB43800A97957 /* Base.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +313,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -375,6 +372,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -388,7 +386,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L444TD22SR;
+				DEVELOPMENT_TEAM = T3YGS3VRGN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
@@ -423,7 +421,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = L444TD22SR;
+				DEVELOPMENT_TEAM = T3YGS3VRGN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;

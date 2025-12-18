@@ -1,10 +1,10 @@
-// This file is licensed to you under the Apache License, Version 2.0 
-// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
+// This file is licensed to you under the Apache License, Version 2.0
+// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license
 // (http://opensource.org/licenses/MIT), at your option.
 //
-// Unless required by applicable law or agreed to in writing, this software is 
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF 
-// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
+// Unless required by applicable law or agreed to in writing, this software is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF
+// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE
 // files for the specific language governing permissions and limitations under
 // each license.
 //
@@ -28,6 +28,8 @@ import Foundation
 /// - ``init(archiveStream:)``
 ///
 /// ### Configuring the Manifest
+/// - ``setIntent(_:)``
+/// - ``addAction(_:)``
 /// - ``setNoEmbed()``
 /// - ``setRemoteURL(_:)``
 ///
@@ -43,6 +45,7 @@ import Foundation
 ///
 /// ```swift
 /// let builder = try Builder(manifestJSON: manifestJSON)
+/// try builder.setIntent(.edit)
 /// builder.setNoEmbed()
 /// try builder.setRemoteURL("https://example.com/manifest.c2pa")
 /// try builder.addIngredient(
@@ -81,6 +84,66 @@ public final class Builder {
     }
 
     deinit { c2pa_builder_free(ptr) }
+
+    /// Sets the builder intent, specifying what kind of manifest to create.
+    ///
+    /// The intent determines whether this is a new creation, an edit of existing content,
+    /// or a metadata-only update. This affects what assertions are automatically added
+    /// and what ingredients are required.
+    ///
+    /// - Parameter intent: The ``BuilderIntent`` specifying the type of manifest.
+    ///
+    /// - Throws: ``C2PAError`` if the intent cannot be set.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let builder = try Builder(manifestJSON: manifestJSON)
+    /// try builder.setIntent(.create(.digitalCapture))
+    /// ```
+    ///
+    /// ```swift
+    /// let builder = try Builder(manifestJSON: manifestJSON)
+    /// try builder.setIntent(.edit)
+    /// ```
+    ///
+    /// - SeeAlso: ``BuilderIntent``, ``DigitalSourceType``
+    public func setIntent(_ intent: BuilderIntent) throws {
+        let (cIntent, cSourceType) = intent.toCIntent()
+        _ = try guardNonNegative(
+            Int64(c2pa_builder_set_intent(ptr, cIntent, cSourceType))
+        )
+    }
+
+    /// Adds an action to the manifest being constructed.
+    ///
+    /// Actions describe operations performed on the content, such as editing,
+    /// cropping, or applying filters. Multiple actions can be added to a single
+    /// manifest to document the complete editing history.
+    ///
+    /// - Parameter action: The ``Action`` to add to the manifest.
+    ///
+    /// - Throws: ``C2PAError`` if the action cannot be added.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let builder = try Builder(manifestJSON: manifestJSON)
+    /// try builder.addAction(Action(action: .edited, digitalSourceType: .digitalCapture))
+    /// try builder.addAction(Action(action: .cropped, digitalSourceType: .digitalCapture))
+    /// ```
+    ///
+    /// - SeeAlso: ``Action``, ``PredefinedAction``
+    public func addAction(_ action: Action) throws {
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(action)
+        guard let actionJSON = String(data: data, encoding: .utf8) else {
+            throw C2PAError.api("Failed to encode action to JSON")
+        }
+        _ = try guardNonNegative(
+            Int64(c2pa_builder_add_action(ptr, actionJSON))
+        )
+    }
 
     /// Configures the builder to not embed the manifest in the output file.
     ///
