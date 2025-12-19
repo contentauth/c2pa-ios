@@ -13,11 +13,10 @@
 
 import Foundation
 
-/**
- A rating on an Assertion. See https://c2pa.org/specifications/specifications/1.0/specs/C2PA_Specification.html#_claim_review.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#reviewrating
- */
+/// A rating on an Assertion.
+///
+/// - SeeAlso: [_claim_review](https://c2pa.org/specifications/specifications/1.0/specs/C2PA_Specification.html#_claim_review)
+/// - SeeAlso: [ReviewRating Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#reviewrating)
 public struct ReviewRating: Codable, Equatable {
 
     public var code: String?

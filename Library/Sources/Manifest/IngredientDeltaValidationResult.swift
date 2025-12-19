@@ -13,11 +13,8 @@
 
 import Foundation
 
-/**
- Represents any changes or deltas between the current and previous validation results for an ingredient’s manifest.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#ingredientdeltavalidationresult
- */
+/// Represents any changes or deltas between the current and previous validation results for an ingredient’s manifest.
+/// - SeeAlso: [IngredientDeltaValidationResult Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#ingredientdeltavalidationresult)
 public struct IngredientDeltaValidationResult: Codable, Equatable {
 
     public enum CodingKeys: String, CodingKey {
@@ -25,21 +22,16 @@ public struct IngredientDeltaValidationResult: Codable, Equatable {
         case validationDeltas
     }
 
-    /**
-     JUMBF URI reference to the ingredient assertion.
-     */
+    /// JUMBF URI reference to the ingredient assertion.
     public var ingredientAssertionUri: String
 
-    /**
-     Validation results for the ingredient’s active manifest.
-     */
+    /// Validation results for the ingredient’s active manifest.
     public var validationDeltas: StatusCodes
 
 
-    /**
-     - parameter ingredientAssertionUri: JUMBF URI reference to the ingredient assertion.
-     - parameter validationDeltas: Validation results for the ingredient’s active manifest.
-     */
+    /// - Parameters:
+    ///   - ingredientAssertionUri: JUMBF URI reference to the ingredient assertion.
+    ///   - validationDeltas: Validation results for the ingredient’s active manifest.
     public init(ingredientAssertionUri: String, validationDeltas: StatusCodes) {
         self.ingredientAssertionUri = ingredientAssertionUri
         self.validationDeltas = validationDeltas

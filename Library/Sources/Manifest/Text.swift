@@ -13,22 +13,16 @@
 
 import Foundation
 
-/**
- A textual range representing multiple (possibly discontinuous) ranges of text.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#text
- */
+/// A textual range representing multiple (possibly discontinuous) ranges of text.
+/// - SeeAlso: [Text Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#text)
 public struct Text: Codable, Equatable {
 
-    /**
-     The ranges of text to select.
-     */
+    /// The ranges of text to select.
     public var selectors: [TextSelectorRange]
 
 
-    /**
-     - parameter selectors: The ranges of text to select.
-     */
+    /// - Parameters:
+    ///   - selectors: The ranges of text to select.
     public init(selectors: [TextSelectorRange]) {
         self.selectors = selectors
     }

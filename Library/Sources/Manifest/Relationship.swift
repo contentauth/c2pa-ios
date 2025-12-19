@@ -13,9 +13,7 @@
 
 import Foundation
 
-/**
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def#relationship
- */
+/// - SeeAlso: [Relationship Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#relationship)
 public enum Relationship: String, Codable {
 
     case parentOf

@@ -13,20 +13,13 @@
 
 import Foundation
 
-/**
- The type of unit for the range.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#unittype
- */
+/// The type of unit for the range.
+/// - SeeAlso: [UnitType Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#unittype)
 public enum UnitType: String, Codable {
 
-    /**
-     Use pixels.
-     */
+    /// Use pixels.
     case pixel
 
-    /**
-     Use percentage.
-     */
+    /// Use percentage.
     case percent
 }

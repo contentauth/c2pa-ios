@@ -13,9 +13,7 @@
 
 import Foundation
 
-/**
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def#assettype
- */
+/// - SeeAlso: [AssetType Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#assettype)
 public struct AssetType: Codable, Equatable {
 
     public var type: String

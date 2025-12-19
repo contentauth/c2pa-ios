@@ -13,11 +13,8 @@
 
 import Foundation
 
-/**
- Contains a set of success, informational, and failure validation status codes.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#statuscodes
- */
+/// Contains a set of success, informational, and failure validation status codes.
+/// - SeeAlso: [StatusCodes Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#statuscodes)
 public struct StatusCodes: Codable, Equatable {
 
     public var failure: [ValidationStatus] = []

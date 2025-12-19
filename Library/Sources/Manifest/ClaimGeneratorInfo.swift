@@ -17,11 +17,8 @@ import Foundation
 import UIKit
 #endif
 
-/**
- Description of the claim generator, or the software used in generating the claim.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def#claimgeneratorinfo
- */
+/// Description of the claim generator, or the software used in generating the claim.
+/// - SeeAlso: [ClaimGeneratorInfo Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#claimgeneratorinfo)
 public struct ClaimGeneratorInfo: Codable, Equatable {
 
     public enum CodingKeys: String, CodingKey {
@@ -31,32 +28,23 @@ public struct ClaimGeneratorInfo: Codable, Equatable {
         case version
     }
 
-    /**
-     Hashed URI to the icon (either embedded or remote).
-     */
+    /// Hashed URI to the icon (either embedded or remote).
     public var icon: UriOrResource?
 
-    /**
-     A human readable string naming the claim_generator.
-     */
+    /// A human readable string naming the claim_generator.
     public var name: String
 
-    /**
-     A human readable string of the OS the claim generator is running on.
-     */
+    /// A human readable string of the OS the claim generator is running on.
     public var operatingSystem: String?
 
-    /**
-     A human readable string of the product’s version
-     */
+    /// A human readable string of the product’s version
     public var version: String?
 
-    /**
-     - parameter icon: Hashed URI to the icon (either embedded or remote).
-     - parameter name: A human readable string naming the claim_generator. *(This is automatically evaluated by default. You should not set this yourself!)*
-     - parameter operatingSystem: A human readable string of the OS the claim generator is running on. *(You should use ClaimGeneratorInfo.operatingSystem to fill this!)*
-     - parameter version: A human readable string of the product’s version. *(This is automatically evaluated by default. You should not set this yourself!)*
-     */
+    /// - Parameters:
+    ///   - icon: Hashed URI to the icon (either embedded or remote).
+    ///   - name: A human readable string naming the claim_generator. *(This is automatically evaluated by default. You should not set this yourself!)*
+    ///   - operatingSystem: A human readable string of the OS the claim generator is running on. *(You should use ClaimGeneratorInfo.operatingSystem to fill this!)*
+    ///   - version: A human readable string of the product’s version. *(This is automatically evaluated by default. You should not set this yourself!)*
     public init(
         icon: UriOrResource? = nil,
         name: String = ClaimGeneratorInfo.appName,

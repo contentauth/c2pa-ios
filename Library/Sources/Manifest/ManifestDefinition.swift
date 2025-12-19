@@ -13,9 +13,9 @@
 
 import Foundation
 
-/**
- Modelled after https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def
- */
+/// A definition for creating a C2PA manifest.
+///
+/// - SeeAlso: [Manifest Definition Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema)
 public struct ManifestDefinition: Codable, CustomStringConvertible, Equatable {
 
     // MARK: ManifestDefinition
@@ -40,81 +40,56 @@ public struct ManifestDefinition: Codable, CustomStringConvertible, Equatable {
     static let jsonEncoder = JSONEncoder()
 
 
-    /**
-     A list of assertions.
-     */
+    /// A list of assertions.
     public var assertions: [AssertionDefinition]
 
-    /**
-     Claim Generator Info is always required with at least one entry.
-     */
+    /// Claim Generator Info is always required with at least one entry.
     public var claimGeneratorInfo: [ClaimGeneratorInfo]
 
-    /**
-     The version of the claim. Defaults to 1.
-     */
+    /// The version of the claim. Defaults to 1.
     public var claimVersion: UInt8
 
-    /**
-     The format of the source file as a MIME type.
-     */
+    /// The format of the source file as a MIME type.
     public var format: String
 
-    /**
-     A list of ingredients.
-     */
+    /// A list of ingredients.
     public var ingredients: [Ingredient]
 
-    /**
-     Instance ID from xmpMM:InstanceID in XMP metadata.
-     */
+    /// Instance ID from xmpMM:InstanceID in XMP metadata.
     public var instanceId: String?
 
-    /**
-     Allows you to pre-define the manifest label, which must be unique. Not intended for general use. If not set, it will be assigned automatically.
-     */
+    /// Allows you to pre-define the manifest label, which must be unique. Not intended for general use. If not set, it will be assigned automatically.
     public var label: String?
 
-    /**
-     Optional manifest metadata. This will be deprecated in the future; not recommended to use.
-     */
+    /// Optional manifest metadata. This will be deprecated in the future; not recommended to use.
     @available(*, deprecated, message: "This will be deprecated in the future; not recommended to use.")
     public var metadata: [Metadata]?
 
-    /**
-     A list of redactions - URIs to redacted assertions.
-     */
+    /// A list of redactions - URIs to redacted assertions.
     public var redactions: [String]?
 
-    /**
-     An optional ``ResourceRef`` to a thumbnail image that represents the asset that was signed. Must be available when the manifest is signed.
-     */
+    /// An optional ``ResourceRef`` to a thumbnail image that represents the asset that was signed. Must be available when the manifest is signed.
     public var thumbnail: ResourceRef?
 
-    /**
-     A human-readable title, generally source filename.
-     */
+    /// A human-readable title, generally source filename.
     public var title: String
 
-    /**
-     Optional prefix added to the generated Manifest Label This is typically a reverse domain name.
-     */
+    /// Optional prefix added to the generated Manifest Label This is typically a reverse domain name.
     public var vendor: String?
 
 
-    /**
-     - parameter assertions: A list of assertions.
-     - parameter claimGeneratorInfo: Claim Generator Info is always required with at least one entry.
-     - parameter claimVersion: The version of the claim. Defaults to 1.
-     - parameter format: The format of the source file as a MIME type.
-     - parameter ingredients: A list of ingredients.
-     - parameter instanceId: Instance ID from xmpMM:InstanceID in XMP metadata.
-     - parameter label: Allows you to pre-define the manifest label, which must be unique. Not intended for general use. If not set, it will be assigned automatically.
-     - parameter redactions: A list of redactions - URIs to redacted assertions.
-     - parameter thumbnail: An optional ``ResourceRef`` to a thumbnail image that represents the asset that was signed. Must be available when the manifest is signed.
-     - parameter title: A human-readable title, generally source filename.
-     - parameter vendor: Optional prefix added to the generated Manifest Label. This is typically a reverse domain name.
-     */
+    /// - Parameters:
+    ///   - assertions: A list of assertions.
+    ///   - claimGeneratorInfo: Claim Generator Info is always required with at least one entry.
+    ///   - claimVersion: The version of the claim. Defaults to 1.
+    ///   - format: The format of the source file as a MIME type.
+    ///   - ingredients: A list of ingredients.
+    ///   - instanceId: Instance ID from xmpMM:InstanceID in XMP metadata.
+    ///   - label: Allows you to pre-define the manifest label, which must be unique. Not intended for general use. If not set, it will be assigned automatically.
+    ///   - redactions: A list of redactions - URIs to redacted assertions.
+    ///   - thumbnail: An optional ``ResourceRef`` to a thumbnail image that represents the asset that was signed. Must be available when the manifest is signed.
+    ///   - title: A human-readable title, generally source filename.
+    ///   - vendor: Optional prefix added to the generated Manifest Label. This is typically a reverse domain name.
     public init(
         assertions: [AssertionDefinition] = [],
         claimGeneratorInfo: [ClaimGeneratorInfo],

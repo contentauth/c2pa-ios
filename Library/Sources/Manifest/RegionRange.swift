@@ -13,52 +13,36 @@
 
 import Foundation
 
-/**
- A spatial, temporal, frame, or textual range describing the region of interest.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#range
- */
+/// A spatial, temporal, frame, or textual range describing the region of interest.
+/// - SeeAlso: [Range Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#range)
 public struct RegionRange: Codable, Equatable {
 
-    /**
-     A frame range.
-     */
+    /// A frame range.
     public var frame: Frame?
 
-    /**
-     An item identifier.
-     */
+    /// An item identifier.
     public var item: Item?
 
-    /**
-     A spatial range.
-     */
+    /// A spatial range.
     public var shape: Shape?
 
-    /**
-     A textual range.
-     */
+    /// A textual range.
     public var text: Text?
 
-    /**
-     A temporal range.
-     */
+    /// A temporal range.
     public var time: Time?
 
-    /**
-     The type of range of interest.
-     */
+    /// The type of range of interest.
     public var type: RangeType
 
 
-    /**
-     - parameter frame: A frame range.
-     - parameter item: An item identifier.
-     - parameter shape: A spatial range.
-     - parameter text: A textual range.
-     - parameter time: A temporal range.
-     - parameter type: The type of range of interest.
-     */
+    /// - Parameters:
+    ///   - frame: A frame range.
+    ///   - item: An item identifier.
+    ///   - shape: A spatial range.
+    ///   - text: A textual range.
+    ///   - time: A temporal range.
+    ///   - type: The type of range of interest.
     public init(
         frame: Frame? = nil,
         item: Item? = nil,

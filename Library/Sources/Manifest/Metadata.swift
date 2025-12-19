@@ -13,13 +13,10 @@
 
 import Foundation
 
-/**
- The Metadata structure can be used as part of other assertions or on its own to reference others
+/// The Metadata structure can be used as part of other assertions or on its own to reference others
+/// NOTE: This object can have any number of additional user-defined properties.
 
- NOTE: This object can have any number of additional user-defined properties.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def#metadata
- */
+/// - SeeAlso: [Metadata Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#metadata)
 public struct Metadata: Codable, Equatable {
 
     public var dataSource: DataSource?
