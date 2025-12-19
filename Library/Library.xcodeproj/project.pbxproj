@@ -69,6 +69,14 @@
 		95C99A6C2E69717700C54D0E /* LibraryTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = LibraryTests.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A0B3CEAA2E96A5DE00F2F938 /* Manifest */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Manifest;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		8A12344F1234567890ABCDEF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -119,6 +127,7 @@
 		8A1234541234567890ABCDEF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				A0B3CEAA2E96A5DE00F2F938 /* Manifest */,
 				8A1234551234567890ABCDEF /* C2PA.swift */,
 				95A782322E6F06E4001E9748 /* Builder.swift */,
 				8A1234571234567890ABCDEF /* CertificateManager.swift */,
@@ -185,6 +194,9 @@
 			);
 			dependencies = (
 				959C8A382E4E3B0000FBD820 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A0B3CEAA2E96A5DE00F2F938 /* Manifest */,
 			);
 			name = C2PA;
 			productName = C2PA;
