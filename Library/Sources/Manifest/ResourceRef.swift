@@ -13,11 +13,8 @@
 
 import Foundation
 
-/**
- A reference to a resource to be used in JSON serialization. The underlying data can be read as a stream via Reader::resource_to_stream .
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def#resourceref
- */
+/// A reference to a resource to be used in JSON serialization. The underlying data can be read as a stream via Reader::resource_to_stream .
+/// - SeeAlso: [ResourceRef Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#resourceref)
 open class ResourceRef: UriOrResource {
 
     public enum CodingKeys: String, CodingKey {
@@ -28,37 +25,27 @@ open class ResourceRef: UriOrResource {
         case identifier
     }
 
-    /**
-     More detailed data types as defined in the C2PA spec.
-     */
+    /// More detailed data types as defined in the C2PA spec.
     open var dataTypes: [AssetType]?
 
-    /**
-     The mime type of the referenced resource.
-     */
+    /// The mime type of the referenced resource.
     open var format: String
 
-    /**
-     The hash of the resource (if applicable).
-     */
+    /// The hash of the resource (if applicable).
     open var hash: String?
 
-    /**
-     A URI that identifies the resource as referenced from the manifest.
-
-     This may be a JUMBF URI, a file path, a URL or any other string. Relative JUMBF URIs will be resolved with the manifest label. Relative file paths will be resolved with the base path if provided.
-     */
+    /// A URI that identifies the resource as referenced from the manifest.
+    /// This may be a JUMBF URI, a file path, a URL or any other string. Relative JUMBF URIs will be resolved with the manifest label. Relative file paths will be resolved with the base path if provided.
     open var identifier: String
 
 
-    /**
-     - parameter alg: A string identifying the cryptographic hash algorithm used to compute the hash.
-     - parameter dataTypes: More detailed data types as defined in the C2PA spec.
-     - parameter format: The mime type of the referenced resource.
-     - parameter hash: The hash of the resource (if applicable).
-     - parameter identifier: A URI that identifies the resource as referenced from the manifest.
-                This may be a JUMBF URI, a file path, a URL or any other string. Relative JUMBF URIs will be resolved with the manifest label. Relative file paths will be resolved with the base path if provided.
-     */
+    /// - Parameters:
+    ///   - alg: A string identifying the cryptographic hash algorithm used to compute the hash.
+    ///   - dataTypes: More detailed data types as defined in the C2PA spec.
+    ///   - format: The mime type of the referenced resource.
+    ///   - hash: The hash of the resource (if applicable).
+    ///   - identifier: A URI that identifies the resource as referenced from the manifest.
+    /// This may be a JUMBF URI, a file path, a URL or any other string. Relative JUMBF URIs will be resolved with the manifest label. Relative file paths will be resolved with the base path if provided.
     public init(alg: String? = nil, dataTypes: [AssetType]? = nil, format: String, hash: String? = nil, identifier: String) {
         self.dataTypes = dataTypes
         self.format = format

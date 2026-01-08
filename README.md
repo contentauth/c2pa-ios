@@ -1,8 +1,5 @@
 # C2PA iOS
 
-> [!WARNING]
-> **This library is currently in alpha and the API will likely change. Do not use for anything other than early testing.**
-
 [![Tests](https://github.com/contentauth/c2pa-ios/actions/workflows/test.yml/badge.svg)](https://github.com/contentauth/c2pa-ios/actions/workflows/test.yml)
 
 This project provides iOS bindings to the [C2PA](https://c2pa.org/) (Content Authenticity Initiative) libraries. It wraps the C2PA Rust implementation ([c2pa-rs](https://github.com/contentauth/c2pa-rs)) using its C API bindings.

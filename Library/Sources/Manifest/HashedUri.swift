@@ -13,12 +13,10 @@
 
 import Foundation
 
-/**
- A HashedUri provides a reference to content available within the same manifest store. This is described in §8.3, URI References of the C2PA Technical Specification.
+/// A HashedUri provides a reference to content available within the same manifest store. This is described in §8.3, URI References of the C2PA Technical Specification.
+/// - SeeAlso: [C2PA Specification: URI References](https://c2pa.org/specifications/specifications/2.1/specs/C2PA_Specification.html#_uri_references)
 
- https://c2pa.org/specifications/specifications/2.1/specs/C2PA_Specification.html#_uri_references
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#hasheduri
- */
+/// - SeeAlso: [HashedUri Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#hasheduri)
 open class HashedUri: UriOrResource {
 
     public enum CodingKeys: String, CodingKey {
@@ -26,22 +24,17 @@ open class HashedUri: UriOrResource {
         case url
     }
 
-    /**
-     Byte string containing the hash value.
-     */
+    /// Byte string containing the hash value.
     open var hash: [UInt8]
 
-    /**
-     JUMBF URI reference
-     */
+    /// JUMBF URI reference
     open var url: String
 
 
-    /**
-     - parameter alg: A string identifying the cryptographic hash algorithm used to compute the hash.
-     - parameter hash: Byte string containing the hash value.
-     - parameter url: JUMBF URI reference
-     */
+    /// - Parameters:
+    ///   - alg: A string identifying the cryptographic hash algorithm used to compute the hash.
+    ///   - hash: Byte string containing the hash value.
+    ///   - url: JUMBF URI reference
     public init(alg: String? = nil, hash: [UInt8], url: String) {
         self.hash = hash
         self.url = url

@@ -6,44 +6,20 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		2B49F972C7FFAAF2DDF4A9B2 /* C2PAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A2807B509741B0E1856DF8 /* C2PAC.framework */; };
-		953416012E6EB47200A97957 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 953415FF2E6EB47200A97957 /* Base.xcconfig */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		3D6A052BCC0A60CEBFA5DBD1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9A1234511234567890ABCDEF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7436E7B8A2AF5613ADC8A59D;
-			remoteInfo = C2PAC;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		4B6BA9869810C799488164AB /* C2PAC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = C2PAC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		953415FF2E6EB47200A97957 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		9A1234551234567890ABCDEF /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		9A1234571234567890ABCDEF /* Sources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sources; sourceTree = "<group>"; };
 		9A1234601234567890ABCDEF /* SigningServer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SigningServer; sourceTree = BUILT_PRODUCTS_DIR; };
-		D7A2807B509741B0E1856DF8 /* C2PAC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = C2PAC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD955EAFD503AF5F76308D00 /* C2PAC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = C2PAC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		53FEE692705696F8851196B7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9A1234651234567890ABCDEF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B49F972C7FFAAF2DDF4A9B2 /* C2PAC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,43 +51,13 @@
 				9A1234601234567890ABCDEF /* SigningServer */,
 				4B6BA9869810C799488164AB /* C2PAC.framework */,
 				FD955EAFD503AF5F76308D00 /* C2PAC.framework */,
-				D7A2807B509741B0E1856DF8 /* C2PAC.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		EFD7391E76B9590CAEF4175C /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
-		7436E7B8A2AF5613ADC8A59D /* C2PAC */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5CC0F06BE62221DFC9369C56 /* Build configuration list for PBXNativeTarget "C2PAC" */;
-			buildPhases = (
-				EFD7391E76B9590CAEF4175C /* Headers */,
-				41789600A8F8D0E644EF2D32 /* Sources */,
-				53FEE692705696F8851196B7 /* Frameworks */,
-				E67AF24896BB3571AC841C7B /* Resources */,
-				9101EA60FDB26B0A6A331565 /* Download and Setup C2PA Libraries for macOS */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = C2PAC;
-			productName = C2PAC;
-			productReference = D7A2807B509741B0E1856DF8 /* C2PAC.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		9A1234621234567890ABCDEF /* SigningServer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9A1234631234567890ABCDEF /* Build configuration list for PBXNativeTarget "SigningServer" */;
@@ -123,7 +69,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				023C3EA242153B750BA0A181 /* PBXTargetDependency */,
 			);
 			name = SigningServer;
 			productName = SigningServer;
@@ -159,43 +104,11 @@
 			projectRoot = "";
 			targets = (
 				9A1234621234567890ABCDEF /* SigningServer */,
-				7436E7B8A2AF5613ADC8A59D /* C2PAC */,
 			);
 		};
 /* End PBXProject section */
 
-/* Begin PBXResourcesBuildPhase section */
-		E67AF24896BB3571AC841C7B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				953416012E6EB47200A97957 /* Base.xcconfig in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
 /* Begin PBXShellScriptBuildPhase section */
-		9101EA60FDB26B0A6A331565 /* Download and Setup C2PA Libraries for macOS */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Download and Setup C2PA Libraries for macOS";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(PRODUCT_NAME).framework/.stamp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\nset -e\n\necho \"C2PAC Framework Builder for macOS\"\necho \"=================================\"\n\n# Use build settings from Base.xcconfig (loaded by Xcode)\n# These are now available as environment variables\nGITHUB_ORG=\"${GITHUB_ORG:-contentauth}\"\nC2PA_VERSION=\"${C2PA_VERSION:-v0.58.0}\"\n\necho \"Version: ${C2PA_VERSION}\"\necho \"GitHub Org: ${GITHUB_ORG}\"\necho \"Platform: macOS\"\necho \"Target Build Dir: ${TARGET_BUILD_DIR}\"\n\n# Setup directories\nFRAMEWORK_DIR=\"${TARGET_BUILD_DIR}/${PRODUCT_NAME}.framework\"\nDOWNLOAD_DIR=\"${TEMP_DIR}/C2PAC-Downloads\"\nmkdir -p \"${DOWNLOAD_DIR}\"\nmkdir -p \"${FRAMEWORK_DIR}\"\n\n# Download macOS universal binary\necho \"Downloading macOS universal library...\"\ncurl -sL \"https://github.com/${GITHUB_ORG}/c2pa-rs/releases/download/c2pa-${C2PA_VERSION}/c2pa-${C2PA_VERSION}-universal-apple-darwin.zip\" \\\n    -o \"${DOWNLOAD_DIR}/macos-universal.zip\"\n\nmkdir -p \"${DOWNLOAD_DIR}/macos-universal\"\ncd \"${DOWNLOAD_DIR}/macos-universal\"\nunzip -q -o \"${DOWNLOAD_DIR}/macos-universal.zip\"\n\n# Copy the dynamic library as the framework binary\ncp \"${DOWNLOAD_DIR}/macos-universal/lib/libc2pa_c.dylib\" \"${FRAMEWORK_DIR}/C2PAC\"\n\n# Copy and patch header\nmkdir -p \"${FRAMEWORK_DIR}/Headers\"\nsed 's/typedef struct C2paSigner C2paSigner;/typedef struct C2paSigner { } C2paSigner;/g' \\\n    \"${DOWNLOAD_DIR}/macos-universal/include/c2pa.h\" > \"${FRAMEWORK_DIR}/Headers/c2pa.h\"\n\n# Create module map\nmkdir -p \"${FRAMEWORK_DIR}/Modules\"\ncat > \"${FRAMEWORK_DIR}/Modules/module.modulemap\" << EOF\nframework module C2PAC {\n    header \"c2pa.h\"\n    export *\n}\nEOF\n\n# Create Info.plist\ncat > \"${FRAMEWORK_DIR}/Info.plist\" << 'PLIST'\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n    <key>CFBundleIdentifier</key>\n    <string>org.contentauth.C2PAC</string>\n    <key>CFBundleName</key>\n    <string>C2PAC</string>\n    <key>CFBundleVersion</key>\n    <string>1.0</string>\n    <key>CFBundlePackageType</key>\n    <string>FMWK</string>\n</dict>\n</plist>\nPLIST\n\n# Create stamp file for build system\ntouch \"${FRAMEWORK_DIR}/.stamp\"\n\necho \"✓ C2PAC framework built successfully at ${FRAMEWORK_DIR}\"\n";
-		};
 		9A1234661234567890ABCDEF /* Run Script - Build with Swift Package Manager */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -219,13 +132,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		41789600A8F8D0E644EF2D32 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9A1234641234567890ABCDEF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -235,49 +141,7 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		023C3EA242153B750BA0A181 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = C2PAC;
-			target = 7436E7B8A2AF5613ADC8A59D /* C2PAC */;
-			targetProxy = 3D6A052BCC0A60CEBFA5DBD1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		2FEEB9001E62917630FE5375 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 953415FF2E6EB47200A97957 /* Base.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.contentauth.C2PAC;
-				PRODUCT_NAME = C2PAC;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = macosx;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 		9A1234521234567890ABCDEF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 953415FF2E6EB47200A97957 /* Base.xcconfig */;
@@ -428,51 +292,9 @@
 			};
 			name = Release;
 		};
-		F07FC6F0F07866DF2A68CB2F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 953415FF2E6EB47200A97957 /* Base.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GENERATE_INFOPLIST_FILE = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.contentauth.C2PAC;
-				PRODUCT_NAME = C2PAC;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = macosx;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5CC0F06BE62221DFC9369C56 /* Build configuration list for PBXNativeTarget "C2PAC" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2FEEB9001E62917630FE5375 /* Release */,
-				F07FC6F0F07866DF2A68CB2F /* Debug */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		9A1234541234567890ABCDEF /* Build configuration list for PBXProject "SigningServer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -13,11 +13,8 @@
 
 import Foundation
 
-/**
- The standard C2PA assertions.
-
- https://spec.c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html#_standard_c2pa_assertion_summary
- */
+/// The standard C2PA assertions.
+/// - SeeAlso: [C2PA Specification: Standard C2PA Assertion Summary](https://spec.c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html#_standard_c2pa_assertion_summary)
 public enum StandardAssertionLabel: String, Codable {
 
     case actions = "c2pa.actions"

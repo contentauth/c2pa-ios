@@ -34,11 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         xcode: ["16.4"]
-        device:
-          [
-            "iPhone 16 Pro",
-            "iPhone 16"
-          ]
+        device: ["iPhone 16 Pro", "iPhone 16"]
         ios: ["18.5"]
 
     steps:
@@ -51,6 +47,74 @@ jobs:
 
       - name: Verify Xcode version
         run: xcodebuild -version
+
+      - name: Ensure Simulator is Available
+        run: |
+          DEVICE_NAME="${{ matrix.device }}"
+          IOS_VERSION="${{ matrix.ios }}"
+          RUNTIME="iOS-${IOS_VERSION//./-}"
+
+          echo "Looking for simulator: $DEVICE_NAME with iOS $IOS_VERSION"
+
+          # List available runtimes
+          echo "Available runtimes:"
+          xcrun simctl list runtimes
+
+          # List available device types
+          echo "Available device types:"
+          xcrun simctl list devicetypes | grep -i iphone | head -20
+
+          # Check if the simulator already exists
+          EXISTING_UDID=$(xcrun simctl list devices "$IOS_VERSION" | grep "$DEVICE_NAME" | grep -oE '[A-F0-9-]{36}' | head -1)
+
+          if [ -n "$EXISTING_UDID" ]; then
+            echo "Simulator found with UDID: $EXISTING_UDID"
+          else
+            echo "Simulator not found, creating one..."
+
+            # Get the runtime identifier
+            RUNTIME_ID=$(xcrun simctl list runtimes | grep "iOS $IOS_VERSION" | grep -oE 'com.apple.CoreSimulator.SimRuntime.iOS-[0-9-]+' | head -1)
+
+            if [ -z "$RUNTIME_ID" ]; then
+              echo "ERROR: iOS $IOS_VERSION runtime not found"
+              echo "Available iOS runtimes:"
+              xcrun simctl list runtimes | grep iOS
+              exit 1
+            fi
+
+            echo "Using runtime: $RUNTIME_ID"
+
+            # Get the device type identifier
+            DEVICE_TYPE=$(xcrun simctl list devicetypes | grep "$DEVICE_NAME" | grep -oE 'com.apple.CoreSimulator.SimDeviceType.[^,)]+' | head -1)
+
+            if [ -z "$DEVICE_TYPE" ]; then
+              echo "ERROR: Device type for '$DEVICE_NAME' not found"
+              echo "Available iPhone device types:"
+              xcrun simctl list devicetypes | grep -i iphone
+              exit 1
+            fi
+
+            echo "Using device type: $DEVICE_TYPE"
+
+            # Create the simulator
+            EXISTING_UDID=$(xcrun simctl create "$DEVICE_NAME" "$DEVICE_TYPE" "$RUNTIME_ID")
+            echo "Created simulator with UDID: $EXISTING_UDID"
+          fi
+
+          # Boot the simulator if not already booted
+          STATE=$(xcrun simctl list devices | grep "$EXISTING_UDID" | grep -oE '\(Booted\)|\(Shutdown\)' | tr -d '()')
+
+          if [ "$STATE" != "Booted" ]; then
+            echo "Booting simulator..."
+            xcrun simctl boot "$EXISTING_UDID" || true
+          fi
+
+          # Wait for the simulator to be ready
+          echo "Waiting for simulator to be ready..."
+          xcrun simctl bootstatus "$EXISTING_UDID" -b
+
+          echo "Simulator is ready!"
+          xcrun simctl list devices | grep "$DEVICE_NAME"
 
       - name: Build Library
         run: make library DESTINATION="platform=iOS Simulator,name=${{ matrix.device }},OS=${{ matrix.ios }}"

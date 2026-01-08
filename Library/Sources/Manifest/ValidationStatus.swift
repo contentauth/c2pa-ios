@@ -13,11 +13,8 @@
 
 import Foundation
 
-/**
- A ValidationStatus struct describes the validation status of a specific part of a manifest.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#validationstatus
- */
+/// A ValidationStatus struct describes the validation status of a specific part of a manifest.
+/// - SeeAlso: [ValidationStatus Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#validationstatus)
 public struct ValidationStatus: Codable, Equatable {
 
     public var code: ValidationStatusCode

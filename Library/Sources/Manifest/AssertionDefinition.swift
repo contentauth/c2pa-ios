@@ -13,17 +13,13 @@
 
 import Foundation
 
-/**
- Defines an assertion that consists of a label that can be either a C2PA-defined assertion label or a custom label in reverse domain format.
+/// Defines an assertion that consists of a label that can be either a C2PA-defined assertion label or a custom label in reverse domain format.
+/// - SeeAlso: [AssertionDefinition Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#assertiondefinition)
 
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def#assertiondefinition
+/// The standard C2PA assertions are currently available:
+/// - SeeAlso: [C2PA Specification: Standard C2PA Assertion Summary](https://spec.c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html#_standard_c2pa_assertion_summary)
 
- The standard C2PA assertions are currently available:
- https://spec.c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html#_standard_c2pa_assertion_summary
-
- But only `actions` is actually implemented!
-
- */
+/// But only `actions` is actually implemented!
 public enum AssertionDefinition: Codable, Equatable {
 
     public enum CodingKeys: CodingKey {
@@ -31,9 +27,7 @@ public enum AssertionDefinition: Codable, Equatable {
         case data
     }
 
-    /**
-     https://opensource.contentauthenticity.org/docs/manifest/writing/assertions-actions#actions
-     */
+    /// - SeeAlso: [Actions Reference](https://opensource.contentauthenticity.org/docs/manifest/writing/assertions-actions#actions)
     case actions(actions: [Action])
 
     case assertionMetadata

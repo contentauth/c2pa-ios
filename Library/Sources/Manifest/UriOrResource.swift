@@ -13,9 +13,7 @@
 
 import Foundation
 
-/**
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#uriorresource
- */
+/// - SeeAlso: [UriOrResource Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#uriorresource)
 open class UriOrResource: Codable, Equatable {
 
     // MARK: Equatable
@@ -27,15 +25,12 @@ open class UriOrResource: Codable, Equatable {
 
     // MARK: UriOrResource
 
-    /**
-     A string identifying the cryptographic hash algorithm used to compute the hash.
-     */
+    /// A string identifying the cryptographic hash algorithm used to compute the hash.
     open var alg: String?
 
 
-    /**
-     - parameter alg: A string identifying the cryptographic hash algorithm used to compute the hash.
-     */
+    /// - Parameters:
+    ///   - alg: A string identifying the cryptographic hash algorithm used to compute the hash.
     public init(alg: String? = nil) {
         self.alg = alg
     }

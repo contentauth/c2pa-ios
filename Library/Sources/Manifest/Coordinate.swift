@@ -13,28 +13,20 @@
 
 import Foundation
 
-/**
- An x, y coordinate used for specifying vertices in polygons.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#coordinate
- */
+/// An x, y coordinate used for specifying vertices in polygons.
+/// - SeeAlso: [Coordinate Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#coordinate)
 public struct Coordinate: Codable, Equatable {
 
-    /**
-     The coordinate along the x-axis.
-     */
+    /// The coordinate along the x-axis.
     public var x: Double
 
-    /**
-     The coordinate along the y-axis.
-     */
+    /// The coordinate along the y-axis.
     public var y: Double
 
 
-    /**
-     - parameter x: The coordinate along the x-axis.
-     - parameter y: The coordinate along the y-axis.
-     */
+    /// - Parameters:
+    ///   - x: The coordinate along the x-axis.
+    ///   - y: The coordinate along the y-axis.
     public init(x: Double, y: Double) {
         self.x = x
         self.y = y

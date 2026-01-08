@@ -13,39 +13,28 @@
 
 import Foundation
 
-/**
- https://opensource.contentauthenticity.org/docs/manifest/writing/assertions-actions#actions
- */
+/// - SeeAlso: [Actions Reference](https://opensource.contentauthenticity.org/docs/manifest/writing/assertions-actions#actions)
 
 public struct Action: Codable, Equatable {
 
-    /**
-     The action name. Most probably a ``PredefinedAction``.
-     */
+    /// The action name. Most probably a ``PredefinedAction``.
     public var action: String
 
-    /**
-     A URL identifying an IPTC term. Most probably a ``DigitalSourceType``.
-     */
+    /// A URL identifying an IPTC term. Most probably a ``DigitalSourceType``.
     public var digitalSourceType: String?
 
-    /**
-     The software or hardware used to perform the action.
-     */
+    /// The software or hardware used to perform the action.
     public var softwareAgent: String?
 
-    /**
-     Additional information describing the action.
-     */
+    /// Additional information describing the action.
     public var parameters: [String: String]?
 
 
-    /**
-     - parameter action: The action name. Most probably a ``PredefinedAction``.
-     - parameter digitalSourceType: A URL identifying an IPTC term. Most probably a ``DigitalSourceType``.
-     - parameter softwareAgent: The software or hardware used to perform the action. Defaults to the app name.
-     - parameter parameters: Additional information describing the action.
-     */
+    /// - Parameters:
+    ///   - action: The action name. Most probably a ``PredefinedAction``.
+    ///   - digitalSourceType: A URL identifying an IPTC term. Most probably a ``DigitalSourceType``.
+    ///   - softwareAgent: The software or hardware used to perform the action. Defaults to the app name.
+    ///   - parameters: Additional information describing the action.
     public init(
         action: String,
         digitalSourceType: String? = nil,
@@ -58,12 +47,11 @@ public struct Action: Codable, Equatable {
         self.parameters = parameters
     }
 
-    /**
-     - parameter action: The action name as a ``PredefinedAction``.
-     - parameter digitalSourceType: A URL identifying an IPTC term as a ``DigitalSourceType``.
-     - parameter softwareAgent: The software or hardware used to perform the action. Defaults to the app name.
-     - parameter parameters: Additional information describing the action.
-     */
+    /// - Parameters:
+    ///   - action: The action name as a ``PredefinedAction``.
+    ///   - digitalSourceType: A URL identifying an IPTC term as a ``DigitalSourceType``.
+    ///   - softwareAgent: The software or hardware used to perform the action. Defaults to the app name.
+    ///   - parameters: Additional information describing the action.
     public init(
         action: PredefinedAction,
         digitalSourceType: DigitalSourceType,

@@ -355,8 +355,8 @@ final class C2PAManager: ObservableObject {
         )
 
         os_log("Creating source and destination streams", log: Logger.signing, type: .info)
-        let sourceStream = try Stream(fileURL: inputURL, truncate: false)
-        let destStream = try Stream(fileURL: outputURL, truncate: true)
+        let sourceStream = try Stream(readFrom: inputURL)
+        let destStream = try Stream(writeTo: outputURL)
 
         os_log("Starting builder.sign operation", log: Logger.signing, type: .info)
         os_log("  Format: image/jpeg", log: Logger.signing, type: .debug)

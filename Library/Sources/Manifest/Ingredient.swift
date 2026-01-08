@@ -13,11 +13,8 @@
 
 import Foundation
 
-/**
- An Ingredient is any external asset that has been used in the creation of an asset.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def#ingredient
- */
+/// An Ingredient is any external asset that has been used in the creation of an asset.
+/// - SeeAlso: [Ingredient Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#ingredient)
 public struct Ingredient: Codable, Equatable {
 
     public enum CodingKeys: String, CodingKey {
@@ -41,123 +38,83 @@ public struct Ingredient: Codable, Equatable {
         case validationStatus = "validation_status"
     }
 
-    /**
-     The active manifest label (if one exists).
-
-     If this ingredient has a manifest store, this is the label of the active manifest.
-     */
+    /// The active manifest label (if one exists).
+    /// If this ingredient has a manifest store, this is the label of the active manifest.
     public var activeManifest: String?
 
-    /**
-     A reference to the actual data of the ingredient.
-     */
+    /// A reference to the actual data of the ingredient.
     public var data: ResourceRef?
 
-    /**
-     Additional information about the data’s type to the ingredient V2 structure.
-     */
+    /// Additional information about the data’s type to the ingredient V2 structure.
     public var dataTypes: [AssetType]?
 
-    /**
-     Additional description of the ingredient.
-     */
+    /// Additional description of the ingredient.
     public var description: String?
 
-    /**
-     Document ID from xmpMM:DocumentID in XMP metadata.
-     */
+    /// Document ID from xmpMM:DocumentID in XMP metadata.
     public var documentId: String?
 
-    /**
-     The format of the source file as a MIME type.
-     */
+    /// The format of the source file as a MIME type.
     public var format: String?
 
-    /**
-     An optional hash of the asset to prevent duplicates.
-     */
+    /// An optional hash of the asset to prevent duplicates.
     public var hash: String?
 
-    /**
-     URI to an informational page about the ingredient or its data.
-     */
+    /// URI to an informational page about the ingredient or its data.
     public var informationalUri: String?
 
-    /**
-     Instance ID from xmpMM:InstanceID in XMP metadata.
-     */
+    /// Instance ID from xmpMM:InstanceID in XMP metadata.
     public var instanceId: String?
 
-    /**
-     The ingredient’s label as assigned in the manifest.
-     */
+    /// The ingredient’s label as assigned in the manifest.
     public var label: String?
 
-    /**
-     A manifest store from the source asset extracted as a binary C2PA blob.
-     */
+    /// A manifest store from the source asset extracted as a binary C2PA blob.
     public var manifestData: ResourceRef?
 
-    /**
-     Any additional ``Metadata`` as defined in the C2PA spec.
-     */
+    /// Any additional ``Metadata`` as defined in the C2PA spec.
     public var metadata: Metadata?
 
-    /**
-     URI from dcterms:provenance in XMP metadata.
-     */
+    /// URI from dcterms:provenance in XMP metadata.
     public var provenance: String?
 
-    /**
-     Set to ``Relationship#parentOf`` if this is the parent ingredient.
-
-     There can only be one parent ingredient in the ingredients.
-     */
+    /// Set to ``Relationship#parentOf`` if this is the parent ingredient.
+    /// There can only be one parent ingredient in the ingredients.
     public var relationship: Relationship?
 
-    /**
-     A thumbnail image capturing the visual state at the time of import.
-
-     A tuple of thumbnail MIME format (for example image/jpeg) and binary bits of the image.
-     */
+    /// A thumbnail image capturing the visual state at the time of import.
+    /// A tuple of thumbnail MIME format (for example image/jpeg) and binary bits of the image.
     public var thumbnail: ResourceRef?
 
-    /**
-     A human-readable title, generally source filename.
-     */
+    /// A human-readable title, generally source filename.
     public var title: String?
 
-    /**
-     Validation results (Ingredient.V3)
-     */
+    /// Validation results (Ingredient.V3)
     public var validationResults: ValidationResults?
 
-    /**
-     Validation status (Ingredient v1 & v2)
-     */
+    /// Validation status (Ingredient v1 & v2)
     public var validationStatus: [ValidationStatus]?
 
 
-    /**
-     - parameter activeManifest: The active manifest label (if one exists). If this ingredient has a manifest store, this is the label of the active manifest.
-     - parameter data: A reference to the actual data of the ingredient.
-     - parameter dataTypes: Additional information about the data’s type to the ingredient V2 structure.
-     - parameter description: Additional description of the ingredient.
-     - parameter documentId: Document ID from xmpMM:DocumentID in XMP metadata.
-     - parameter format: The format of the source file as a MIME type.
-     - parameter hash: An optional hash of the asset to prevent duplicates.
-     - parameter informationalUri: URI to an informational page about the ingredient or its data.
-     - parameter instanceId: Instance ID from xmpMM:InstanceID in XMP metadata.
-     - parameter label: The ingredient’s label as assigned in the manifest.
-     - parameter manifestData: A manifest store from the source asset extracted as a binary C2PA blob.
-     - parameter metadata: Any additional ``Metadata`` as defined in the C2PA spec.
-     - parameter provenance: URI from dcterms:provenance in XMP metadata.
-     - parameter relationship: Set to ``Relationship#parentOf`` if this is the parent ingredient. There can only be one parent ingredient in the ingredients.
-     - parameter thumbnail: A thumbnail image capturing the visual state at the time of import. A tuple of thumbnail MIME format (for example image/jpeg) and binary bits of the image.
-     - parameter title: A human-readable title, generally source filename.
-     - parameter validationResults: Validation results (Ingredient.V3)
-     - parameter validationStatus: Validation status (Ingredient v1 & v2)
-     */
+    /// - Parameters:
+    ///   - activeManifest: The active manifest label (if one exists). If this ingredient has a manifest store, this is the label of the active manifest.
+    ///   - data: A reference to the actual data of the ingredient.
+    ///   - dataTypes: Additional information about the data’s type to the ingredient V2 structure.
+    ///   - description: Additional description of the ingredient.
+    ///   - documentId: Document ID from xmpMM:DocumentID in XMP metadata.
+    ///   - format: The format of the source file as a MIME type.
+    ///   - hash: An optional hash of the asset to prevent duplicates.
+    ///   - informationalUri: URI to an informational page about the ingredient or its data.
+    ///   - instanceId: Instance ID from xmpMM:InstanceID in XMP metadata.
+    ///   - label: The ingredient’s label as assigned in the manifest.
+    ///   - manifestData: A manifest store from the source asset extracted as a binary C2PA blob.
+    ///   - metadata: Any additional ``Metadata`` as defined in the C2PA spec.
+    ///   - provenance: URI from dcterms:provenance in XMP metadata.
+    ///   - relationship: Set to ``Relationship#parentOf`` if this is the parent ingredient. There can only be one parent ingredient in the ingredients.
+    ///   - thumbnail: A thumbnail image capturing the visual state at the time of import. A tuple of thumbnail MIME format (for example image/jpeg) and binary bits of the image.
+    ///   - title: A human-readable title, generally source filename.
+    ///   - validationResults: Validation results (Ingredient.V3)
+    ///   - validationStatus: Validation status (Ingredient v1 & v2)
     public init(
         activeManifest: String? = nil,
         data: ResourceRef? = nil,

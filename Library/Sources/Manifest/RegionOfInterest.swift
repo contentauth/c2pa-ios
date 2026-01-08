@@ -13,11 +13,8 @@
 
 import Foundation
 
-/**
- A region of interest within an asset describing the change.
-
- https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-def/#regionofinterest
- */
+/// A region of interest within an asset describing the change.
+/// - SeeAlso: [RegionOfInterest Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#regionofinterest)
 open class RegionOfInterest: Codable, Equatable {
 
     // MARK: Equatable
@@ -35,52 +32,37 @@ open class RegionOfInterest: Codable, Equatable {
 
     // MARK: RegionOfInterest
 
-    /**
-     A free-text string.
-     */
+    /// A free-text string.
     open var description: String?
 
-    /**
-     A free-text string representing a machine-readable, unique to this assertion, identifier for the region.
-     */
+    /// A free-text string representing a machine-readable, unique to this assertion, identifier for the region.
     open var identifier: String?
 
-    /**
-     Additional information about the asset.
-     */
+    /// Additional information about the asset.
     open var metadata: Metadata?
 
-    /**
-     A free-text string representing a human-readable name for the region which might be used in a user interface.
-     */
+    /// A free-text string representing a human-readable name for the region which might be used in a user interface.
     open var name: String?
 
-    /**
-     A range describing the region of interest for the specific asset.
-     */
+    /// A range describing the region of interest for the specific asset.
     open var region: [RegionRange]
 
-    /**
-     A value from our controlled vocabulary or an entity-specific value (e.g., com.litware.coolArea) that represents the role of a region among other regions.
-     */
+    /// A value from our controlled vocabulary or an entity-specific value (e.g., com.litware.coolArea) that represents the role of a region among other regions.
     open var role: Role?
 
-    /**
-     A value from a controlled vocabulary such as ``ImageRegionType`` or an entity-specific value
-     (e.g., com.litware.newType) that represents the type of thing(s) depicted by a region.
-     */
+    /// A value from a controlled vocabulary such as ``ImageRegionType`` or an entity-specific value
+    /// (e.g., com.litware.newType) that represents the type of thing(s) depicted by a region.
     open var type: String?
 
-    /**
-     - parameter description: A free-text string.
-     - parameter identifier: A free-text string representing a machine-readable, unique to this assertion, identifier for the region.
-     - parameter metadata: Additional information about the asset.
-     - parameter name: A free-text string representing a human-readable name for the region which might be used in a user interface.
-     - parameter region: A range describing the region of interest for the specific asset.
-     - parameter role: A value from our controlled vocabulary or an entity-specific value (e.g., com.litware.coolArea) that represents the role of a region among other regions.
-     - parameter type: A value from a controlled vocabulary such as ``ImageRegionType`` or an entity-specific value
-                        (e.g., com.litware.newType) that represents the type of thing(s) depicted by a region.
-     */
+    /// - Parameters:
+    ///   - description: A free-text string.
+    ///   - identifier: A free-text string representing a machine-readable, unique to this assertion, identifier for the region.
+    ///   - metadata: Additional information about the asset.
+    ///   - name: A free-text string representing a human-readable name for the region which might be used in a user interface.
+    ///   - region: A range describing the region of interest for the specific asset.
+    ///   - role: A value from our controlled vocabulary or an entity-specific value (e.g., com.litware.coolArea) that represents the role of a region among other regions.
+    ///   - type: A value from a controlled vocabulary such as ``ImageRegionType`` or an entity-specific value
+    /// (e.g., com.litware.newType) that represents the type of thing(s) depicted by a region.
     public init(
         description: String? = nil,
         identifier: String? = nil,
@@ -99,15 +81,14 @@ open class RegionOfInterest: Codable, Equatable {
         self.type = type
     }
 
-    /**
-     - parameter description: A free-text string.
-     - parameter identifier: A free-text string representing a machine-readable, unique to this assertion, identifier for the region.
-     - parameter metadata: Additional information about the asset.
-     - parameter name: A free-text string representing a human-readable name for the region which might be used in a user interface.
-     - parameter region: A range describing the region of interest for the specific asset.
-     - parameter role: A value from our controlled vocabulary or an entity-specific value (e.g., com.litware.coolArea) that represents the role of a region among other regions.
-     - parameter type: A value from the controlled vocabulary ``ImageRegionType`` that represents the type of thing(s) depicted by a region.
-     */
+    /// - Parameters:
+    ///   - description: A free-text string.
+    ///   - identifier: A free-text string representing a machine-readable, unique to this assertion, identifier for the region.
+    ///   - metadata: Additional information about the asset.
+    ///   - name: A free-text string representing a human-readable name for the region which might be used in a user interface.
+    ///   - region: A range describing the region of interest for the specific asset.
+    ///   - role: A value from our controlled vocabulary or an entity-specific value (e.g., com.litware.coolArea) that represents the role of a region among other regions.
+    ///   - type: A value from the controlled vocabulary ``ImageRegionType`` that represents the type of thing(s) depicted by a region.
     public convenience init(
         description: String? = nil,
         identifier: String? = nil,

@@ -101,6 +101,21 @@ final class BuilderTests: XCTestCase {
         XCTAssertTrue(result.passed, result.message)
     }
 
+    func testBuilderSetIntentCreate() throws {
+        let result = tests.testBuilderSetIntentCreate()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testBuilderSetIntentEdit() throws {
+        let result = tests.testBuilderSetIntentEdit()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testBuilderSetIntentUpdate() throws {
+        let result = tests.testBuilderSetIntentUpdate()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
     func testReadIngredient() throws {
         let result = tests.testReadIngredient()
         XCTAssertTrue(result.passed, result.message)
@@ -149,6 +164,26 @@ final class ReaderTests: XCTestCase {
 
     func testReaderWithMultipleStreams() throws {
         let result = tests.testReaderWithMultipleStreams()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderRemoteURL() throws {
+        let result = tests.testReaderRemoteURL()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderIsEmbedded() throws {
+        let result = tests.testReaderIsEmbedded()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderDetailedJSON() throws {
+        let result = tests.testReaderDetailedJSON()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderDetailedJSONComparison() throws {
+        let result = tests.testReaderDetailedJSONComparison()
         XCTAssertTrue(result.passed, result.message)
     }
 }
