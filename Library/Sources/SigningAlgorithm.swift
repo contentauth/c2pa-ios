@@ -38,7 +38,7 @@ public enum SigningAlgorithm: String, CaseIterable, Sendable {
     /// ECDSA with SHA-256 using the P-256 curve.
     ///
     /// This is the most widely supported algorithm and is recommended for most use cases.
-    /// It is the only algorithm supported by the iOS Secure Enclave.
+    /// It is the only algorithm supported by the Secure Enclave.
     case es256
 
     /// ECDSA with SHA-384 using the P-384 curve.
@@ -58,7 +58,7 @@ public enum SigningAlgorithm: String, CaseIterable, Sendable {
 
     /// EdDSA using Curve25519.
     ///
-    /// - Note: Not supported by iOS Keychain or Secure Enclave.
+    /// - Note: Not supported by the Keychain or Secure Enclave.
     case ed25519
 
     var cValue: C2paSigningAlg {

@@ -280,7 +280,7 @@ public final class Signer {
     /// is not directly accessible as PEM data. Common use cases include:
     ///
     /// - Hardware security modules (HSM)
-    /// - Secure Enclave on iOS devices
+    /// - Secure Enclave on iOS/macOS devices
     /// - Remote signing services
     /// - Keychain-stored keys
     ///

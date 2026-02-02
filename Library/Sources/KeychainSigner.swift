@@ -1,4 +1,4 @@
-// This file is licensed to you under the Apache License, Version 2.0 
+// This file is licensed to you under the Apache License, Version 2.0
 // (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
 // (http://opensource.org/licenses/MIT), at your option.
 //
@@ -29,7 +29,7 @@ extension Signer {
     ///   - keychainKeyTag: The keychain tag identifying the private key.
     ///
     /// - Throws: ``C2PAError`` if the key cannot be found, doesn't support the algorithm,
-    ///   or if signing fails. Also throws for Ed25519 which is not supported by iOS keychain.
+    ///   or if signing fails. Also throws for Ed25519 which is not supported by the keychain.
     ///
     /// ## Example
     ///
@@ -52,9 +52,9 @@ extension Signer {
     /// ```
     ///
     /// - Important: The key must already exist in the keychain before creating the signer.
-    ///   Use standard iOS keychain APIs to generate and store the key.
+    ///   Use standard keychain APIs to generate and store the key.
     ///
-    /// - Note: Ed25519 is not supported because iOS Keychain doesn't support this algorithm.
+    /// - Note: Ed25519 is not supported because Keychain doesn't support this algorithm.
     ///
     /// - SeeAlso: ``SecureEnclaveSigner``, ``exportPublicKeyPEM(fromKeychainTag:)``
     public convenience init(

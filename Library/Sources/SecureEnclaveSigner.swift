@@ -18,7 +18,7 @@ import Security
 /// Configuration for Secure Enclave-based signing.
 ///
 /// This structure defines the parameters needed to create or access a private key
-/// in the iOS Secure Enclave, providing hardware-backed security for signing operations.
+/// in the Secure Enclave, providing hardware-backed security for signing operations.
 public struct SecureEnclaveSignerConfig {
     /// The keychain tag identifying the Secure Enclave key.
     public let keyTag: String
@@ -41,11 +41,11 @@ public struct SecureEnclaveSignerConfig {
 }
 
 extension Signer {
-    /// Creates a signer using a private key stored in the iOS Secure Enclave.
+    /// Creates a signer using a private key stored in the Secure Enclave.
     ///
     /// The Secure Enclave provides hardware-backed security where the private key
     /// never leaves the secure hardware. This is the most secure signing method
-    /// available on iOS devices with Secure Enclave support (iPhone 5s and later).
+    /// available on devices with Secure Enclave support (iPhone 5s and later).
     ///
     /// If the specified key doesn't exist, it will be automatically created in the
     /// Secure Enclave.

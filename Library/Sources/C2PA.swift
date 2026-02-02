@@ -209,7 +209,6 @@ public enum C2PAError: LocalizedError {
     /// - Parameter original: Original error message from C API.
     case ingridientDataNotFound(_ original: String)
 
-    /// Ed25519 algorithm is not supported by iOS
     case ed25519NotSupported
 
     /// - Parameter tag: Searched for keychain tag
@@ -256,7 +255,7 @@ public enum C2PAError: LocalizedError {
             return "No ingredient data found: \(original)"
 
         case .ed25519NotSupported:
-            return "Ed25519 not supported by iOS Keychain"
+            return "Ed25519 not supported by Keychain"
 
         case .keySearchFailed(let tag, let status, let isSecureEnclave):
             return "Failed to find key '\(tag)' in \(isSecureEnclave ? "Secure Enclave" : "keychain"): \(status)"
