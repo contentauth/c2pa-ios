@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/contentauth/c2pa-ios/actions/workflows/test.yml/badge.svg)](https://github.com/contentauth/c2pa-ios/actions/workflows/test.yml)
 
-This project provides iOS bindings to the [C2PA](https://c2pa.org/) (Content Authenticity Initiative) libraries. It wraps the C2PA Rust implementation ([c2pa-rs](https://github.com/contentauth/c2pa-rs)) using its C API bindings.
+This project provides iOS bindings to the Content Authenticity Initiative [C2PA](https://c2pa.org/) libraries. It wraps the C2PA Rust implementation ([c2pa-rs](https://github.com/contentauth/c2pa-rs)) using its C API bindings.
 
 ## Overview
 
@@ -14,6 +14,8 @@ C2PA iOS offers:
 - Builder APIs for creating custom manifests
 - Comprehensive test suite with example application
 - Hardware-backed signing with Secure Enclave (iOS devices)
+
+NOTE: This project officially supports only iOS, even though it may run on other platforms that support Swift.
 
 ## Repository Structure
 
