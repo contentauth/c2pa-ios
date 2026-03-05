@@ -404,7 +404,7 @@ public final class ReaderTests: TestImplementation {
             let stream = try Stream(data: imageData)
             let reader = try Reader(format: "image/jpeg", stream: stream)
 
-            let remoteURL = reader.remoteURL()
+            let remoteURL = reader.remote()
 
             // Most test images will have embedded manifests
             if let url = remoteURL {
@@ -433,7 +433,7 @@ public final class ReaderTests: TestImplementation {
             let reader = try Reader(format: "image/jpeg", stream: stream)
 
             let isEmbedded = reader.isEmbedded()
-            let remoteURL = reader.remoteURL()
+            let remoteURL = reader.remote()
 
             // Validate consistency between isEmbedded and remoteURL
             if isEmbedded && remoteURL == nil {
