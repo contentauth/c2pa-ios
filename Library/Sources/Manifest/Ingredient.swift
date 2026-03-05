@@ -153,4 +153,45 @@ public struct Ingredient: Codable, Equatable {
         self.validationResults = validationResults
         self.validationStatus = validationStatus
     }
+
+    // MARK: - Factory Methods
+
+    /// Creates a parent ingredient.
+    ///
+    /// A parent ingredient is the primary source asset that was modified
+    /// to create the current asset.
+    ///
+    /// - Parameters:
+    ///   - title: A human-readable title.
+    ///   - format: Optional MIME type of the ingredient.
+    /// - Returns: An ingredient configured as a parent.
+    public static func parent(title: String, format: String? = nil) -> Ingredient {
+        Ingredient(format: format, relationship: .parentOf, title: title)
+    }
+
+    /// Creates a component ingredient.
+    ///
+    /// A component ingredient is a secondary source asset incorporated
+    /// into the current asset (e.g., a watermark or overlay).
+    ///
+    /// - Parameters:
+    ///   - title: A human-readable title.
+    ///   - format: Optional MIME type of the ingredient.
+    /// - Returns: An ingredient configured as a component.
+    public static func component(title: String, format: String? = nil) -> Ingredient {
+        Ingredient(format: format, relationship: .componentOf, title: title)
+    }
+
+    /// Creates an inputTo ingredient.
+    ///
+    /// An inputTo ingredient was used as input to a process that
+    /// generated the current asset (e.g., training data for AI).
+    ///
+    /// - Parameters:
+    ///   - title: A human-readable title.
+    ///   - format: Optional MIME type of the ingredient.
+    /// - Returns: An ingredient configured as inputTo.
+    public static func inputTo(title: String, format: String? = nil) -> Ingredient {
+        Ingredient(format: format, relationship: .inputTo, title: title)
+    }
 }
