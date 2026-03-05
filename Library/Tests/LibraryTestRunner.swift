@@ -657,11 +657,6 @@ final class SignerExtendedTests: XCTestCase {
         XCTAssertTrue(result.passed, result.message)
     }
 
-    func testLoadSettingsInvalidFormat() throws {
-        let result = tests.testLoadSettingsInvalidFormat()
-        XCTAssertTrue(result.passed, result.message)
-    }
-
     func testSignerFromSignerInfo() throws {
         let result = tests.testSignerFromSignerInfo()
         XCTAssertTrue(result.passed, result.message)

@@ -42,7 +42,6 @@ public struct Shape: Codable, Equatable {
     /// The type of unit for the shape range.
     public var unit: UnitType
 
-
     /// - Parameters:
     ///   - type: The type of shape.
     ///   - origin: The origin of the coordinate in the shape.

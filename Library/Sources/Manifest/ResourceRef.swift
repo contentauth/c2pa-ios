@@ -38,7 +38,6 @@ open class ResourceRef: UriOrResource {
     /// This may be a JUMBF URI, a file path, a URL or any other string. Relative JUMBF URIs will be resolved with the manifest label. Relative file paths will be resolved with the base path if provided.
     open var identifier: String
 
-
     /// - Parameters:
     ///   - alg: A string identifying the cryptographic hash algorithm used to compute the hash.
     ///   - dataTypes: More detailed data types as defined in the C2PA spec.
@@ -65,7 +64,6 @@ open class ResourceRef: UriOrResource {
 
         try super.init(from: decoder)
     }
-
 
     override open func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)

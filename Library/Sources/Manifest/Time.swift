@@ -26,7 +26,6 @@ public struct Time: Codable, Equatable {
     /// The type of time.
     public var type: TimeType?
 
-
     /// - Parameters:
     ///   - end: The end time or the end of the asset if not present.
     ///   - start: The start time or the start of the asset if not present.

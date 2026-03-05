@@ -23,7 +23,6 @@ public struct Coordinate: Codable, Equatable {
     /// The coordinate along the y-axis.
     public var y: Double
 
-
     /// - Parameters:
     ///   - x: The coordinate along the x-axis.
     ///   - y: The coordinate along the y-axis.

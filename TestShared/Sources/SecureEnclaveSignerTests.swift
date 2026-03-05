@@ -98,7 +98,7 @@ public final class SecureEnclaveSignerTests: TestImplementation {
                 _ = try Signer(
                     algorithm: algorithm,
                     certificateChainPEM: TestUtilities.testCertsPEM,
-                    tsaURL: nil,
+                    tsa: nil,
                     secureEnclaveConfig: config
                 )
 
@@ -297,7 +297,7 @@ public final class SecureEnclaveSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es256,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 secureEnclaveConfig: config
             )
             testSteps.append("ES256 signer created successfully")
