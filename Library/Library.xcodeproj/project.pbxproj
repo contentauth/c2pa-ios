@@ -12,6 +12,7 @@
 		A0C2A0022E96B00100F2F938 /* C2PAError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0012E96B00100F2F938 /* C2PAError.swift */; };
 		A0C2A0042E96B00100F2F938 /* C2PAJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0032E96B00100F2F938 /* C2PAJson.swift */; };
 		A0C2A0062E96B00100F2F938 /* SignerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0052E96B00100F2F938 /* SignerInfo.swift */; };
+		A0C2A0082E96B00100F2F938 /* C2PASettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0072E96B00100F2F938 /* C2PASettings.swift */; };
 		953415F32E6EB31400A97957 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 953415F12E6EB31400A97957 /* Base.xcconfig */; };
 		9534697E2E4CB081003E83AD /* X509 in Frameworks */ = {isa = PBXBuildFile; productRef = 9534697D2E4CB081003E83AD /* X509 */; };
 		953469812E4CB0A8003E83AD /* Crypto in Frameworks */ = {isa = PBXBuildFile; productRef = 953469802E4CB0A8003E83AD /* Crypto */; };
@@ -59,6 +60,7 @@
 		A0C2A0012E96B00100F2F938 /* C2PAError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAError.swift; sourceTree = "<group>"; };
 		A0C2A0032E96B00100F2F938 /* C2PAJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAJson.swift; sourceTree = "<group>"; };
 		A0C2A0052E96B00100F2F938 /* SignerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignerInfo.swift; sourceTree = "<group>"; };
+		A0C2A0072E96B00100F2F938 /* C2PASettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PASettings.swift; sourceTree = "<group>"; };
 		953415F12E6EB31400A97957 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		953469D92E4D2578003E83AD /* C2PATests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = C2PATests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		953469E52E4D25C6003E83AD /* TestShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TestShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -141,6 +143,7 @@
 				95A782322E6F06E4001E9748 /* Builder.swift */,
 				A0C2A0012E96B00100F2F938 /* C2PAError.swift */,
 				A0C2A0032E96B00100F2F938 /* C2PAJson.swift */,
+				A0C2A0072E96B00100F2F938 /* C2PASettings.swift */,
 				8A1234571234567890ABCDEF /* CertificateManager.swift */,
 				95A782342E6F06E4001E9748 /* Helpers.swift */,
 				95A782352E6F06E4001E9748 /* KeychainSigner.swift */,
@@ -343,6 +346,7 @@
 				95A7823D2E6F06E4001E9748 /* Builder.swift in Sources */,
 				A0C2A0022E96B00100F2F938 /* C2PAError.swift in Sources */,
 				A0C2A0042E96B00100F2F938 /* C2PAJson.swift in Sources */,
+				A0C2A0082E96B00100F2F938 /* C2PASettings.swift in Sources */,
 				95A7823E2E6F06E4001E9748 /* KeychainSigner.swift in Sources */,
 				95A7823F2E6F06E4001E9748 /* Signer.swift in Sources */,
 				95A782402E6F06E4001E9748 /* Reader.swift in Sources */,
