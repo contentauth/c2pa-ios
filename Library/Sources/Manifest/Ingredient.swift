@@ -95,7 +95,6 @@ public struct Ingredient: Codable, Equatable {
     /// Validation status (Ingredient v1 & v2)
     public var validationStatus: [ValidationStatus]?
 
-
     /// - Parameters:
     ///   - activeManifest: The active manifest label (if one exists). If this ingredient has a manifest store, this is the label of the active manifest.
     ///   - data: A reference to the actual data of the ingredient.

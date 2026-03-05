@@ -23,7 +23,6 @@ public struct StatusCodes: Codable, Equatable {
 
     public var success: [ValidationStatus] = []
 
-
     public init(failure: [ValidationStatus], informational: [ValidationStatus], success: [ValidationStatus]) {
         self.failure = failure
         self.informational = informational

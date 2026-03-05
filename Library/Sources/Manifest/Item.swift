@@ -23,7 +23,6 @@ public struct Item: Codable, Equatable {
     /// The value of the identifier, e.g. a value of “2” for an identifier of “track_id” would imply track 2 of the asset.
     public var value: String
 
-
     /// - Parameters:
     ///   - identifier: The container-specific term used to identify items, such as “track_id” for MP4 or “item_ID” for HEIF.
     ///   - value: The value of the identifier, e.g. a value of “2” for an identifier of “track_id” would imply track 2 of the asset.

@@ -20,7 +20,6 @@ public struct Text: Codable, Equatable {
     /// The ranges of text to select.
     public var selectors: [TextSelectorRange]
 
-
     /// - Parameters:
     ///   - selectors: The ranges of text to select.
     public init(selectors: [TextSelectorRange]) {

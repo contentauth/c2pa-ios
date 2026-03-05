@@ -1,10 +1,10 @@
-// This file is licensed to you under the Apache License, Version 2.0 
-// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
+// This file is licensed to you under the Apache License, Version 2.0
+// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license
 // (http://opensource.org/licenses/MIT), at your option.
 //
-// Unless required by applicable law or agreed to in writing, this software is 
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF 
-// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
+// Unless required by applicable law or agreed to in writing, this software is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF
+// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE
 // files for the specific language governing permissions and limitations under
 // each license.
 //
@@ -27,9 +27,9 @@ import Foundation
 /// ## Topics
 ///
 /// ### Creating a Signer
-/// - ``init(certsPEM:privateKeyPEM:algorithm:tsaURL:)``
+/// - ``init(certsPEM:privateKeyPEM:algorithm:tsa:)``
 /// - ``init(info:)``
-/// - ``init(algorithm:certificateChainPEM:tsaURL:sign:)``
+/// - ``init(algorithm:certificateChainPEM:tsa:sign:)``
 ///
 /// ### Signing Operations
 /// - ``reserveSize()``
@@ -44,7 +44,7 @@ import Foundation
 ///     certsPEM: certificateChainPEM,
 ///     privateKeyPEM: privateKeyPEM,
 ///     algorithm: .es256,
-///     tsaURL: "http://timestamp.digicert.com"
+///     tsa: URL(string: "http://timestamp.digicert.com")
 /// )
 /// ```
 ///
@@ -54,7 +54,7 @@ import Foundation
 /// let signer = try Signer(
 ///     algorithm: .es256,
 ///     certificateChainPEM: certChainPEM,
-///     tsaURL: "http://timestamp.digicert.com"
+///     tsa: URL(string: "http://timestamp.digicert.com")
 /// ) { dataToSign in
 ///     // Custom signing logic (e.g., hardware key, remote service)
 ///     return try signWithHardwareKey(dataToSign)
@@ -63,6 +63,17 @@ import Foundation
 ///
 /// - SeeAlso: ``KeychainSigner``, ``SecureEnclaveSigner``, ``WebServiceSigner``
 public final class Signer {
+
+    /// The possible formats a settings string can have.
+    public enum SettingsFormat: String {
+
+        /// Settings are provided as a JSON formatted string
+        case json
+
+        /// Settings are provided as a TOML formatted string
+        case toml
+    }
+
     let ptr: UnsafeMutablePointer<C2paSigner>
     private var retainedContext: Unmanaged<AnyObject>?
 
@@ -79,7 +90,7 @@ public final class Signer {
     ///   - certsPEM: The certificate chain in PEM format.
     ///   - privateKeyPEM: The private key in PEM format.
     ///   - algorithm: The signing algorithm to use.
-    ///   - tsaURL: Optional URL of a timestamp authority for trusted timestamps.
+    ///   - tsa: Optional URL of a timestamp authority for trusted timestamps.
     ///
     /// - Throws: ``C2PAError`` if the credentials are invalid or incompatible.
     ///
@@ -88,14 +99,14 @@ public final class Signer {
         certsPEM: String,
         privateKeyPEM: String,
         algorithm: SigningAlgorithm,
-        tsaURL: String? = nil
+        tsa: URL? = nil
     ) throws {
         var raw: UnsafeMutablePointer<C2paSigner>!
         try withSignerInfo(
-            alg: algorithm.description,
+            algorithm: algorithm.rawValue,
             cert: certsPEM,
             key: privateKeyPEM,
-            tsa: tsaURL
+            tsa: tsa
         ) { algPtr, certPtr, keyPtr, tsaPtr in
             var info = C2paSignerInfo(
                 alg: algPtr,
@@ -122,7 +133,7 @@ public final class Signer {
             certsPEM: info.certificatePEM,
             privateKeyPEM: info.privateKeyPEM,
             algorithm: info.algorithm,
-            tsaURL: info.tsaURL)
+            tsa: info.tsa)
     }
 
     /// Creates a signer from JSON settings configuration.
@@ -177,9 +188,9 @@ public final class Signer {
     ///
     /// - Note: This method requires C2PAC framework v0.71.0 or later.
     ///
-    /// - SeeAlso: ``init(certsPEM:privateKeyPEM:algorithm:tsaURL:)``
+    /// - SeeAlso: ``init(certsPEM:privateKeyPEM:algorithm:tsa:)``
     public convenience init(settingsJSON: String) throws {
-        try self.init(settings: settingsJSON, format: "json")
+        try self.init(settings: settingsJSON, format: .json)
     }
 
     /// Creates a signer from TOML settings configuration.
@@ -219,7 +230,7 @@ public final class Signer {
     ///
     /// - SeeAlso: ``init(settingsJSON:)``
     public convenience init(settingsTOML: String) throws {
-        try self.init(settings: settingsTOML, format: "toml")
+        try self.init(settings: settingsTOML, format: .toml)
     }
 
     /// Creates a signer from settings configuration in the specified format.
@@ -229,9 +240,9 @@ public final class Signer {
     ///   - format: The format of the settings string ("json" or "toml").
     ///
     /// - Throws: ``C2PAError`` if the settings are invalid or the signer cannot be created.
-    private convenience init(settings: String, format: String) throws {
+    private convenience init(settings: String, format: SettingsFormat) throws {
         let raw = try settings.withCString { settingsPtr in
-            try format.withCString { formatPtr in
+            try format.rawValue.withCString { formatPtr in
                 let result = c2pa_load_settings(settingsPtr, formatPtr)
                 guard result == 0 else {
                     throw C2PAError.api(lastC2PAError())
@@ -252,9 +263,9 @@ public final class Signer {
     ///   - format: The format of the settings string ("json" or "toml").
     ///
     /// - Throws: ``C2PAError`` if the settings are invalid.
-    public static func loadSettings(_ settings: String, format: String) throws {
+    public static func loadSettings(_ settings: String, format: SettingsFormat) throws {
         try settings.withCString { settingsPtr in
-            try format.withCString { formatPtr in
+            try format.rawValue.withCString { formatPtr in
                 let result = c2pa_load_settings(settingsPtr, formatPtr)
                 guard result == 0 else {
                     throw C2PAError.api(lastC2PAError())
@@ -279,7 +290,7 @@ public final class Signer {
     /// - Parameters:
     ///   - algorithm: The signing algorithm that matches your closure's implementation.
     ///   - certificateChainPEM: The certificate chain in PEM format.
-    ///   - tsaURL: Optional URL of a timestamp authority for trusted timestamps.
+    ///   - tsa: Optional URL of a timestamp authority for trusted timestamps.
     ///   - sign: A closure that accepts data to sign and returns the signature.
     ///
     /// - Throws: ``C2PAError`` if the signer cannot be created.
@@ -290,7 +301,7 @@ public final class Signer {
     /// let signer = try Signer(
     ///     algorithm: .es256,
     ///     certificateChainPEM: certChain,
-    ///     tsaURL: "http://timestamp.digicert.com"
+    ///     tsa: URL(string: "http://timestamp.digicert.com")
     /// ) { dataToSign in
     ///     let signature = try SecKeyCreateSignature(
     ///         privateKeyRef,
@@ -306,7 +317,7 @@ public final class Signer {
     public convenience init(
         algorithm: SigningAlgorithm,
         certificateChainPEM: String,
-        tsaURL: String? = nil,
+        tsa: URL? = nil,
         sign: @escaping (Data) throws -> Data
     ) throws {
         // keep closure alive
@@ -336,7 +347,7 @@ public final class Signer {
 
         var raw: UnsafeMutablePointer<C2paSigner>!
         try certificateChainPEM.withCString { certPtr in
-            try withOptionalCString(tsaURL) { tsaPtr in
+            try withOptionalCString(tsa?.absoluteString) { tsaPtr in
                 raw = try guardNotNull(
                     c2pa_signer_create(
                         ref.toOpaque(),  // Pass opaque pointer to Box instance
@@ -408,20 +419,17 @@ extension Signer {
         guard status == errSecSuccess,
             let privateKey = item as! SecKey?
         else {
-            throw C2PAError.api("Failed to find key '\(keyTag)' in keychain: \(status)")
+            throw C2PAError.keySearchFailed(keyTag, status)
         }
 
         guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
-            throw C2PAError.api("Failed to extract public key")
+            throw C2PAError.publicKeyExtractionFailed
         }
 
         var error: Unmanaged<CFError>?
         guard let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, &error) as Data?
         else {
-            if let error = error?.takeRetainedValue() {
-                throw C2PAError.api("Failed to export public key: \(error)")
-            }
-            throw C2PAError.api("Failed to export public key")
+            throw C2PAError.publicKeyExportFailed(error?.takeRetainedValue())
         }
 
         let base64 = publicKeyData.base64EncodedString(options: [

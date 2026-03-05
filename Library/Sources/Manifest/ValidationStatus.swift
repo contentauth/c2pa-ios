@@ -25,7 +25,6 @@ public struct ValidationStatus: Codable, Equatable {
 
     public var url: String?
 
-
     public init(code: ValidationStatusCode, explanation: String? = nil, success: Bool? = nil, url: String? = nil) {
         self.code = code
         self.explanation = explanation

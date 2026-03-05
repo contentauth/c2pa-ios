@@ -25,7 +25,6 @@ public struct ReviewRating: Codable, Equatable {
 
     public var value: UInt8
 
-
     public init(code: String? = nil, explanation: String, value: UInt8) {
         self.code = code
         self.explanation = explanation

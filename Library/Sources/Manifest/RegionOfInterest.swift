@@ -29,7 +29,6 @@ open class RegionOfInterest: Codable, Equatable {
             && lhs.type == rhs.type
     }
 
-
     // MARK: RegionOfInterest
 
     /// A free-text string.

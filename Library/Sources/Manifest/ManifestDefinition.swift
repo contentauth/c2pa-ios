@@ -17,9 +17,6 @@ import Foundation
 ///
 /// - SeeAlso: [Manifest Definition Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema)
 public struct ManifestDefinition: Codable, CustomStringConvertible, Equatable {
-
-    // MARK: ManifestDefinition
-
     public enum CodingKeys: String, CodingKey {
         case assertions
         case claimGeneratorInfo = "claim_generator_info"
@@ -34,11 +31,6 @@ public struct ManifestDefinition: Codable, CustomStringConvertible, Equatable {
         case title
         case vendor
     }
-
-
-    static let jsonDecoder = JSONDecoder()
-    static let jsonEncoder = JSONEncoder()
-
 
     /// A list of assertions.
     public var assertions: [AssertionDefinition]
@@ -76,7 +68,6 @@ public struct ManifestDefinition: Codable, CustomStringConvertible, Equatable {
 
     /// Optional prefix added to the generated Manifest Label This is typically a reverse domain name.
     public var vendor: String?
-
 
     /// - Parameters:
     ///   - assertions: A list of assertions.
@@ -116,14 +107,11 @@ public struct ManifestDefinition: Codable, CustomStringConvertible, Equatable {
         self.vendor = vendor
     }
 
-
-    // MARK: CustomStringConvertible
+    // MARK: - CustomStringConvertible
 
     public var description: String {
         do {
-            let data = try Self.jsonEncoder.encode(self)
-
-            return String(data: data, encoding: .utf8) ?? "<ERROR encoding: Could not convert to UTF-8>"
+            return try C2PAJson.encode(self)
         } catch {
             return "<ERROR encoding: \(error.localizedDescription)>"
         }
