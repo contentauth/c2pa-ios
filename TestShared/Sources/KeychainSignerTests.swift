@@ -68,7 +68,7 @@ public final class KeychainSignerTests: TestImplementation {
             _ = try Signer(
                 algorithm: .ed25519,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: "org.contentauth.test.ed25519"
             )
 
@@ -110,7 +110,7 @@ public final class KeychainSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es256,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: nonExistentTag
             )
             testSteps.append("Signer created (key lookup is deferred)")
@@ -178,7 +178,7 @@ public final class KeychainSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es256,
                 certificateChainPEM: certChain,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: keyTag
             )
             testSteps.append("Created ES256 keychain signer")
@@ -213,7 +213,7 @@ public final class KeychainSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es384,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: "org.contentauth.test.es384.mismatch"
             )
             testSteps.append("Signer created (deferred key validation)")
@@ -250,7 +250,7 @@ public final class KeychainSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es512,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: "org.contentauth.test.es512.mismatch"
             )
             _ = try signer.reserveSize()
@@ -283,7 +283,7 @@ public final class KeychainSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .ps256,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: "org.contentauth.test.ps256.mismatch"
             )
             _ = try signer.reserveSize()
@@ -314,7 +314,7 @@ public final class KeychainSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .ps384,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: "org.contentauth.test.ps384.mismatch"
             )
             _ = try signer.reserveSize()
@@ -345,7 +345,7 @@ public final class KeychainSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .ps512,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: "org.contentauth.test.ps512.mismatch"
             )
             _ = try signer.reserveSize()
@@ -411,7 +411,7 @@ public final class KeychainSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es256,
                 certificateChainPEM: certChain,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: keyTag
             )
             testSteps.append("Created keychain signer")

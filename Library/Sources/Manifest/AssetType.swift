@@ -20,7 +20,6 @@ public struct AssetType: Codable, Equatable {
 
     public var version: String?
 
-
     public init(type: String, version: String? = nil) {
         self.type = type
         self.version = version

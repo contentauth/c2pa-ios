@@ -23,18 +23,18 @@ public final class WebServiceSignerTests: TestImplementation {
         var testSteps: [String] = []
 
         let signer1 = WebServiceSigner(
-            configurationURL: "https://example.com/config"
+            configurationEndpoint: URL(string: "https://example.com/config")!
         )
         testSteps.append("Created WebServiceSigner with minimal parameters")
 
         let signer2 = WebServiceSigner(
-            configurationURL: "https://example.com/config",
+            configurationEndpoint: URL(string: "https://example.com/config")!,
             bearerToken: "test-token"
         )
         testSteps.append("Created WebServiceSigner with bearer token")
 
         let signer3 = WebServiceSigner(
-            configurationURL: "https://example.com/config",
+            configurationEndpoint: URL(string: "https://example.com/config")!,
             bearerToken: "test-token",
             headers: ["X-Custom-Header": "test-value", "X-Another": "value2"]
         )
@@ -61,7 +61,7 @@ public final class WebServiceSignerTests: TestImplementation {
 
         // Test with clearly invalid URL
         let signer = WebServiceSigner(
-            configurationURL: "not-a-valid-url"
+            configurationEndpoint: URL(string: "not-a-valid-url")!
         )
 
         do {
@@ -97,7 +97,7 @@ public final class WebServiceSignerTests: TestImplementation {
 
         // Test with a URL that won't respond
         let signer = WebServiceSigner(
-            configurationURL: "http://localhost:59999/nonexistent"
+            configurationEndpoint: URL(string: "http://localhost:59999/nonexistent")!
         )
 
         do {
@@ -123,7 +123,7 @@ public final class WebServiceSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es256,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: nil,
+                tsa: nil,
                 asyncSigner: { data in
                     // Track that closure was invoked and capture input
                     asyncClosureInvoked = true
@@ -201,7 +201,7 @@ public final class WebServiceSignerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es256,
                 certificateChainPEM: TestUtilities.testCertsPEM,
-                tsaURL: "http://timestamp.digicert.com",
+                tsa: URL(string: "http://timestamp.digicert.com"),
                 asyncSigner: { _ in
                     return Data(repeating: 0x30, count: 72)
                 }
@@ -255,7 +255,7 @@ public final class WebServiceSignerTests: TestImplementation {
         let configurationURL = ProcessInfo.processInfo.environment["SIGNING_SERVER_URL"] ?? "http://127.0.0.1:8080"
         let bearerToken = ProcessInfo.processInfo.environment["SIGNING_SERVER_TOKEN"] ?? "test-bearer-token-12345"
         let signer = WebServiceSigner(
-            configurationURL: "\(configurationURL)/api/v1/c2pa/configuration",
+            configurationEndpoint: URL(string: "\(configurationURL)/api/v1/c2pa/configuration")!,
             bearerToken: bearerToken
         )
 

@@ -452,7 +452,7 @@ final class C2PAManager: ObservableObject {
             certsPEM: certPEM,
             privateKeyPEM: keyPEM,
             algorithm: .es256,
-            tsaURL: Constants.Signing.defaultTSAURL
+            tsa: Constants.Signing.defaultTSA
         )
     }
 
@@ -470,7 +470,7 @@ final class C2PAManager: ObservableObject {
         return try Signer(
             algorithm: .es256,
             certificateChainPEM: certChainPEM,
-            tsaURL: Constants.Signing.defaultTSAURL,
+            tsa: Constants.Signing.defaultTSA,
             keychainKeyTag: keyTag
         )
     }
@@ -598,7 +598,7 @@ final class C2PAManager: ObservableObject {
         return try Signer(
             algorithm: .es256,
             certificateChainPEM: certChainPEM,
-            tsaURL: Constants.Signing.defaultTSAURL,
+            tsa: Constants.Signing.defaultTSA,
             secureEnclaveConfig: config
         )
     }
@@ -699,7 +699,7 @@ final class C2PAManager: ObservableObject {
         return try Signer(
             algorithm: .es256,
             certificateChainPEM: certChainPEM,
-            tsaURL: Constants.Signing.defaultTSAURL,
+            tsa: Constants.Signing.defaultTSA,
             keychainKeyTag: keyTag
         )
     }
@@ -1021,16 +1021,20 @@ final class C2PAManager: ObservableObject {
         }
 
         // Construct the full configuration URL if not already a full path
-        let configurationURL: String
+        let configurationURLString: String
         if remoteURL.contains("/api/v1/c2pa/configuration") {
-            configurationURL = remoteURL
+            configurationURLString = remoteURL
         } else {
-            configurationURL = "\(remoteURL.trimmingCharacters(in: .init(charactersIn: "/")))/api/v1/c2pa/configuration"
+            configurationURLString = "\(remoteURL.trimmingCharacters(in: .init(charactersIn: "/")))/api/v1/c2pa/configuration"
+        }
+
+        guard let configurationEndpoint = URL(string: configurationURLString) else {
+            throw C2PAManagerError.remoteSigningNotConfigured
         }
 
         os_log(
             "Creating remote service signer with configuration URL: %{public}@", log: Logger.signing, type: .info,
-            configurationURL)
+            configurationURLString)
 
         let customHeaders = [
             "X-Client-Version": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0",
@@ -1038,7 +1042,7 @@ final class C2PAManager: ObservableObject {
         ]
 
         let webServiceSigner = WebServiceSigner(
-            configurationURL: configurationURL,
+            configurationEndpoint: configurationEndpoint,
             bearerToken: bearerToken,
             headers: customHeaders
         )
@@ -1299,6 +1303,6 @@ enum C2PAManagerError: LocalizedError {
 
 extension Constants {
     enum Signing {
-        static let defaultTSAURL = "http://timestamp.digicert.com"
+        static let defaultTSA = URL(string: "http://timestamp.digicert.com")
     }
 }

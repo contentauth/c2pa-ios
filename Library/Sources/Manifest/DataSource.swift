@@ -26,7 +26,6 @@ public struct DataSource: Codable, Equatable {
     /// A value from among the enumerated list indicating the source of the assertion.
     public var type: String
 
-
     /// - Parameters:
     ///   - actors: A list of actors associated with this source.
     ///   - details: A human-readable string giving details about the source of the assertion data.

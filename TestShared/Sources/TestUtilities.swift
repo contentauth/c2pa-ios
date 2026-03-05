@@ -85,7 +85,7 @@ public enum TestUtilities {
             certsPEM: testCertsPEM,
             privateKeyPEM: testPrivateKeyPEM,
             algorithm: .es256,
-            tsaURL: nil
+            tsa: nil
         )
     }
 
@@ -95,7 +95,7 @@ public enum TestUtilities {
             certsPEM: invalidCertsPEM,
             privateKeyPEM: invalidPrivateKeyPEM,
             algorithm: .es256,
-            tsaURL: nil
+            tsa: nil
         )
     }
 
