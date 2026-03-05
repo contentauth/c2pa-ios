@@ -318,6 +318,21 @@ public final class BuilderTests: TestImplementation {
             let builder = try Builder(manifestJSON: manifestJSON)
             try builder.setIntent(.edit)
 
+            // v0.75.7+ requires a ParentOf ingredient for Edit intent (PR #1762)
+            guard let ingredientData = TestUtilities.loadPexelsTestImage() else {
+                return .failure("Builder Set Intent Edit", "Could not load test image for ingredient")
+            }
+            let ingredientFile = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "edit_ingredient_\(UUID().uuidString).jpg")
+            try ingredientData.write(to: ingredientFile)
+            defer { try? FileManager.default.removeItem(at: ingredientFile) }
+
+            let ingredientStream = try Stream(readFrom: ingredientFile)
+            let ingredientJSON = """
+                {"title": "Parent Asset", "format": "image/jpeg", "relationship": "parentOf"}
+                """
+            try builder.addIngredient(json: ingredientJSON, format: "image/jpeg", from: ingredientStream)
+
             let archiveFile = FileManager.default.temporaryDirectory.appendingPathComponent(
                 "intent_edit_\(UUID().uuidString).c2pa")
             defer {
@@ -349,6 +364,21 @@ public final class BuilderTests: TestImplementation {
         do {
             let builder = try Builder(manifestJSON: manifestJSON)
             try builder.setIntent(.update)
+
+            // v0.75.7+ requires a ParentOf ingredient for Update intent (PR #1762)
+            guard let ingredientData = TestUtilities.loadPexelsTestImage() else {
+                return .failure("Builder Set Intent Update", "Could not load test image for ingredient")
+            }
+            let ingredientFile = FileManager.default.temporaryDirectory.appendingPathComponent(
+                "update_ingredient_\(UUID().uuidString).jpg")
+            try ingredientData.write(to: ingredientFile)
+            defer { try? FileManager.default.removeItem(at: ingredientFile) }
+
+            let ingredientStream = try Stream(readFrom: ingredientFile)
+            let ingredientJSON = """
+                {"title": "Parent Asset", "format": "image/jpeg", "relationship": "parentOf"}
+                """
+            try builder.addIngredient(json: ingredientJSON, format: "image/jpeg", from: ingredientStream)
 
             let archiveFile = FileManager.default.temporaryDirectory.appendingPathComponent(
                 "intent_update_\(UUID().uuidString).c2pa")
