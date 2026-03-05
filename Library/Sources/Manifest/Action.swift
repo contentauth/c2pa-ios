@@ -29,7 +29,6 @@ public struct Action: Codable, Equatable {
     /// Additional information describing the action.
     public var parameters: [String: String]?
 
-
     /// - Parameters:
     ///   - action: The action name. Most probably a ``PredefinedAction``.
     ///   - digitalSourceType: A URL identifying an IPTC term. Most probably a ``DigitalSourceType``.

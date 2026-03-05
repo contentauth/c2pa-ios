@@ -159,8 +159,8 @@ validate-version:
 		echo "::error::VERSION environment variable is required"; \
 		exit 1; \
 	fi
-	@if ! echo "$(VERSION)" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$$' > /dev/null; then \
-		echo "::error::Version must be in format vX.Y.Z (e.g., v1.0.0)"; \
+	@if ! echo "$(VERSION)" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[0-9]+)?)?$$' > /dev/null; then \
+		echo "::error::Version must be in format vX.Y.Z or vX.Y.Z-pre.N (e.g., v1.0.0 or v0.9.0-beta.7)"; \
 		exit 1; \
 	fi
 	@echo "Version $(VERSION) is valid."
@@ -217,7 +217,7 @@ update-package-swift:
 		exit 1; \
 	fi
 	@if [ -f "Package.swift" ]; then \
-		sed -i '' 's#https://github.com/[^/]*/[^/]*/releases/download/v[0-9.]*/C2PAC.xcframework.zip#https://github.com/$(GITHUB_REPOSITORY)/releases/download/$(VERSION)/C2PAC.xcframework.zip#g' Package.swift; \
+		sed -i '' 's#https://github.com/[^/]*/[^/]*/releases/download/v[^/]*/C2PAC.xcframework.zip#https://github.com/$(GITHUB_REPOSITORY)/releases/download/$(VERSION)/C2PAC.xcframework.zip#g' Package.swift; \
 		sed -i '' 's#checksum: "[a-f0-9]\{64\}"#checksum: "$(CHECKSUM)"#g' Package.swift; \
 		echo "Package.swift updated successfully for release $(VERSION)"; \
 	else \
@@ -401,7 +401,7 @@ help:
 	@echo "  make run-test-app - Build and run the test app in simulator"
 	@echo "  make run-example-app - Build and run the example app in simulator"
 	@echo "  make publish      - Prepare library for publishing"
-	@echo "  make validate-version - Validate version format (VERSION=vX.Y.Z)"
+	@echo "  make validate-version - Validate version format (VERSION=vX.Y.Z or vX.Y.Z-pre.N)"
 	@echo "  make package-xcframework - Package XCFramework for distribution"
 	@echo "  make compute-checksum - Compute checksum for XCFramework"
 	@echo "  make package-swift - Package Swift sources"

@@ -314,7 +314,7 @@ public final class ConvenienceTests: TestImplementation {
                 algorithm: .es256,
                 certificatePEM: TestUtilities.testCertsPEM,
                 privateKeyPEM: TestUtilities.testPrivateKeyPEM,
-                tsaURL: nil
+                tsa: nil
             )
             testSteps.append("Created SignerInfo")
 
@@ -382,7 +382,7 @@ public final class ConvenienceTests: TestImplementation {
                 algorithm: .es256,
                 certificatePEM: TestUtilities.testCertsPEM,
                 privateKeyPEM: TestUtilities.testPrivateKeyPEM,
-                tsaURL: nil
+                tsa: nil
             )
 
             let manifestJSON = TestUtilities.createTestManifestJSON(claimGenerator: "signFile_datadir_test/1.0")
@@ -444,7 +444,7 @@ public final class ConvenienceTests: TestImplementation {
             algorithm: .es256,
             certificatePEM: TestUtilities.testCertsPEM,
             privateKeyPEM: TestUtilities.testPrivateKeyPEM,
-            tsaURL: nil
+            tsa: nil
         )
         testSteps.append("Created SignerInfo")
 

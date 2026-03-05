@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version for the release (e.g. v1.0.0)"
+        description: "Version for the release (e.g. v1.0.0 or v0.9.0-beta.7)"
         required: true
         type: string
 
@@ -19,9 +19,22 @@ jobs:
       - name: Validate version format
         run: make validate-version VERSION="${{ github.event.inputs.version }}"
 
+      - name: Detect pre-release
+        id: prerelease
+        run: |
+          if echo "${{ github.event.inputs.version }}" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+-.+'; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "Detected pre-release version"
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            echo "Detected stable release version"
+          fi
+
       - name: Display release information
         run: |
           echo "Starting release process for version ${{ github.event.inputs.version }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Pre-release: ${{ steps.prerelease.outputs.is_prerelease }}"
           echo "This workflow will:"
           echo "1. Build iOS XCFramework"
           echo "2. Create and publish Swift Package"
@@ -65,7 +78,7 @@ jobs:
           git commit -m "Update Package.swift for release ${{ github.event.inputs.version }}"
 
       - name: Push changes
-        run: git push origin HEAD:main
+        run: git push origin HEAD:${{ github.ref_name }}
 
       - name: Create tag
         run: |
@@ -77,6 +90,7 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.version }}
           name: C2PA iOS ${{ github.event.inputs.version }}
+          prerelease: ${{ steps.prerelease.outputs.is_prerelease == 'true' }}
           files: |
             output/C2PAC.xcframework.zip
             output/C2PA-Swift-Package.zip

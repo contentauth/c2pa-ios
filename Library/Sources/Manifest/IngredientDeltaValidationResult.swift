@@ -28,7 +28,6 @@ public struct IngredientDeltaValidationResult: Codable, Equatable {
     /// Validation results for the ingredient’s active manifest.
     public var validationDeltas: StatusCodes
 
-
     /// - Parameters:
     ///   - ingredientAssertionUri: JUMBF URI reference to the ingredient assertion.
     ///   - validationDeltas: Validation results for the ingredient’s active manifest.

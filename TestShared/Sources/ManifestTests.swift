@@ -9,8 +9,8 @@ public final class ManifestTests: TestImplementation {
     public func testMinimal() -> TestResult {
         let manifest = ManifestDefinition(claimGeneratorInfo: [], title: "test")
 
-        if manifest.claimVersion != 1 {
-            return .failure("Manifest", "claimVersion != 1, got \(manifest.claimVersion)")
+        if manifest.claimVersion != 2 {
+            return .failure("Manifest", "claimVersion != 2, got \(manifest.claimVersion)")
         }
 
         if manifest.format != "application/octet-stream" {
