@@ -1,10 +1,10 @@
-// This file is licensed to you under the Apache License, Version 2.0 
-// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
+// This file is licensed to you under the Apache License, Version 2.0
+// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license
 // (http://opensource.org/licenses/MIT), at your option.
 //
-// Unless required by applicable law or agreed to in writing, this software is 
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF 
-// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
+// Unless required by applicable law or agreed to in writing, this software is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF
+// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE
 // files for the specific language governing permissions and limitations under
 // each license.
 //
@@ -45,16 +45,16 @@ func guardNonNegative(_ v: Int64) throws -> Int64 {
 // Borrow 4 strings for one call (alg, cert, key, tsa)
 @inline(__always)
 func withSignerInfo<R>(
-    alg: String, cert: String, key: String, tsa: String?,
+    algorithm: String, cert: String, key: String, tsa: URL?,
     _ body: (
         UnsafePointer<CChar>, UnsafePointer<CChar>,
         UnsafePointer<CChar>, UnsafePointer<CChar>?
     ) throws -> R
 ) rethrows -> R {
-    try alg.withCString { algPtr in
+    try algorithm.withCString { algPtr in
         try cert.withCString { certPtr in
             try key.withCString { keyPtr in
-                if let tsa {
+                if let tsa = tsa?.absoluteString {
                     return try tsa.withCString { tsaPtr in
                         try body(algPtr, certPtr, keyPtr, tsaPtr)
                     }
@@ -66,7 +66,7 @@ func withSignerInfo<R>(
     }
 }
 
-// Borrow optional `String` → `char*` (NULL if nil)
+// Borrow optional `String` -> `char*` (NULL if nil)
 @inline(__always)
 func withOptionalCString<R>(
     _ s: String?, _ body: (UnsafePointer<CChar>?) throws -> R
@@ -83,10 +83,3 @@ func withOptionalCString<R>(
 func asStreamCtx(_ p: UnsafeMutableRawPointer) -> UnsafeMutablePointer<StreamContext> {
     UnsafeMutablePointer<StreamContext>(OpaquePointer(p))
 }
-
-// C2PA version fetched once
-public let c2paVersion: String = {
-    let p = c2pa_version()!
-    defer { c2pa_string_free(p) }
-    return String(cString: p)
-}()

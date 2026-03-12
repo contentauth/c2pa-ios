@@ -1,10 +1,10 @@
-// This file is licensed to you under the Apache License, Version 2.0 
-// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
+// This file is licensed to you under the Apache License, Version 2.0
+// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license
 // (http://opensource.org/licenses/MIT), at your option.
 //
-// Unless required by applicable law or agreed to in writing, this software is 
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF 
-// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
+// Unless required by applicable law or agreed to in writing, this software is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF
+// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE
 // files for the specific language governing permissions and limitations under
 // each license.
 //
@@ -28,6 +28,13 @@ import Foundation
 /// ### Signing Files
 /// - ``signFile(source:destination:manifestJSON:signerInfo:dataDir:)``
 public enum C2PA {
+
+    public static var version: String {
+        let p = c2pa_version()!
+        defer { c2pa_string_free(p) }
+        return String(cString: p)
+    }
+
     /// Reads the C2PA manifest from a file and returns it as JSON.
     ///
     /// This method extracts and validates the C2PA manifest embedded in a media file,
@@ -98,7 +105,7 @@ public enum C2PA {
             // TODO: This special case handling may be removable if the underlying C API
             // is updated to handle NULL data_dir consistently with c2pa_read_file
             if errorMsg.contains("null parameter data_dir") || errorMsg.contains("data_dir") {
-                throw C2PAError.api("No ingredient data found")
+                throw C2PAError.ingridientDataNotFound(errorMsg)
             }
             throw C2PAError.api(errorMsg)
         }
@@ -127,7 +134,7 @@ public enum C2PA {
     ///     certificatePEM: certPEM,
     ///     privateKeyPEM: keyPEM,
     ///     algorithm: .es256,
-    ///     tsaURL: "http://timestamp.digicert.com"
+    ///     tsa: URL(string: "http://timestamp.digicert.com")
     /// )
     ///
     /// try C2PA.signFile(
@@ -151,10 +158,10 @@ public enum C2PA {
     ) throws {
         var maybeErr: UnsafeMutablePointer<CChar>?
         withSignerInfo(
-            alg: signerInfo.algorithm.description,
+            algorithm: signerInfo.algorithm.rawValue,
             cert: signerInfo.certificatePEM,
             key: signerInfo.privateKeyPEM,
-            tsa: signerInfo.tsaURL
+            tsa: signerInfo.tsa
         ) { algPtr, certPtr, keyPtr, tsaPtr in
             var sInfo = C2paSignerInfo(
                 alg: algPtr,
@@ -172,38 +179,6 @@ public enum C2PA {
         if let e = maybeErr {
             let msg = try stringFromC(e)
             throw C2PAError.api(msg)
-        }
-    }
-}
-
-/// Errors that can occur during C2PA operations.
-///
-/// `C2PAError` represents various error conditions that may arise when working
-/// with the C2PA library, from low-level C API errors to data validation failures.
-public enum C2PAError: Error, CustomStringConvertible {
-    /// An error reported by the underlying C2PA library.
-    ///
-    /// - Parameter message: The error message from the Rust/C layer.
-    case api(String)
-
-    /// An unexpected NULL pointer was encountered in the C API.
-    case nilPointer
-
-    /// Invalid UTF-8 data was returned from the C2PA library.
-    case utf8
-
-    /// A negative status code was returned from the C API.
-    ///
-    /// - Parameter value: The negative status value.
-    case negative(Int64)
-
-    /// A human-readable description of the error.
-    public var description: String {
-        switch self {
-        case .api(let m): return "C2PA-API error: \(m)"
-        case .nilPointer: return "Unexpected NULL pointer"
-        case .utf8: return "Invalid UTF-8 from C2PA"
-        case .negative(let v): return "C2PA negative status \(v)"
         }
     }
 }

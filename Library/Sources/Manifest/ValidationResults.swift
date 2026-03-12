@@ -21,7 +21,6 @@ public struct ValidationResults: Codable, Equatable {
 
     public var ingredientDeltas: [IngredientDeltaValidationResult]?
 
-
     public init(activeManifest: StatusCodes? = nil, ingredientDeltas: [IngredientDeltaValidationResult]? = nil) {
         self.activeManifest = activeManifest
         self.ingredientDeltas = ingredientDeltas

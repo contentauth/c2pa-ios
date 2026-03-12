@@ -17,7 +17,7 @@ public final class ComprehensiveTests: TestImplementation {
     public init() {}
 
     public func testLibraryVersion() -> TestResult {
-        let version = c2paVersion
+        let version = C2PA.version
         if !version.isEmpty && version.contains(".") {
             return .success("Library Version", "[PASS] C2PA Version: \(version)")
         }
@@ -164,7 +164,7 @@ public final class ComprehensiveTests: TestImplementation {
 
         do {
             let builder = try Builder(manifestJSON: manifestJSON)
-            try builder.setRemoteURL("https://example.com/manifest")
+            try builder.setRemote(url: URL(string: "https://example.com/manifest")!)
             return .success("Builder Remote URL", "[PASS] Set remote URL on builder")
         } catch {
             return .failure("Builder Remote URL", "Failed: \(error)")
@@ -251,14 +251,49 @@ public final class ComprehensiveTests: TestImplementation {
     }
 
     public func testSigningAlgorithms() -> TestResult {
-        let algorithms: [SigningAlgorithm] = [.es256, .es384, .es512, .ps256, .ps384, .ps512, .ed25519]
-        var results: [String] = []
+        let algorithms = SigningAlgorithm.allCases
 
         for algorithm in algorithms {
-            if !algorithm.description.isEmpty {
-                results.append("\(algorithm.description)[PASS]")
-            } else {
-                results.append("\(algorithm)[FAIL]")
+            if algorithm.rawValue.isEmpty {
+                return .failure("Signing Algorithms", "[FAIL] \(algorithm).rawValue.isEmpty")
+            }
+
+            // Needed for Codecov
+            switch algorithm {
+            case .es256:
+                if algorithm.secKeyAlgo != .ecdsaSignatureMessageX962SHA256 {
+                    return .failure("Signing Algorithms", "[FAIL] \(algorithm).secKeyAlgo != .ecdsaSignatureMessageX962SHA256")
+                }
+
+            case .es384:
+                if algorithm.secKeyAlgo != .ecdsaSignatureMessageX962SHA384 {
+                    return .failure("Signing Algorithms", "[FAIL] \(algorithm).secKeyAlgo != .ecdsaSignatureMessageX962SHA384")
+                }
+
+            case .es512:
+                if algorithm.secKeyAlgo != .ecdsaSignatureMessageX962SHA512 {
+                    return .failure("Signing Algorithms", "[FAIL] \(algorithm).secKeyAlgo != .ecdsaSignatureMessageX962SHA512")
+                }
+
+            case .ps256:
+                if algorithm.secKeyAlgo != .rsaSignatureMessagePSSSHA256 {
+                    return .failure("Signing Algorithms", "[FAIL] \(algorithm).secKeyAlgo != .rsaSignatureMessagePSSSHA256")
+                }
+
+            case .ps384:
+                if algorithm.secKeyAlgo != .rsaSignatureMessagePSSSHA384 {
+                    return .failure("Signing Algorithms", "[FAIL] \(algorithm).secKeyAlgo != .rsaSignatureMessagePSSSHA384")
+                }
+
+            case .ps512:
+                if algorithm.secKeyAlgo != .rsaSignatureMessagePSSSHA512 {
+                    return .failure("Signing Algorithms", "[FAIL] \(algorithm).secKeyAlgo != .rsaSignatureMessagePSSSHA512")
+                }
+
+            default:
+                if algorithm.secKeyAlgo != nil {
+                    return .failure("Signing Algorithms", "[FAIL] \(algorithm).secKeyAlgo != nil")
+                }
             }
         }
 
@@ -267,22 +302,22 @@ public final class ComprehensiveTests: TestImplementation {
 
     public func testErrorEnumCases() -> TestResult {
         let apiError = C2PAError.api("Test error")
-        if apiError.description != "C2PA-API error: Test error" {
+        if apiError.localizedDescription != "C2PA API error: Test error" {
             return .failure("Error Enum Cases", "API error description mismatch")
         }
 
         let nilError = C2PAError.nilPointer
-        if nilError.description != "Unexpected NULL pointer" {
+        if nilError.localizedDescription != "Unexpected NULL pointer" {
             return .failure("Error Enum Cases", "Nil error description mismatch")
         }
 
         let utf8Error = C2PAError.utf8
-        if utf8Error.description != "Invalid UTF-8 from C2PA" {
+        if utf8Error.localizedDescription != "Invalid UTF-8 from C2PA" {
             return .failure("Error Enum Cases", "UTF8 error description mismatch")
         }
 
         let negativeError = C2PAError.negative(42)
-        if negativeError.description != "C2PA negative status 42" {
+        if negativeError.localizedDescription != "C2PA negative status 42" {
             return .failure("Error Enum Cases", "Negative error description mismatch")
         }
 
@@ -323,7 +358,7 @@ public final class ComprehensiveTests: TestImplementation {
                 certsPEM: TestUtilities.testCertsPEM,
                 privateKeyPEM: TestUtilities.testPrivateKeyPEM,
                 algorithm: .es256,
-                tsaURL: nil
+                tsa: nil
             )
 
             _ = try builder.sign(

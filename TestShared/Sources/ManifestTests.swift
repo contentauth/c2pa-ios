@@ -9,8 +9,8 @@ public final class ManifestTests: TestImplementation {
     public func testMinimal() -> TestResult {
         let manifest = ManifestDefinition(claimGeneratorInfo: [], title: "test")
 
-        if manifest.claimVersion != 1 {
-            return .failure("Manifest", "claimVersion != 1, got \(manifest.claimVersion)")
+        if manifest.claimVersion != 2 {
+            return .failure("Manifest", "claimVersion != 2, got \(manifest.claimVersion)")
         }
 
         if manifest.format != "application/octet-stream" {
@@ -273,6 +273,415 @@ public final class ManifestTests: TestImplementation {
         return .success("Mass Init", testSteps.joined(separator: "\n"))
     }
 
+    public func testNewPredefinedActions() -> TestResult {
+        let cases: [(PredefinedAction, String)] = [
+            (.mastered, "c2pa.mastered"),
+            (.mixed, "c2pa.mixed"),
+            (.remixed, "c2pa.remixed"),
+            (.resizedProportional, "c2pa.resized.proportional"),
+            (.watermarkedBound, "c2pa.watermarked.bound"),
+            (.watermarkedUnbound, "c2pa.watermarked.unbound"),
+            (.fontCharactersAdded, "font.charactersAdded"),
+            (.fontCharactersDeleted, "font.charactersDeleted"),
+            (.fontCharactersModified, "font.charactersModified"),
+            (.fontCreatedFromVariableFont, "font.createdFromVariableFont"),
+            (.fontEdited, "font.edited"),
+            (.fontHinted, "font.hinted"),
+            (.fontMerged, "font.merged"),
+            (.fontOpenTypeFeatureAdded, "font.openTypeFeatureAdded"),
+            (.fontOpenTypeFeatureModified, "font.openTypeFeatureModified"),
+            (.fontOpenTypeFeatureRemoved, "font.openTypeFeatureRemoved"),
+            (.fontSubset, "font.subset")
+        ]
+        for (action, expected) in cases {
+            guard action.rawValue == expected else {
+                return .failure("PredefinedAction", "\(action) rawValue '\(action.rawValue)' != '\(expected)'")
+            }
+        }
+        return .success("PredefinedAction", "[PASS] All 17 new action cases verified")
+    }
+
+    public func testActionV2SoftwareAgent() -> TestResult {
+        // Test v1 string softwareAgent
+        let v1Action = Action(action: "c2pa.created", softwareAgent: "MyApp/1.0")
+        guard v1Action.softwareAgentString == "MyApp/1.0" else {
+            return .failure("Action v2", "softwareAgentString should be 'MyApp/1.0', got '\(v1Action.softwareAgentString ?? "nil")'")
+        }
+        guard v1Action.softwareAgentInfo == nil else {
+            return .failure("Action v2", "softwareAgentInfo should be nil for v1 string agent")
+        }
+
+        // Test v2 ClaimGeneratorInfo softwareAgent
+        let generatorInfo = ClaimGeneratorInfo(name: "TestApp", version: "2.0")
+        let v2Action = Action(
+            action: .created,
+            softwareAgentInfo: generatorInfo
+        )
+        guard v2Action.softwareAgentString == nil else {
+            return .failure("Action v2", "softwareAgentString should be nil for v2 object agent")
+        }
+        guard let decoded = v2Action.softwareAgentInfo else {
+            return .failure("Action v2", "softwareAgentInfo should decode to ClaimGeneratorInfo")
+        }
+        guard decoded.name == "TestApp" else {
+            return .failure("Action v2", "softwareAgentInfo.name should be 'TestApp', got '\(decoded.name)'")
+        }
+
+        return .success("Action v2", "[PASS] v1 string and v2 object softwareAgent verified")
+    }
+
+    public func testActionNewFields() -> TestResult {
+        let action = Action(
+            action: "c2pa.created",
+            digitalSourceType: "http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture",
+            softwareAgent: "TestApp",
+            when: "2026-03-12T10:00:00Z",
+            reason: "Initial capture"
+        )
+
+        guard action.when == "2026-03-12T10:00:00Z" else {
+            return .failure("Action Fields", "when mismatch")
+        }
+        guard action.reason == "Initial capture" else {
+            return .failure("Action Fields", "reason mismatch")
+        }
+        guard action.changes == nil else {
+            return .failure("Action Fields", "changes should be nil by default")
+        }
+        guard action.related == nil else {
+            return .failure("Action Fields", "related should be nil by default")
+        }
+
+        // Test round-trip encoding/decoding
+        do {
+            let data = try JSONEncoder().encode(action)
+            let decoded = try JSONDecoder().decode(Action.self, from: data)
+            guard action == decoded else {
+                return .failure("Action Fields", "Round-trip encoding/decoding mismatch")
+            }
+        } catch {
+            return .failure("Action Fields", "Encoding error: \(error)")
+        }
+
+        return .success("Action Fields", "[PASS] Action new fields and round-trip verified")
+    }
+
+    public func testValidateAndLog() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo()],
+            title: "test"
+        )
+        let result = ManifestValidator.validateAndLog(manifest)
+        guard result.isValid else {
+            return .failure("ValidateAndLog", "Valid manifest reported as invalid: \(result.errors)")
+        }
+        return .success("ValidateAndLog", "[PASS] validateAndLog works for valid manifest")
+    }
+
+    public func testCustomAssertionLabelValidation() -> TestResult {
+        let manifest = ManifestDefinition(
+            assertions: [.custom(label: "nolabel", data: AnyCodable("test"))],
+            claimGeneratorInfo: [ClaimGeneratorInfo()],
+            title: "test"
+        )
+        let result = ManifestValidator.validate(manifest)
+        guard result.warnings.contains(where: { $0.contains("namespaced format") }) else {
+            return .failure("Custom Label", "Expected warning about namespaced format, got: \(result.warnings)")
+        }
+
+        // Verify properly namespaced label does not trigger warning
+        let manifest2 = ManifestDefinition(
+            assertions: [.custom(label: "com.example.test", data: AnyCodable("test"))],
+            claimGeneratorInfo: [ClaimGeneratorInfo()],
+            title: "test"
+        )
+        let result2 = ManifestValidator.validate(manifest2)
+        guard !result2.warnings.contains(where: { $0.contains("namespaced format") }) else {
+            return .failure("Custom Label", "Should not warn for properly namespaced label")
+        }
+
+        return .success("Custom Label", "[PASS] Custom assertion label validation verified")
+    }
+
+    // MARK: - ManifestDefinition Factory Methods
+
+    public func testCreatedFactory() -> TestResult {
+        let manifest = ManifestDefinition.created(
+            title: "photo.jpg",
+            claimGeneratorInfo: ClaimGeneratorInfo(name: "TestApp"),
+            digitalSourceType: .digitalCapture
+        )
+        guard !manifest.assertions.isEmpty else {
+            return .failure("Created Factory", "Should have assertions")
+        }
+        if case .actions(let actions) = manifest.assertions.first {
+            guard actions.first?.action == PredefinedAction.created.rawValue else {
+                return .failure("Created Factory", "First action should be c2pa.created")
+            }
+        } else {
+            return .failure("Created Factory", "First assertion should be .actions")
+        }
+        return .success("Created Factory", "[PASS] ManifestDefinition.created() works")
+    }
+
+    public func testEditedFactory() -> TestResult {
+        let parent = Ingredient.parent(title: "original.jpg")
+        let manifest = ManifestDefinition.edited(
+            title: "edited.jpg",
+            claimGeneratorInfo: ClaimGeneratorInfo(name: "TestApp"),
+            parentIngredient: parent,
+            editActions: [Action(action: PredefinedAction.cropped.rawValue)]
+        )
+        guard manifest.ingredients.count == 1 else {
+            return .failure("Edited Factory", "Should have 1 ingredient")
+        }
+        guard manifest.ingredients.first?.relationship == .parentOf else {
+            return .failure("Edited Factory", "Ingredient should be parentOf")
+        }
+        return .success("Edited Factory", "[PASS] ManifestDefinition.edited() works")
+    }
+
+    public func testWithAssertionsFactory() -> TestResult {
+        let manifest = ManifestDefinition.withAssertions(
+            title: "test.jpg",
+            claimGeneratorInfo: ClaimGeneratorInfo(name: "TestApp"),
+            createdAssertions: [.metadata],
+            gatheredAssertions: [.cawgIdentity(data: ["test": AnyCodable("value")])]
+        )
+        guard manifest.assertions.count == 1 else {
+            return .failure("WithAssertions", "Should have 1 created assertion")
+        }
+        guard manifest.gatheredAssertions.count == 1 else {
+            return .failure("WithAssertions", "Should have 1 gathered assertion")
+        }
+        return .success("WithAssertions", "[PASS] ManifestDefinition.withAssertions() works")
+    }
+
+    public func testWithCawgIdentityFactory() -> TestResult {
+        let cawg = AssertionDefinition.cawgIdentity(data: ["sig_type": AnyCodable("cawg.x509")])
+        let manifest = ManifestDefinition.withCawgIdentity(
+            title: "test.jpg",
+            claimGeneratorInfo: ClaimGeneratorInfo(name: "TestApp"),
+            createdAssertions: [.metadata],
+            cawgIdentityAssertion: cawg
+        )
+        guard manifest.gatheredAssertions.first?.baseLabel == "cawg.identity" else {
+            return .failure("WithCawgIdentity", "CAWG identity should be in gatheredAssertions")
+        }
+        return .success("WithCawgIdentity", "[PASS] ManifestDefinition.withCawgIdentity() works")
+    }
+
+    // MARK: - ManifestDefinition Convenience Methods
+
+    public func testCreatedAssertionLabels() -> TestResult {
+        let manifest = ManifestDefinition.withAssertions(
+            title: "test.jpg",
+            claimGeneratorInfo: ClaimGeneratorInfo(name: "TestApp"),
+            createdAssertions: [.metadata, .metadata, .dataHash]
+        )
+        let labels = manifest.createdAssertionLabels()
+        guard labels.contains("c2pa.metadata") else {
+            return .failure("AssertionLabels", "Should contain c2pa.metadata")
+        }
+        guard labels.contains("c2pa.hash.data") else {
+            return .failure("AssertionLabels", "Should contain c2pa.hash.data")
+        }
+        return .success("AssertionLabels", "[PASS] createdAssertionLabels() works")
+    }
+
+    public func testToJSON() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            title: "json.jpg"
+        )
+        do {
+            let json = try manifest.toJSON()
+            guard json.contains("json.jpg") else {
+                return .failure("toJSON", "JSON should contain title")
+            }
+            return .success("toJSON", "[PASS] toJSON() works")
+        } catch {
+            return .failure("toJSON", "Error: \(error)")
+        }
+    }
+
+    public func testToPrettyJSON() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            title: "pretty.jpg"
+        )
+        do {
+            let json = try manifest.toPrettyJSON()
+            guard json.contains("\n") else {
+                return .failure("toPrettyJSON", "Pretty JSON should contain newlines")
+            }
+            return .success("toPrettyJSON", "[PASS] toPrettyJSON() works")
+        } catch {
+            return .failure("toPrettyJSON", "Error: \(error)")
+        }
+    }
+
+    public func testFromJSON() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            title: "fromjson.jpg"
+        )
+        do {
+            let json = try manifest.toJSON()
+            let decoded = try ManifestDefinition.fromJSON(json)
+            guard decoded.title == "fromjson.jpg" else {
+                return .failure("fromJSON", "Title mismatch")
+            }
+            return .success("fromJSON", "[PASS] fromJSON() round-trip works")
+        } catch {
+            return .failure("fromJSON", "Error: \(error)")
+        }
+    }
+
+    public func testDescription() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            title: "desc.jpg"
+        )
+        let desc = manifest.description
+        guard desc.contains("desc.jpg") else {
+            return .failure("Description", "description should contain title")
+        }
+        return .success("Description", "[PASS] CustomStringConvertible works")
+    }
+
+    // MARK: - Ingredient Factory Methods
+
+    public func testIngredientParentFactory() -> TestResult {
+        let ingredient = Ingredient.parent(title: "parent.jpg", format: "image/jpeg")
+        guard ingredient.relationship == .parentOf else {
+            return .failure("Ingredient.parent", "Should have parentOf relationship")
+        }
+        guard ingredient.title == "parent.jpg" else {
+            return .failure("Ingredient.parent", "Title mismatch")
+        }
+        return .success("Ingredient.parent", "[PASS] Ingredient.parent() works")
+    }
+
+    public func testIngredientComponentFactory() -> TestResult {
+        let ingredient = Ingredient.component(title: "watermark.png")
+        guard ingredient.relationship == .componentOf else {
+            return .failure("Ingredient.component", "Should have componentOf relationship")
+        }
+        return .success("Ingredient.component", "[PASS] Ingredient.component() works")
+    }
+
+    public func testIngredientInputToFactory() -> TestResult {
+        let ingredient = Ingredient.inputTo(title: "training.jpg")
+        guard ingredient.relationship == .inputTo else {
+            return .failure("Ingredient.inputTo", "Should have inputTo relationship")
+        }
+        return .success("Ingredient.inputTo", "[PASS] Ingredient.inputTo() works")
+    }
+
+    // MARK: - ManifestValidator Coverage
+
+    public func testValidatorEmptyTitle() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            title: ""
+        )
+        let result = ManifestValidator.validate(manifest)
+        guard result.errors.contains(where: { $0.contains("title") }) else {
+            return .failure("Empty Title", "Expected title error, got: \(result.errors)")
+        }
+        return .success("Empty Title", "[PASS] Empty title produces error")
+    }
+
+    public func testValidatorEmptyClaimGeneratorInfo() -> TestResult {
+        let manifest = ManifestDefinition(claimGeneratorInfo: [], title: "test")
+        let result = ManifestValidator.validate(manifest)
+        guard result.errors.contains(where: { $0.contains("claim_generator_info") }) else {
+            return .failure("Empty CGI", "Expected CGI error, got: \(result.errors)")
+        }
+        return .success("Empty CGI", "[PASS] Empty claimGeneratorInfo produces error")
+    }
+
+    public func testValidatorOldClaimVersion() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            claimVersion: 1,
+            title: "test"
+        )
+        let result = ManifestValidator.validate(manifest)
+        guard result.warnings.contains(where: { $0.contains("outdated") }) else {
+            return .failure("Old Version", "Expected version warning, got: \(result.warnings)")
+        }
+        return .success("Old Version", "[PASS] Old claim version produces warning")
+    }
+
+    public func testValidatorDeprecatedAssertionLabels() -> TestResult {
+        let manifest = ManifestDefinition(
+            assertions: [.custom(label: "stds.exif", data: AnyCodable("test"))],
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            title: "test"
+        )
+        let result = ManifestValidator.validate(manifest)
+        guard result.warnings.contains(where: { $0.contains("Deprecated") && $0.contains("stds.exif") }) else {
+            return .failure("Deprecated Labels", "Expected deprecated warning, got: \(result.warnings)")
+        }
+        return .success("Deprecated Labels", "[PASS] Deprecated labels produce warnings")
+    }
+
+    public func testValidatorCawgInCreatedAssertions() -> TestResult {
+        let manifest = ManifestDefinition(
+            assertions: [.cawgIdentity(data: ["test": AnyCodable("value")])],
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            title: "test"
+        )
+        let result = ManifestValidator.validate(manifest)
+        guard result.warnings.contains(where: { $0.contains("CAWG") || $0.contains("gatheredAssertions") }) else {
+            return .failure("CAWG in Created", "Expected CAWG placement warning, got: \(result.warnings)")
+        }
+        return .success("CAWG in Created", "[PASS] CAWG in created assertions produces warning")
+    }
+
+    public func testValidatorMultipleParents() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            ingredients: [
+                .parent(title: "parent1.jpg"),
+                .parent(title: "parent2.jpg")
+            ],
+            title: "test"
+        )
+        let result = ManifestValidator.validate(manifest)
+        guard result.warnings.contains(where: { $0.contains("Multiple parent") }) else {
+            return .failure("Multiple Parents", "Expected multiple parent warning, got: \(result.warnings)")
+        }
+        return .success("Multiple Parents", "[PASS] Multiple parent ingredients produce warning")
+    }
+
+    public func testValidateJSON() -> TestResult {
+        let manifest = ManifestDefinition(
+            claimGeneratorInfo: [ClaimGeneratorInfo(name: "test")],
+            title: "test"
+        )
+        do {
+            let json = try manifest.toJSON()
+            let result = ManifestValidator.validateJSON(json)
+            guard result.isValid else {
+                return .failure("ValidateJSON", "Valid JSON should validate, got errors: \(result.errors)")
+            }
+            return .success("ValidateJSON", "[PASS] validateJSON() works")
+        } catch {
+            return .failure("ValidateJSON", "Error: \(error)")
+        }
+    }
+
+    public func testValidateJSONInvalid() -> TestResult {
+        let result = ManifestValidator.validateJSON("not valid json {{{")
+        guard !result.isValid else {
+            return .failure("ValidateJSON Invalid", "Invalid JSON should not validate")
+        }
+        return .success("ValidateJSON Invalid", "[PASS] Invalid JSON fails validateJSON()")
+    }
+
     @MainActor
     public func runAllTests() async -> [TestResult] {
         return [
@@ -283,7 +692,32 @@ public final class ManifestTests: TestImplementation {
             testResourceRef(),
             testHashedUri(),
             testUriOrResource(),
-            testMassInit()
+            testMassInit(),
+            testNewPredefinedActions(),
+            testActionV2SoftwareAgent(),
+            testActionNewFields(),
+            testValidateAndLog(),
+            testCustomAssertionLabelValidation(),
+            testCreatedFactory(),
+            testEditedFactory(),
+            testWithAssertionsFactory(),
+            testWithCawgIdentityFactory(),
+            testCreatedAssertionLabels(),
+            testToJSON(),
+            testToPrettyJSON(),
+            testFromJSON(),
+            testDescription(),
+            testIngredientParentFactory(),
+            testIngredientComponentFactory(),
+            testIngredientInputToFactory(),
+            testValidatorEmptyTitle(),
+            testValidatorEmptyClaimGeneratorInfo(),
+            testValidatorOldClaimVersion(),
+            testValidatorDeprecatedAssertionLabels(),
+            testValidatorCawgInCreatedAssertions(),
+            testValidatorMultipleParents(),
+            testValidateJSON(),
+            testValidateJSONInvalid()
         ]
     }
 

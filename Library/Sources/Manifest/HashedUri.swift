@@ -30,7 +30,6 @@ open class HashedUri: UriOrResource {
     /// JUMBF URI reference
     open var url: String
 
-
     /// - Parameters:
     ///   - alg: A string identifying the cryptographic hash algorithm used to compute the hash.
     ///   - hash: Byte string containing the hash value.

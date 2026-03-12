@@ -366,6 +366,193 @@ public final class AssertionDefinitionTests: TestImplementation {
             testSteps.joined(separator: "\n"))
     }
 
+    // MARK: - Custom Assertion Tests
+
+    public func testCustomAssertionRoundTrip() -> TestResult {
+        let assertion = AssertionDefinition.custom(
+            label: "com.example.test",
+            data: AnyCodable(["key": "value", "number": 42] as [String: Any])
+        )
+        do {
+            let data = try JSONEncoder().encode(assertion)
+            let decoded = try JSONDecoder().decode(AssertionDefinition.self, from: data)
+            if case .custom(let label, _) = decoded {
+                guard label == "com.example.test" else {
+                    return .failure("Custom Round-Trip", "Label mismatch: \(label)")
+                }
+            } else {
+                return .failure("Custom Round-Trip", "Decoded as wrong type")
+            }
+            return .success("Custom Assertion", "[PASS] Custom assertion round-trip works")
+        } catch {
+            return .failure("Custom Assertion", "Error: \(error)")
+        }
+    }
+
+    // MARK: - Training/Mining Assertion Tests
+
+    public func testTrainingMiningAssertion() -> TestResult {
+        let entries = [
+            TrainingMiningEntry(use: "notAllowed"),
+            TrainingMiningEntry(use: "constrained", constraintInfo: "License required")
+        ]
+        let assertion = AssertionDefinition.trainingMining(entries: entries)
+        do {
+            let data = try JSONEncoder().encode(assertion)
+            let decoded = try JSONDecoder().decode(AssertionDefinition.self, from: data)
+            if case .trainingMining(let decodedEntries) = decoded {
+                guard decodedEntries.count == 2 else {
+                    return .failure("TrainingMining", "Expected 2 entries, got \(decodedEntries.count)")
+                }
+                guard decodedEntries[0].use == "notAllowed" else {
+                    return .failure("TrainingMining", "First entry use mismatch")
+                }
+                guard decodedEntries[1].constraintInfo == "License required" else {
+                    return .failure("TrainingMining", "Second entry constraintInfo mismatch")
+                }
+            } else {
+                return .failure("TrainingMining", "Decoded as wrong type")
+            }
+            return .success("TrainingMining", "[PASS] Training/mining assertion round-trip works")
+        } catch {
+            return .failure("TrainingMining", "Error: \(error)")
+        }
+    }
+
+    public func testCawgTrainingMiningAssertion() -> TestResult {
+        let entries = [
+            CawgTrainingMiningEntry(
+                use: "allowed",
+                constraintInfo: nil,
+                aiModelLearningType: "supervised",
+                aiMiningType: "text"
+            )
+        ]
+        let assertion = AssertionDefinition.cawgTrainingMining(entries: entries)
+        do {
+            let data = try JSONEncoder().encode(assertion)
+            let decoded = try JSONDecoder().decode(AssertionDefinition.self, from: data)
+            if case .cawgTrainingMining(let decodedEntries) = decoded {
+                guard decodedEntries.first?.aiModelLearningType == "supervised" else {
+                    return .failure("CawgTrainingMining", "aiModelLearningType mismatch")
+                }
+            } else {
+                return .failure("CawgTrainingMining", "Decoded as wrong type")
+            }
+            return .success("CawgTrainingMining", "[PASS] CAWG training/mining round-trip works")
+        } catch {
+            return .failure("CawgTrainingMining", "Error: \(error)")
+        }
+    }
+
+    // MARK: - Other Typed Assertions
+
+    public func testCawgIdentityAssertion() -> TestResult {
+        let assertion = AssertionDefinition.cawgIdentity(data: [
+            "sig_type": AnyCodable("cawg.x509"),
+            "pad1": AnyCodable(0)
+        ])
+        do {
+            let data = try JSONEncoder().encode(assertion)
+            let decoded = try JSONDecoder().decode(AssertionDefinition.self, from: data)
+            if case .cawgIdentity(let decodedData) = decoded {
+                guard decodedData["sig_type"] != nil else {
+                    return .failure("CawgIdentity", "Missing sig_type in decoded data")
+                }
+            } else {
+                return .failure("CawgIdentity", "Decoded as wrong type")
+            }
+            return .success("CawgIdentity", "[PASS] CAWG identity assertion round-trip works")
+        } catch {
+            return .failure("CawgIdentity", "Error: \(error)")
+        }
+    }
+
+    public func testCreativeWorkAssertion() -> TestResult {
+        let assertion = AssertionDefinition.creativeWork(data: [
+            "@type": AnyCodable("CreativeWork"),
+            "author": AnyCodable(["@type": "Person", "name": "Test Author"] as [String: Any])
+        ])
+        do {
+            let data = try JSONEncoder().encode(assertion)
+            let decoded = try JSONDecoder().decode(AssertionDefinition.self, from: data)
+            if case .creativeWork(let decodedData) = decoded {
+                guard decodedData["@type"] != nil else {
+                    return .failure("CreativeWork", "Missing @type in decoded data")
+                }
+            } else {
+                return .failure("CreativeWork", "Decoded as wrong type")
+            }
+            return .success("CreativeWork", "[PASS] Creative work assertion round-trip works")
+        } catch {
+            return .failure("CreativeWork", "Error: \(error)")
+        }
+    }
+
+    // MARK: - AnyCodable Tests
+
+    public func testAnyCodableTypes() -> TestResult {
+        let values: [(String, AnyCodable)] = [
+            ("bool", AnyCodable(true)),
+            ("int", AnyCodable(42)),
+            ("double", AnyCodable(3.14)),
+            ("string", AnyCodable("hello")),
+            ("array", AnyCodable([1, 2, 3])),
+            ("dict", AnyCodable(["key": "value"] as [String: Any]))
+        ]
+        for (name, value) in values {
+            do {
+                let data = try JSONEncoder().encode(value)
+                let decoded = try JSONDecoder().decode(AnyCodable.self, from: data)
+                guard value == decoded else {
+                    return .failure("AnyCodable", "\(name) round-trip failed")
+                }
+            } catch {
+                return .failure("AnyCodable", "\(name) error: \(error)")
+            }
+        }
+        return .success("AnyCodable Types", "[PASS] All AnyCodable types round-trip correctly")
+    }
+
+    public func testAnyCodableEquality() -> TestResult {
+        let a = AnyCodable("hello")
+        let b = AnyCodable("hello")
+        let c = AnyCodable("world")
+        guard a == b else {
+            return .failure("AnyCodable Equality", "Same values should be equal")
+        }
+        guard a != c else {
+            return .failure("AnyCodable Equality", "Different values should not be equal")
+        }
+        return .success("AnyCodable Equality", "[PASS] AnyCodable equality works")
+    }
+
+    // MARK: - Actions V2 Label
+
+    public func testActionsV2Decoding() -> TestResult {
+        let json = """
+        {
+            "label": "c2pa.actions.v2",
+            "data": {
+                "actions": [{"action": "c2pa.created"}]
+            }
+        }
+        """
+        do {
+            let decoded = try JSONDecoder().decode(AssertionDefinition.self, from: json.data(using: .utf8)!)
+            if case .actions(let actions) = decoded {
+                guard actions.count == 1 else {
+                    return .failure("Actions V2", "Expected 1 action")
+                }
+            } else {
+                return .failure("Actions V2", "Should decode as .actions")
+            }
+            return .success("Actions V2", "[PASS] c2pa.actions.v2 label decodes correctly")
+        } catch {
+            return .failure("Actions V2", "Error: \(error)")
+        }
+    }
+
     public func runAllTests() async -> [TestResult] {
         var results: [TestResult] = []
 
@@ -377,6 +564,14 @@ public final class AssertionDefinitionTests: TestImplementation {
         results.append(testAllAssertionTypesEncoding())
         results.append(testAllAssertionTypesRoundTrip())
         results.append(testAssertionEquality())
+        results.append(testCustomAssertionRoundTrip())
+        results.append(testTrainingMiningAssertion())
+        results.append(testCawgTrainingMiningAssertion())
+        results.append(testCawgIdentityAssertion())
+        results.append(testCreativeWorkAssertion())
+        results.append(testAnyCodableTypes())
+        results.append(testAnyCodableEquality())
+        results.append(testActionsV2Decoding())
 
         return results
     }

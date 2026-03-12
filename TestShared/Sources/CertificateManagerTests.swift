@@ -120,7 +120,7 @@ public final class CertificateManagerTests: TestImplementation {
             let signer = try Signer(
                 algorithm: .es256,
                 certificateChainPEM: certificateChain,
-                tsaURL: nil,
+                tsa: nil,
                 keychainKeyTag: keyTag
             )
             testSteps.append("Created signer with certificate chain")
@@ -574,7 +574,7 @@ public final class CertificateManagerTests: TestImplementation {
                 let signer = try Signer(
                     algorithm: .es256,
                     certificateChainPEM: chain,
-                    tsaURL: nil,
+                    tsa: nil,
                     keychainKeyTag: keyTag
                 )
                 testSteps.append("Created signer with chain")

@@ -1,18 +1,19 @@
-// This file is licensed to you under the Apache License, Version 2.0 
-// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
+// This file is licensed to you under the Apache License, Version 2.0
+// (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license
 // (http://opensource.org/licenses/MIT), at your option.
 //
-// Unless required by applicable law or agreed to in writing, this software is 
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF 
-// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE 
+// Unless required by applicable law or agreed to in writing, this software is
+// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS OF
+// ANY KIND, either express or implied. See the LICENSE-MIT and LICENSE-APACHE
 // files for the specific language governing permissions and limitations under
 // each license.
 //
 //  SigningAlgorithm.swift
 //
 
-import C2PAC
 import Foundation
+import C2PAC
+import Security
 
 /// Cryptographic algorithms supported for C2PA signing.
 ///
@@ -33,7 +34,7 @@ import Foundation
 ///
 /// ### EdDSA Algorithm
 /// - ``ed25519``
-public enum SigningAlgorithm {
+public enum SigningAlgorithm: String, CaseIterable, Sendable {
     /// ECDSA with SHA-256 using the P-256 curve.
     ///
     /// This is the most widely supported algorithm and is recommended for most use cases.
@@ -72,67 +73,23 @@ public enum SigningAlgorithm {
         }
     }
 
-    public var description: String {
+    public var secKeyAlgo: SecKeyAlgorithm? {
         switch self {
-        case .es256: return "es256"
-        case .es384: return "es384"
-        case .es512: return "es512"
-        case .ps256: return "ps256"
-        case .ps384: return "ps384"
-        case .ps512: return "ps512"
-        case .ed25519: return "ed25519"
+        case .es256:
+            return .ecdsaSignatureMessageX962SHA256
+        case .es384:
+            return .ecdsaSignatureMessageX962SHA384
+        case .es512:
+            return .ecdsaSignatureMessageX962SHA512
+        case .ps256:
+            return .rsaSignatureMessagePSSSHA256
+        case .ps384:
+            return .rsaSignatureMessagePSSSHA384
+        case .ps512:
+            return .rsaSignatureMessagePSSSHA512
+
+        default:
+            return nil
         }
-    }
-}
-
-/// A container for signing credentials and configuration.
-///
-/// `SignerInfo` bundles together all the information needed to create a basic
-/// PEM-based signer. This is a convenience structure for simple signing scenarios.
-///
-/// ## Example
-///
-/// ```swift
-/// let signerInfo = SignerInfo(
-///     algorithm: .es256,
-///     certificatePEM: certChainPEM,
-///     privateKeyPEM: privateKeyPEM,
-///     tsaURL: "http://timestamp.digicert.com"
-/// )
-///
-/// let signer = try Signer(info: signerInfo)
-/// ```
-///
-/// - SeeAlso: ``Signer/init(info:)``
-public struct SignerInfo {
-    /// The signing algorithm to use.
-    public let algorithm: SigningAlgorithm
-
-    /// The certificate chain in PEM format.
-    public let certificatePEM: String
-
-    /// The private key in PEM format.
-    public let privateKeyPEM: String
-
-    /// Optional URL of a timestamp authority for trusted timestamps.
-    public let tsaURL: String?
-
-    /// Creates a new signer info structure.
-    ///
-    /// - Parameters:
-    ///   - algorithm: The signing algorithm.
-    ///   - certificatePEM: The certificate chain in PEM format.
-    ///   - privateKeyPEM: The private key in PEM format.
-    ///   - tsaURL: Optional timestamp authority URL.
-    public init(
-        algorithm: SigningAlgorithm,
-        certificatePEM: String,
-        privateKeyPEM: String,
-        tsaURL: String? = nil
-    ) {
-        self.algorithm = algorithm
-        self.certificatePEM = certificatePEM
-        self.privateKeyPEM = privateKeyPEM
-        self.tsaURL = tsaURL
     }
 }

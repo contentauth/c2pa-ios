@@ -42,6 +42,15 @@ public enum ImageRegionType: String, Codable {
     /// A human being
     case human = "http://cv.iptc.org/newscodes/imageregiontype/human"
 
+    /// A face within the region
+    case face = "http://cv.iptc.org/newscodes/imageregiontype/face"
+
+    /// A headshot of a person
+    case headshot = "http://cv.iptc.org/newscodes/imageregiontype/headshot"
+
+    /// A body part
+    case bodyPart = "http://cv.iptc.org/newscodes/imageregiontype/bodyPart"
+
     /// A thing that was produced and can be handed over
     case product = "http://cv.iptc.org/newscodes/imageregiontype/product"
 
@@ -66,4 +75,19 @@ public enum ImageRegionType: String, Codable {
     /// A significant accumulation of water
     /// Including a waterfall, a geyser and other phenomena of water
     case bodyOfWater = "http://cv.iptc.org/newscodes/imageregiontype/bodyOfWater"
+
+    /// A thing or entity
+    case object = "http://cv.iptc.org/newscodes/imageregiontype/object"
+
+    /// An occurrence or happening
+    case event = "http://cv.iptc.org/newscodes/imageregiontype/event"
+
+    /// A recognizable sign, symbol, or design identifying a product or organization
+    case logo = "http://cv.iptc.org/newscodes/imageregiontype/logo"
+
+    /// A visible code such as a QR code or barcode
+    case visibleCode = "http://cv.iptc.org/newscodes/imageregiontype/visibleCode"
+
+    /// A geographical feature or landmark
+    case geoFeature = "http://cv.iptc.org/newscodes/imageregiontype/geoFeature"
 }

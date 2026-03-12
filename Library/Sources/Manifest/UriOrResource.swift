@@ -22,12 +22,10 @@ open class UriOrResource: Codable, Equatable {
         lhs.alg == rhs.alg
     }
 
-
     // MARK: UriOrResource
 
     /// A string identifying the cryptographic hash algorithm used to compute the hash.
     open var alg: String?
-
 
     /// - Parameters:
     ///   - alg: A string identifying the cryptographic hash algorithm used to compute the hash.
