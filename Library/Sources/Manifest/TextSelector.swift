@@ -26,7 +26,6 @@ public struct TextSelector: Codable, Equatable {
     /// The start character offset or the start of the fragment if not present.
     public var start: Int32?
 
-
     /// - Parameters:
     ///   - end: The end character offset or the end of the fragment if not present.
     ///   - fragment: Fragment identifier as per RFC3023 (XML) or ISO 32000-2 (PDF), Annex O.

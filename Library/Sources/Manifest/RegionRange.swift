@@ -35,7 +35,6 @@ public struct RegionRange: Codable, Equatable {
     /// The type of range of interest.
     public var type: RangeType
 
-
     /// - Parameters:
     ///   - frame: A frame range.
     ///   - item: An item identifier.

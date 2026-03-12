@@ -13,15 +13,14 @@
 
 import Foundation
 
-/// Defines an assertion that consists of a label that can be either a C2PA-defined assertion label or a custom label in reverse domain format.
+/// Defines an assertion in a C2PA manifest.
+///
+/// An assertion consists of a label identifying its type and associated data.
+/// Labels can be standard C2PA labels or custom reverse-domain labels.
+///
 /// - SeeAlso: [AssertionDefinition Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#assertiondefinition)
-
-/// The standard C2PA assertions are currently available:
-/// - SeeAlso: [C2PA Specification: Standard C2PA Assertion Summary](https://spec.c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html#_standard_c2pa_assertion_summary)
-
-/// But only `actions` is actually implemented!
+/// - SeeAlso: ``StandardAssertionLabel``
 public enum AssertionDefinition: Codable, Equatable {
-
     public enum CodingKeys: CodingKey {
         case label
         case data
@@ -49,7 +48,6 @@ public enum AssertionDefinition: Codable, Equatable {
     case thumbnailClaim
     case thumbnailIngredient
     case timeStamps
-
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

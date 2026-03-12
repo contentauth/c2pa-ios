@@ -24,7 +24,6 @@ public struct Frame: Codable, Equatable {
     /// The first frame/page starts at 0.
     public var start: Int32?
 
-
     /// - Parameters:
     ///   - end: The end of the frame inclusive or the end of the asset if not present.
     ///   - start: The start of the frame or the end of the asset if not present. The first frame/page starts at 0.

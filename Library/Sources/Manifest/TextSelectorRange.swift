@@ -23,7 +23,6 @@ public struct TextSelectorRange: Codable, Equatable {
     /// The start (or entire) text range.
     public var selector: TextSelector
 
-
     /// - Parameters:
     ///   - end: The end of the text range.
     ///   - selector: The start (or entire) text range.

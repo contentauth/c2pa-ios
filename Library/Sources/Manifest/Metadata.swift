@@ -29,7 +29,6 @@ public struct Metadata: Codable, Equatable {
 
     public var reviewRatings: [ReviewRating]?
 
-
     public init(
         dataSource: DataSource? = nil,
         dateTime: Date? = nil,

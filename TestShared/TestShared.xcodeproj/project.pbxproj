@@ -20,6 +20,10 @@
 		95COV0092E9700000000005 /* SignerExtendedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95COV00A2E9700000000005 /* SignerExtendedTests.swift */; };
 		95COV00B2E9700000000006 /* WebServiceSignerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95COV00C2E9700000000006 /* WebServiceSignerTests.swift */; };
 		95COV00D2E9700000000007 /* AssertionDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95COV00E2E9700000000007 /* AssertionDefinitionTests.swift */; };
+		95COV0102E9700000000008 /* SettingsValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95COV0112E9700000000008 /* SettingsValidatorTests.swift */; };
+		95COV0122E9700000000009 /* ValidationResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95COV0132E9700000000009 /* ValidationResultTests.swift */; };
+		95COV0142E970000000000A /* C2PAJsonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95COV0152E970000000000A /* C2PAJsonTests.swift */; };
+		95COV0162E970000000000B /* C2PAErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95COV0172E970000000000B /* C2PAErrorTests.swift */; };
 
 		95C99A3C2E68D83F00C54D0E /* C2PA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95C99A3B2E68D83F00C54D0E /* C2PA.framework */; };
 		95C99A552E695DF100C54D0E /* StreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A542E695DF100C54D0E /* StreamTests.swift */; };
@@ -74,6 +78,10 @@
 		95CAWG042E6EDDF700F0BC7C /* test_settings_with_cawg_signing.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_settings_with_cawg_signing.json; sourceTree = "<group>"; };
 		95F271292E72CD5800A6A88D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestTests.swift; sourceTree = "<group>"; };
+		95COV0112E9700000000008 /* SettingsValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsValidatorTests.swift; sourceTree = "<group>"; };
+		95COV0132E9700000000009 /* ValidationResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationResultTests.swift; sourceTree = "<group>"; };
+		95COV0152E970000000000A /* C2PAJsonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAJsonTests.swift; sourceTree = "<group>"; };
+		95COV0172E970000000000B /* C2PAErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAErrorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +120,8 @@
 			children = (
 				95COV00E2E9700000000007 /* AssertionDefinitionTests.swift */,
 				95C99A4F2E695DF100C54D0E /* BuilderTests.swift */,
+				95COV0172E970000000000B /* C2PAErrorTests.swift */,
+				95COV0152E970000000000A /* C2PAJsonTests.swift */,
 				95COV0082E9700000000004 /* ConvenienceTests.swift */,
 				95COV0022E9700000000001 /* CertificateManagerTests.swift */,
 				95C99A502E695DF100C54D0E /* ComprehensiveTests.swift */,
@@ -120,11 +130,13 @@
 				A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */,
 				95C99A522E695DF100C54D0E /* ReaderTests.swift */,
 				95COV0062E9700000000003 /* SecureEnclaveSignerTests.swift */,
+				95COV0112E9700000000008 /* SettingsValidatorTests.swift */,
 				95COV00A2E9700000000005 /* SignerExtendedTests.swift */,
 				95C99A532E695DF100C54D0E /* SigningTests.swift */,
 				95C99A542E695DF100C54D0E /* StreamTests.swift */,
 				95C99A622E696CBF00C54D0E /* TestResult.swift */,
 				953416042E6EBAF400A97957 /* TestUtilities.swift */,
+				95COV0132E9700000000009 /* ValidationResultTests.swift */,
 				95COV00C2E9700000000006 /* WebServiceSignerTests.swift */,
 			);
 			path = Sources;
@@ -249,6 +261,8 @@
 			files = (
 				95COV00D2E9700000000007 /* AssertionDefinitionTests.swift in Sources */,
 				95C99A572E695DF100C54D0E /* BuilderTests.swift in Sources */,
+				95COV0162E970000000000B /* C2PAErrorTests.swift in Sources */,
+				95COV0142E970000000000A /* C2PAJsonTests.swift in Sources */,
 				95COV0072E9700000000004 /* ConvenienceTests.swift in Sources */,
 				95COV0012E9700000000001 /* CertificateManagerTests.swift in Sources */,
 				95C99A562E695DF100C54D0E /* ComprehensiveTests.swift in Sources */,
@@ -257,11 +271,13 @@
 				A0B3CF4F2E96AC2C00F2F938 /* ManifestTests.swift in Sources */,
 				95C99A592E695DF100C54D0E /* ReaderTests.swift in Sources */,
 				95COV0052E9700000000003 /* SecureEnclaveSignerTests.swift in Sources */,
+				95COV0102E9700000000008 /* SettingsValidatorTests.swift in Sources */,
 				95COV0092E9700000000005 /* SignerExtendedTests.swift in Sources */,
 				95C99A5A2E695DF100C54D0E /* SigningTests.swift in Sources */,
 				95C99A552E695DF100C54D0E /* StreamTests.swift in Sources */,
 				95C99A692E696CBF00C54D0E /* TestResult.swift in Sources */,
 				953416052E6EBAF400A97957 /* TestUtilities.swift in Sources */,
+				95COV0122E9700000000009 /* ValidationResultTests.swift in Sources */,
 				95COV00B2E9700000000006 /* WebServiceSignerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

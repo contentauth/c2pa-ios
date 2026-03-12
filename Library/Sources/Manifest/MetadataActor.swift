@@ -23,7 +23,6 @@ public struct MetadataActor: Codable, Equatable {
     /// An identifier for a human actor, used when the “type” is humanEntry.identified.
     public var identifier: String?
 
-
     /// - Parameters:
     ///   - credentials: List of references to W3C Verifiable Credentials.
     ///   - identifier: An identifier for a human actor, used when the “type” is humanEntry.identified.
