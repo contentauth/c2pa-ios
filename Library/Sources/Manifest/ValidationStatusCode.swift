@@ -13,17 +13,28 @@
 
 import Foundation
 
-/// - SeeAlso: [C2PA Specification: returning_validation_results](https://spec.c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html#_returning_validation_results)
+/// - SeeAlso: [C2PA Specification: returning_validation_results](https://spec.c2pa.org/specifications/specifications/2.3/specs/C2PA_Specification.html#_returning_validation_results)
 public enum ValidationStatusCode: String, Codable {
+
+    // MARK: - Success codes
 
     /// The claim signature referenced in the ingredient’s claim validated.
     case claimSignatureValidated = "claimSignature.validated"
 
+    /// The claim signature was created within the validity window of the signing certificate.
+    case claimSignatureInsideValidity = "claimSignature.insideValidity"
+
     /// The signing credential is listed on the validator’s trust list.
     case signingCredentialTrusted = "signingCredential.trusted"
 
+    /// The signing credential was checked via OCSP and was not revoked.
+    case signingCredentialOCSPNotRevoked = "signingCredential.ocsp.notRevoked"
+
     /// The time-stamp credential is listed on the validator’s trust list.
     case timeStampTrusted = "timeStamp.trusted"
+
+    /// The time-stamp token was successfully validated.
+    case timeStampValidated = "timeStamp.validated"
 
     /// The hash of the the referenced assertion in the ingredient’s manifest matches the corresponding hash in the assertion’s hashed URI in the claim.
     case assertionHashedUriMatch = "assertion.hashedURI.match"
@@ -34,8 +45,53 @@ public enum ValidationStatusCode: String, Codable {
     /// Hash of a box-based asset matches the hash declared in the BMFF hash assertion.
     case assertionBmffHashMatch = "assertion.bmffHash.match"
 
+    /// Hash of the specified boxes matches the hash declared in the boxes hash assertion.
+    case assertionBoxesHashMatch = "assertion.boxesHash.match"
+
+    /// Hash of a collection of assets matches the value declared in the collection hash assertion.
+    case assertionCollectionHashMatch = "assertion.collectionHash.match"
+
+    /// The alternative content representation assertion hash matched the expected value.
+    case assertionAlternativeContentRepresentationMatch = "assertion.alternativeContentRepresentation.match"
+
+    /// Hash of multiple referenced assets matches the hash declared in the multi-asset hash assertion.
+    case assertionMultiAssetHashMatch = "assertion.multiAssetHash.match"
+
     /// A non-embedded (remote) assertion was accessible at the time of validation.
     case assertionAccessible = "assertion.accessible"
+
+    /// The claim signature referenced by an ingredient validated successfully.
+    case ingredientClaimSignatureValidated = "ingredient.claimSignature.validated"
+
+    /// The ingredient’s manifest validated successfully.
+    case ingredientManifestValidated = "ingredient.manifest.validated"
+
+
+    // MARK: - Informational codes
+
+    /// The algorithm used is deprecated but still recognized by the validator.
+    case algorithmDeprecated = "algorithm.deprecated"
+
+    /// A BMFF hash assertion contained additional exclusions that were ignored during validation.
+    case assertionBmffHashAdditionalExclusionsPresent = "assertion.bmffHash.additionalExclusionsPresent"
+
+    /// A boxes hash assertion contained additional exclusions that were ignored during validation.
+    case assertionBoxesHashAdditionalExclusionsPresent = "assertion.boxesHash.additionalExclusionsPresent"
+
+    /// A data hash assertion contained additional exclusions that were ignored during validation.
+    case assertionDataHashAdditionalExclusionsPresent = "assertion.dataHash.additionalExclusionsPresent"
+
+    /// The provenance of an ingredient could not be determined.
+    case ingredientUnknownProvenance = "ingredient.unknownProvenance"
+
+    /// The OCSP responder for the signing credential could not be reached.
+    case signingCredentialOCSPInaccessible = "signingCredential.ocsp.inaccessible"
+
+    /// OCSP checking for the signing credential was skipped.
+    case signingCredentialOCSPSkipped = "signingCredential.ocsp.skipped"
+
+
+    // MARK: - Failure codes
 
     /// The referenced claim in the ingredient’s manifest cannot be found.
     case claimMissing = "claim.missing"
@@ -54,6 +110,9 @@ public enum ValidationStatusCode: String, Codable {
 
     /// The claim signature referenced in the ingredient’s claim failed to validate.
     case claimSignatureMismatch = "claimSignature.mismatch"
+
+    /// The claim signature timestamp is outside the validity window of the signing certificate.
+    case claimSignatureOutsideValidity = "claimSignature.outsideValidity"
 
     /// The manifest has more than one ingredient whose relationship is parentOf.
     case manifestMultipleParents = "manifest.multipleParents"
@@ -117,6 +176,15 @@ public enum ValidationStatusCode: String, Codable {
 
     /// An update manifest contains a cloud data assertion referencing an actions assertion.
     case assertionCloudDataActions = "assertion.cloud-data.actions"
+
+    /// More than one hard binding assertion was present when only one is permitted.
+    case assertionMultipleHardBindings = "assertion.multipleHardBindings"
+
+    /// An assertion contained metadata that is not permitted by the specification.
+    case assertionMetadataDisallowed = "assertion.metadata.disallowed"
+
+    /// A timestamp assertion is malformed or cannot be parsed.
+    case assertionTimestampMalformed = "assertion.timestamp.malformed"
 
     /// The value of an alg header, or other header that specifies an algorithm used to compute the value of another field, is unknown or unsupported.
     case algorithmUnsupported = "algorithm.unsupported"

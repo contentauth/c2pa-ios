@@ -17,7 +17,7 @@ import Foundation
 /// - SeeAlso: [AssertionDefinition Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema#assertiondefinition)
 
 /// The standard C2PA assertions are currently available:
-/// - SeeAlso: [C2PA Specification: Standard C2PA Assertion Summary](https://spec.c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html#_standard_c2pa_assertion_summary)
+/// - SeeAlso: [C2PA Specification: Standard C2PA Assertion Summary](https://spec.c2pa.org/specifications/specifications/2.3/specs/C2PA_Specification.html#_standard_c2pa_assertion_summary)
 
 /// But only `actions` is actually implemented!
 public enum AssertionDefinition: Codable, Equatable {
@@ -30,7 +30,11 @@ public enum AssertionDefinition: Codable, Equatable {
     /// - SeeAlso: [Actions Reference](https://opensource.contentauthenticity.org/docs/manifest/writing/assertions-actions#actions)
     case actions(actions: [Action])
 
+    /// - SeeAlso: [Actions Reference](https://opensource.contentauthenticity.org/docs/manifest/writing/assertions-actions#actions)
+    case actionsV2(actions: [Action])
+
     case assertionMetadata
+    case alternativeContentRepresentation
     case assetRef
     case assetType
     case bmffBasedHash
@@ -40,9 +44,11 @@ public enum AssertionDefinition: Codable, Equatable {
     case dataHash
     case depthmap
     case embeddedData
+    case externalReference
     case fontInfo
     case generalBoxHash
     case ingredient
+    case ingredientV3
     case metadata
     case multiAssetHash
     case softBinding
@@ -61,8 +67,16 @@ public enum AssertionDefinition: Codable, Equatable {
 
             self = .actions(actions: actions["actions"] ?? [])
 
+        case .actionsV2:
+            let actions = try container.decode([String: [Action]].self, forKey: .data)
+
+            self = .actionsV2(actions: actions["actions"] ?? [])
+
         case .assertionMetadata:
             self = .assertionMetadata
+
+        case .alternativeContentRepresentation:
+            self = .alternativeContentRepresentation
 
         case .assetRef:
             self = .assetRef
@@ -91,6 +105,9 @@ public enum AssertionDefinition: Codable, Equatable {
         case .embeddedData:
             self = .embeddedData
 
+        case .externalReference:
+            self = .externalReference
+
         case .fontInfo:
             self = .fontInfo
 
@@ -99,6 +116,9 @@ public enum AssertionDefinition: Codable, Equatable {
 
         case .ingredient:
             self = .ingredient
+
+        case .ingredientV3:
+            self = .ingredientV3
 
         case .metadata:
             self = .metadata
@@ -128,8 +148,15 @@ public enum AssertionDefinition: Codable, Equatable {
             try container.encode(StandardAssertionLabel.actions, forKey: .label)
             try container.encode(["actions": actions], forKey: .data)
 
+        case .actionsV2(let actions):
+            try container.encode(StandardAssertionLabel.actionsV2, forKey: .label)
+            try container.encode(["actions": actions], forKey: .data)
+
         case .assertionMetadata:
             try container.encode(StandardAssertionLabel.assertionMetadata, forKey: .label)
+
+        case .alternativeContentRepresentation:
+            try container.encode(StandardAssertionLabel.alternativeContentRepresentation, forKey: .label)
 
         case .assetRef:
             try container.encode(StandardAssertionLabel.assetRef, forKey: .label)
@@ -158,6 +185,9 @@ public enum AssertionDefinition: Codable, Equatable {
         case .embeddedData:
             try container.encode(StandardAssertionLabel.embeddedData, forKey: .label)
 
+        case .externalReference:
+            try container.encode(StandardAssertionLabel.externalReference, forKey: .label)
+
         case .fontInfo:
             try container.encode(StandardAssertionLabel.fontInfo, forKey: .label)
 
@@ -166,6 +196,9 @@ public enum AssertionDefinition: Codable, Equatable {
 
         case .ingredient:
             try container.encode(StandardAssertionLabel.ingredient, forKey: .label)
+
+        case .ingredientV3:
+            try container.encode(StandardAssertionLabel.ingredientV3, forKey: .label)
 
         case .metadata:
             try container.encode(StandardAssertionLabel.metadata, forKey: .label)
