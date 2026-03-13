@@ -126,7 +126,7 @@ public final class SigningTests: TestImplementation {
                 certsPEM: TestUtilities.testCertsPEM,
                 privateKeyPEM: TestUtilities.testPrivateKeyPEM,
                 algorithm: .es256,
-                tsaURL: nil
+                tsa: nil
             )
             results.append("ES256: PASS (expected)")
         } catch {
@@ -662,7 +662,7 @@ public final class SigningTests: TestImplementation {
                     certsPEM: invalidCert,
                     privateKeyPEM: TestUtilities.testPrivateKeyPEM,
                     algorithm: .es256,
-                    tsaURL: nil
+                    tsa: nil
                 )
                 testSteps.append("\(description): UNEXPECTED SUCCESS")
             } catch {
@@ -700,7 +700,7 @@ public final class SigningTests: TestImplementation {
                     certsPEM: TestUtilities.testCertsPEM,
                     privateKeyPEM: invalidKey,
                     algorithm: .es256,
-                    tsaURL: nil
+                    tsa: nil
                 )
                 testSteps.append("\(description): UNEXPECTED SUCCESS")
             } catch {

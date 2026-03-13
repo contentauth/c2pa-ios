@@ -98,7 +98,7 @@ public final class SecureEnclaveSignerTests: TestImplementation {
                 _ = try Signer(
                     algorithm: algorithm,
                     certificateChainPEM: TestUtilities.testCertsPEM,
-                    tsaURL: nil,
+                    tsa: nil,
                     secureEnclaveConfig: config
                 )
 
