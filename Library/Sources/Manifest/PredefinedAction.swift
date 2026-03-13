@@ -13,7 +13,7 @@
 
 import Foundation
 
-/// - SeeAlso: [C2PA Specification: Actions](https://spec.c2pa.org/specifications/specifications/2.2/specs/C2PA_Specification.html#_actions)
+/// - SeeAlso: [C2PA Specification: Actions](https://spec.c2pa.org/specifications/specifications/2.3/specs/C2PA_Specification.html#_actions)
 public enum PredefinedAction: String, Codable {
 
     /// (visible) Textual content was inserted into the asset, such as on a text layer or as a caption.
@@ -24,6 +24,9 @@ public enum PredefinedAction: String, Codable {
 
     /// Reduced or increased playback speed of a video or audio track
     case changedSpeed = "c2pa.changedSpeed"
+
+    /// The asset was captured from a camera or recording device.
+    case captured = "c2pa.captured"
 
     /// [DEPRECATED] Changes to tone, saturation, etc.
     @available(*, deprecated)
@@ -83,6 +86,9 @@ public enum PredefinedAction: String, Codable {
     /// Changes to either content dimensions, its file size or both
     case resized = "c2pa.resized"
 
+    /// Content was segmented into multiple parts or clips.
+    case segmented = "c2pa.segmented"
+
     /// A conversion of one encoding to another, including resolution scaling, bitrate adjustment and encoding format change. This action is considered as a non-editorial transformation of the parentOf ingredient.
     case transcoded = "c2pa.transcoded"
 
@@ -97,4 +103,16 @@ public enum PredefinedAction: String, Codable {
 
     /// An invisible watermark was inserted into the digital content for the purpose of creating a soft binding.
     case watermarked = "c2pa.watermarked"
+
+    /// Content was compressed using a compression algorithm.
+    case compressed = "c2pa.compressed"
+
+    /// Content was decompressed from a compressed representation.
+    case decompressed = "c2pa.decompressed"
+
+    /// Content was converted between stereo and another channel configuration.
+    case stereoConverted = "c2pa.stereoConverted"
+
+    /// Content was generated or synthesized using automated or algorithmic means (e.g., generative AI).
+    case synthesized = "c2pa.synthesized"
 }

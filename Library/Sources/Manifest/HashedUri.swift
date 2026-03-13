@@ -14,7 +14,7 @@
 import Foundation
 
 /// A HashedUri provides a reference to content available within the same manifest store. This is described in §8.3, URI References of the C2PA Technical Specification.
-/// - SeeAlso: [C2PA Specification: URI References](https://c2pa.org/specifications/specifications/2.1/specs/C2PA_Specification.html#_uri_references)
+/// - SeeAlso: [C2PA Specification: URI References](https://spec.c2pa.org/specifications/specifications/2.3/specs/C2PA_Specification.html#_uri_references)
 
 /// - SeeAlso: [HashedUri Reference](https://opensource.contentauthenticity.org/docs/manifest/json-ref/manifest-definition-schema/#hasheduri)
 open class HashedUri: UriOrResource {
