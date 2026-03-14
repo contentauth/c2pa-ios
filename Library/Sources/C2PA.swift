@@ -105,7 +105,7 @@ public enum C2PA {
             // TODO: This special case handling may be removable if the underlying C API
             // is updated to handle NULL data_dir consistently with c2pa_read_file
             if errorMsg.contains("null parameter data_dir") || errorMsg.contains("data_dir") {
-                throw C2PAError.ingridientDataNotFound(errorMsg)
+                throw C2PAError.ingredientDataNotFound(errorMsg)
             }
             throw C2PAError.api(errorMsg)
         }
@@ -207,7 +207,7 @@ public enum C2PAError: LocalizedError {
     /// The underlying C API probably experienced a NULL data_dir.
     ///
     /// - Parameter original: Original error message from C API.
-    case ingridientDataNotFound(_ original: String)
+    case ingredientDataNotFound(_ original: String)
 
     case ed25519NotSupported
 
@@ -251,7 +251,7 @@ public enum C2PAError: LocalizedError {
         case .negative(let value):
             return "C2PA negative status \(value)"
 
-        case .ingridientDataNotFound(let original):
+        case .ingredientDataNotFound(let original):
             return "No ingredient data found: \(original)"
 
         case .ed25519NotSupported:
