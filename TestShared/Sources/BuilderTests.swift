@@ -251,7 +251,7 @@ public final class BuilderTests: TestImplementation {
 
         do {
             let builder = try Builder(manifestJSON: manifestJSON)
-            try builder.setRemoteURL("https://example.com/manifest.c2pa")
+            try builder.setRemote(url: URL(string: "https://example.com/manifest.c2pa")!)
 
             // Create archive to test
             let archiveFile = FileManager.default.temporaryDirectory.appendingPathComponent(

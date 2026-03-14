@@ -11,8 +11,9 @@
 //  SigningAlgorithm.swift
 //
 
-import C2PAC
 import Foundation
+import C2PAC
+import Security
 
 /// Cryptographic algorithms supported for C2PA signing.
 ///
@@ -33,11 +34,11 @@ import Foundation
 ///
 /// ### EdDSA Algorithm
 /// - ``ed25519``
-public enum SigningAlgorithm {
+public enum SigningAlgorithm: String, CaseIterable, Sendable {
     /// ECDSA with SHA-256 using the P-256 curve.
     ///
     /// This is the most widely supported algorithm and is recommended for most use cases.
-    /// It is the only algorithm supported by the iOS Secure Enclave.
+    /// It is the only algorithm supported by the Secure Enclave.
     case es256
 
     /// ECDSA with SHA-384 using the P-384 curve.
@@ -57,7 +58,7 @@ public enum SigningAlgorithm {
 
     /// EdDSA using Curve25519.
     ///
-    /// - Note: Not supported by iOS Keychain or Secure Enclave.
+    /// - Note: Not supported by the Keychain or Secure Enclave.
     case ed25519
 
     var cValue: C2paSigningAlg {
@@ -72,15 +73,23 @@ public enum SigningAlgorithm {
         }
     }
 
-    public var description: String {
+    public var secKeyAlgo: SecKeyAlgorithm? {
         switch self {
-        case .es256: return "es256"
-        case .es384: return "es384"
-        case .es512: return "es512"
-        case .ps256: return "ps256"
-        case .ps384: return "ps384"
-        case .ps512: return "ps512"
-        case .ed25519: return "ed25519"
+        case .es256:
+            return .ecdsaSignatureMessageX962SHA256
+        case .es384:
+            return .ecdsaSignatureMessageX962SHA384
+        case .es512:
+            return .ecdsaSignatureMessageX962SHA512
+        case .ps256:
+            return .rsaSignatureMessagePSSSHA256
+        case .ps384:
+            return .rsaSignatureMessagePSSSHA384
+        case .ps512:
+            return .rsaSignatureMessagePSSSHA512
+
+        default:
+            return nil
         }
     }
 }
@@ -97,7 +106,7 @@ public enum SigningAlgorithm {
 ///     algorithm: .es256,
 ///     certificatePEM: certChainPEM,
 ///     privateKeyPEM: privateKeyPEM,
-///     tsaURL: "http://timestamp.digicert.com"
+///     tsa: URL(string: "http://timestamp.digicert.com")
 /// )
 ///
 /// let signer = try Signer(info: signerInfo)
@@ -115,7 +124,7 @@ public struct SignerInfo {
     public let privateKeyPEM: String
 
     /// Optional URL of a timestamp authority for trusted timestamps.
-    public let tsaURL: String?
+    public let tsa: URL?
 
     /// Creates a new signer info structure.
     ///
@@ -123,16 +132,16 @@ public struct SignerInfo {
     ///   - algorithm: The signing algorithm.
     ///   - certificatePEM: The certificate chain in PEM format.
     ///   - privateKeyPEM: The private key in PEM format.
-    ///   - tsaURL: Optional timestamp authority URL.
+    ///   - tsa: Optional timestamp authority URL.
     public init(
         algorithm: SigningAlgorithm,
         certificatePEM: String,
         privateKeyPEM: String,
-        tsaURL: String? = nil
+        tsa: URL? = nil
     ) {
         self.algorithm = algorithm
         self.certificatePEM = certificatePEM
         self.privateKeyPEM = privateKeyPEM
-        self.tsaURL = tsaURL
+        self.tsa = tsa
     }
 }

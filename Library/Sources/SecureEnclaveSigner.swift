@@ -18,7 +18,7 @@ import Security
 /// Configuration for Secure Enclave-based signing.
 ///
 /// This structure defines the parameters needed to create or access a private key
-/// in the iOS Secure Enclave, providing hardware-backed security for signing operations.
+/// in the Secure Enclave, providing hardware-backed security for signing operations.
 public struct SecureEnclaveSignerConfig {
     /// The keychain tag identifying the Secure Enclave key.
     public let keyTag: String
@@ -41,11 +41,11 @@ public struct SecureEnclaveSignerConfig {
 }
 
 extension Signer {
-    /// Creates a signer using a private key stored in the iOS Secure Enclave.
+    /// Creates a signer using a private key stored in the Secure Enclave.
     ///
     /// The Secure Enclave provides hardware-backed security where the private key
     /// never leaves the secure hardware. This is the most secure signing method
-    /// available on iOS devices with Secure Enclave support (iPhone 5s and later).
+    /// available on devices with Secure Enclave support (iPhone 5s and later).
     ///
     /// If the specified key doesn't exist, it will be automatically created in the
     /// Secure Enclave.
@@ -53,7 +53,7 @@ extension Signer {
     /// - Parameters:
     ///   - algorithm: Must be `.es256` (the only algorithm supported by Secure Enclave).
     ///   - certificateChainPEM: The certificate chain in PEM format.
-    ///   - tsaURL: Optional URL of a timestamp authority.
+    ///   - tsa: Optional URL of a timestamp authority.
     ///   - secureEnclaveConfig: Configuration specifying the key tag and access control.
     ///
     /// - Throws: ``C2PAError`` if the algorithm is not ES256, if the Secure Enclave is
@@ -70,7 +70,7 @@ extension Signer {
     /// let signer = try Signer(
     ///     algorithm: .es256,
     ///     certificateChainPEM: certChainPEM,
-    ///     tsaURL: "http://timestamp.digicert.com",
+    ///     tsa: URL(string: "http://timestamp.digicert.com"),
     ///     secureEnclaveConfig: config
     /// )
     /// ```
@@ -85,17 +85,17 @@ extension Signer {
     public convenience init(
         algorithm: SigningAlgorithm,
         certificateChainPEM: String,
-        tsaURL: String? = nil,
+        tsa: URL? = nil,
         secureEnclaveConfig: SecureEnclaveSignerConfig
     ) throws {
         guard algorithm == .es256 else {
-            throw C2PAError.api("Secure Enclave only supports ES256 (P-256)")
+            throw C2PAError.unsupportedAlgorithm(algorithm, true)
         }
 
         try self.init(
             algorithm: algorithm,
             certificateChainPEM: certificateChainPEM,
-            tsaURL: tsaURL
+            tsa: tsa
         ) { data in
             let query: [String: Any] = [
                 kSecClass as String: kSecClassKey,
@@ -116,27 +116,22 @@ extension Signer {
             {
                 privateKey = key
             } else {
-                throw C2PAError.api("Failed to access Secure Enclave key: \(status)")
+                throw C2PAError.keySearchFailed(secureEnclaveConfig.keyTag, status, true)
             }
 
-            let algorithm = SecKeyAlgorithm.ecdsaSignatureMessageX962SHA256
-
-            guard SecKeyIsAlgorithmSupported(privateKey, .sign, algorithm) else {
-                throw C2PAError.api("Secure Enclave key doesn't support required algorithm")
+            guard SecKeyIsAlgorithmSupported(privateKey, .sign, algorithm.secKeyAlgo!) else {
+                throw C2PAError.unsupportedAlgorithm(algorithm, true)
             }
 
             var error: Unmanaged<CFError>?
             guard
                 let signature = SecKeyCreateSignature(
                     privateKey,
-                    algorithm,
+                    algorithm.secKeyAlgo!,
                     data as CFData,
                     &error)
             else {
-                if let error = error?.takeRetainedValue() {
-                    throw C2PAError.api("Secure Enclave signing failed: \(error)")
-                }
-                throw C2PAError.api("Secure Enclave signing failed")
+                throw C2PAError.signingFailed(error?.takeRetainedValue(), true)
             }
 
             return signature as Data
@@ -168,7 +163,7 @@ extension Signer {
                 nil
             )
         else {
-            throw C2PAError.api("Failed to create access control")
+            throw C2PAError.accessControlCreationFailed
         }
 
         let attributes: [String: Any] = [
@@ -184,10 +179,7 @@ extension Signer {
 
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-            if let error = error?.takeRetainedValue() {
-                throw C2PAError.api("Failed to create Secure Enclave key: \(error)")
-            }
-            throw C2PAError.api("Failed to create Secure Enclave key")
+            throw C2PAError.keyCreationFailed(error?.takeRetainedValue(), true)
         }
 
         return privateKey

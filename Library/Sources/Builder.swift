@@ -31,7 +31,7 @@ import Foundation
 /// - ``setIntent(_:)``
 /// - ``addAction(_:)``
 /// - ``setNoEmbed()``
-/// - ``setRemoteURL(_:)``
+/// - ``setRemote(url:)``
 ///
 /// ### Adding Content
 /// - ``addResource(uri:stream:)``
@@ -47,7 +47,7 @@ import Foundation
 /// let builder = try Builder(manifestJSON: manifestJSON)
 /// try builder.setIntent(.edit)
 /// builder.setNoEmbed()
-/// try builder.setRemoteURL("https://example.com/manifest.c2pa")
+/// try builder.setRemote(url: URL(string: "https://example.com/manifest.c2pa")!)
 /// try builder.addIngredient(
 ///     json: ingredientJSON,
 ///     format: "image/jpeg",
@@ -138,7 +138,7 @@ public final class Builder {
         let encoder = JSONEncoder()
         let data = try encoder.encode(action)
         guard let actionJSON = String(data: data, encoding: .utf8) else {
-            throw C2PAError.api("Failed to encode action to JSON")
+            throw C2PAError.utf8
         }
         _ = try guardNonNegative(
             Int64(c2pa_builder_add_action(ptr, actionJSON))
@@ -148,10 +148,10 @@ public final class Builder {
     /// Configures the builder to not embed the manifest in the output file.
     ///
     /// When enabled, the manifest will be stored separately and referenced
-    /// via a remote URL. You must call ``setRemoteURL(_:)`` to specify
+    /// via a remote URL. You must call ``setRemote(url:)`` to specify
     /// where the manifest will be hosted.
     ///
-    /// - SeeAlso: ``setRemoteURL(_:)``
+    /// - SeeAlso: ``setRemote(url:)``
     public func setNoEmbed() { c2pa_builder_set_no_embed(ptr) }
 
     /// Sets the remote URL where the manifest will be hosted.
@@ -166,9 +166,9 @@ public final class Builder {
     /// - Note: The URL should be accessible via HTTPS for security.
     ///
     /// - SeeAlso: ``setNoEmbed()``
-    public func setRemoteURL(_ url: String) throws {
+    public func setRemote(url: URL) throws {
         _ = try guardNonNegative(
-            Int64(c2pa_builder_set_remote_url(ptr, url))
+            Int64(c2pa_builder_set_remote_url(ptr, url.absoluteString))
         )
     }
 
@@ -244,8 +244,8 @@ public final class Builder {
     /// ```swift
     /// let builder = try Builder(manifestJSON: manifestJSON)
     /// let signer = try Signer(info: signerInfo)
-    /// let sourceStream = try Stream(fileURL: sourceURL)
-    /// let destStream = try Stream(fileURL: destURL)
+    /// let sourceStream = try Stream(readFrom: sourceURL)
+    /// let destStream = try Stream(writeTo: destURL)
     ///
     /// let manifestData = try builder.sign(
     ///     format: "image/jpeg",

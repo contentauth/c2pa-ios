@@ -1,4 +1,4 @@
-// This file is licensed to you under the Apache License, Version 2.0 
+// This file is licensed to you under the Apache License, Version 2.0
 // (http://www.apache.org/licenses/LICENSE-2.0) or the MIT license 
 // (http://opensource.org/licenses/MIT), at your option.
 //
@@ -25,11 +25,11 @@ extension Signer {
     /// - Parameters:
     ///   - algorithm: The signing algorithm (ES256, ES384, ES512, PS256, PS384, or PS512).
     ///   - certificateChainPEM: The certificate chain in PEM format.
-    ///   - tsaURL: Optional URL of a timestamp authority.
+    ///   - tsa: Optional URL of a timestamp authority.
     ///   - keychainKeyTag: The keychain tag identifying the private key.
     ///
     /// - Throws: ``C2PAError`` if the key cannot be found, doesn't support the algorithm,
-    ///   or if signing fails. Also throws for Ed25519 which is not supported by iOS keychain.
+    ///   or if signing fails. Also throws for Ed25519 which is not supported by the keychain.
     ///
     /// ## Example
     ///
@@ -38,7 +38,7 @@ extension Signer {
     /// let signer = try Signer(
     ///     algorithm: .es256,
     ///     certificateChainPEM: certChainPEM,
-    ///     tsaURL: "http://timestamp.digicert.com",
+    ///     tsa: URL(string: "http://timestamp.digicert.com"),
     ///     keychainKeyTag: "com.example.c2pa.signing.key"
     /// )
     ///
@@ -52,39 +52,25 @@ extension Signer {
     /// ```
     ///
     /// - Important: The key must already exist in the keychain before creating the signer.
-    ///   Use standard iOS keychain APIs to generate and store the key.
+    ///   Use standard keychain APIs to generate and store the key.
     ///
-    /// - Note: Ed25519 is not supported because iOS Keychain doesn't support this algorithm.
+    /// - Note: Ed25519 is not supported because Keychain doesn't support this algorithm.
     ///
     /// - SeeAlso: ``SecureEnclaveSigner``, ``exportPublicKeyPEM(fromKeychainTag:)``
     public convenience init(
         algorithm: SigningAlgorithm,
         certificateChainPEM: String,
-        tsaURL: String? = nil,
+        tsa: URL? = nil,
         keychainKeyTag: String
     ) throws {
-        let secAlgorithm: SecKeyAlgorithm
-        switch algorithm {
-        case .es256:
-            secAlgorithm = .ecdsaSignatureMessageX962SHA256
-        case .es384:
-            secAlgorithm = .ecdsaSignatureMessageX962SHA384
-        case .es512:
-            secAlgorithm = .ecdsaSignatureMessageX962SHA512
-        case .ps256:
-            secAlgorithm = .rsaSignatureMessagePSSSHA256
-        case .ps384:
-            secAlgorithm = .rsaSignatureMessagePSSSHA384
-        case .ps512:
-            secAlgorithm = .rsaSignatureMessagePSSSHA512
-        case .ed25519:
-            throw C2PAError.api("Ed25519 not supported by iOS Keychain")
+        guard let secAlgorithm = algorithm.secKeyAlgo else {
+            throw C2PAError.ed25519NotSupported
         }
 
         try self.init(
             algorithm: algorithm,
             certificateChainPEM: certificateChainPEM,
-            tsaURL: tsaURL
+            tsa: tsa
         ) { data in
             let query: [String: Any] = [
                 kSecClass as String: kSecClassKey,
@@ -99,11 +85,11 @@ extension Signer {
             guard status == errSecSuccess,
                 let privateKey = item as! SecKey?
             else {
-                throw C2PAError.api("Failed to find key '\(keychainKeyTag)' in keychain: \(status)")
+                throw C2PAError.keySearchFailed(keychainKeyTag, status)
             }
 
             guard SecKeyIsAlgorithmSupported(privateKey, .sign, secAlgorithm) else {
-                throw C2PAError.api("Key doesn't support algorithm \(algorithm)")
+                throw C2PAError.unsupportedAlgorithm(algorithm)
             }
 
             var error: Unmanaged<CFError>?
@@ -114,10 +100,7 @@ extension Signer {
                     data as CFData,
                     &error)
             else {
-                if let error = error?.takeRetainedValue() {
-                    throw C2PAError.api("Signing failed: \(error)")
-                }
-                throw C2PAError.api("Signing failed")
+                throw C2PAError.signingFailed(error?.takeRetainedValue())
             }
 
             return signature as Data
