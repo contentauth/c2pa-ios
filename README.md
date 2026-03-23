@@ -195,35 +195,6 @@ let manifestData = try builder.sign(
 )
 ```
 
-## Building from Source
-
-1. Clone this repository:
-
-   ```bash
-   git clone https://github.com/contentauth/c2pa-ios.git
-   cd c2pa-ios
-   ```
-
-2. Build the iOS framework:
-
-   ```bash
-   # Build library framework
-   make library
-
-   # Or build entire workspace
-   make workspace-build
-   ```
-
-3. Run tests:
-
-   ```bash
-   # Run all tests
-   make test
-
-   # Run with coverage
-   make coverage
-   ```
-
 ## Makefile Targets
 
 The project includes a comprehensive Makefile with various targets:
@@ -244,22 +215,6 @@ The project includes a comprehensive Makefile with various targets:
 - `clean` - Clean build artifacts
 - `lint` - Run SwiftLint on the codebase
 - `help` - Show all available targets
-
-## Test App
-
-The app includes comprehensive tests covering all major C2PA operations. Run the app and tap "Run All Tests" to see the library in action.
-
-- **C2PA Library Version** - Display current library version
-- **Error Handling** - Proper error handling for invalid files
-- **Reading C2PA Data** - Extract manifest data from signed images
-- **Stream APIs** - Demonstrate flexible stream-based operations
-- **Builder APIs** - Sign images with custom manifest data
-- **No-Embed Manifests** - Create cloud/sidecar manifests
-- **Resource Management** - Add and extract resources (thumbnails, etc.)
-- **Ingredient Support** - Handle ingredient relationships
-- **Archive Operations** - Work with C2PA archives
-- **Custom Signers** - Implement callback-based signing
-- **Hardware Signing** - Use Secure Enclave for signing (iOS devices)
 
 ## Test Signing Server
 
@@ -286,4 +241,4 @@ The server runs on `http://localhost:8080` and provides:
 
 ## License
 
-This project is licensed under the Apache License, Version 2.0 and MIT - see the LICENSE-APACHE and LICENSE-MIT files for details.
+This project is licensed under the Apache License, Version 2.0 and MIT License. See the [LICENSE-APACHE](https://github.com/contentauth/c2pa-ios/blob/main/LICENSE-APACHE) and [LICENSE-MIT](https://github.com/contentauth/c2pa-ios/blob/main/LICENSE-MIT) files for details.
