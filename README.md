@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/contentauth/c2pa-ios/actions/workflows/test.yml/badge.svg)](https://github.com/contentauth/c2pa-ios/actions/workflows/test.yml)
 
-This project provides iOS bindings to the Content Authenticity Initiative [C2PA](https://c2pa.org/) libraries. It wraps [c2pa-rs Rust library](https://github.com/contentauth/c2pa-rs) using its C API bindings.
+This project provides iOS bindings to the [Content Authenticity Initiative SDK](https://opensource.contentauthenticity.org/docs/). It wraps [c2pa-rs Rust library](https://github.com/contentauth/c2pa-rs) using its C API bindings.
 
 ## Overview
 
@@ -15,9 +15,12 @@ C2PA iOS offers:
 - Comprehensive test suite with example application
 - Hardware-backed signing with Secure Enclave (iOS devices)
 
-NOTE: This project officially supports only iOS, even though it may run on other platforms that support Swift.
+> [!NOTE] 
+> This project officially supports only iOS, even though it may run on other platforms that support Swift.
 
-## Repository Structure
+For information on contributing to the project, see [Project contributions](https://github.com/contentauth/c2pa-ios/tree/main/docs).
+
+## Repository structure
 
 ```
 c2pa-ios/
@@ -49,9 +52,9 @@ c2pa-ios/
 - Xcode Command Line Tools
 - Make
 
-## Quick Start
+## Quick start
 
-### Building the Library
+### Building the library
 
 ```bash
 # Build the complete library with XCFramework
@@ -70,7 +73,7 @@ make test-library
 make coverage
 ```
 
-### Running Applications
+### Running applications
 
 ```bash
 # Run the test app in iOS Simulator
@@ -83,7 +86,7 @@ make run-example-app
 make workspace-build
 ```
 
-### Working with the Signing Server
+### Working with the signing server
 
 ```bash
 # Start the local signing server
@@ -101,7 +104,7 @@ make tests-with-server
 
 ## Installation
 
-### Swift Package Manager
+### Swift package manager
 
 You can add C2PA iOS as a Swift Package Manager dependency:
 
@@ -122,7 +125,7 @@ targets: [
 ]
 ```
 
-### Local Development
+### Local development
 
 For local development without using a released version:
 
@@ -132,7 +135,7 @@ For local development without using a released version:
 
 ## Usage
 
-### Basic File Operations
+### Basic file operations
 
 ```swift
 import C2PA
@@ -169,7 +172,7 @@ try C2PA.signFile(
 )
 ```
 
-### Stream-Based APIs
+### Stream-based APIs
 
 ```swift
 // Create stream from data
@@ -195,7 +198,7 @@ let manifestData = try builder.sign(
 )
 ```
 
-## Makefile Targets
+## Makefile targets
 
 The project includes a comprehensive Makefile with various targets:
 
@@ -216,7 +219,7 @@ The project includes a comprehensive Makefile with various targets:
 - `lint` - Run SwiftLint on the codebase
 - `help` - Show all available targets
 
-## Test Signing Server
+## Test signing server
 
 For testing certificate enrollment and C2PA signing, a Swift-based signing server is included:
 
