@@ -18,7 +18,7 @@ C2PA iOS offers:
 > [!NOTE] 
 > This project officially supports only iOS, even though it may run on other platforms that support Swift.
 
-For information on contributing to the project, see [Project contributions](https://github.com/contentauth/c2pa-ios/tree/main/docs).
+For information on contributing to the project, see [Project contributions](https://github.com/contentauth/c2pa-ios/tree/main/docs/project-contributions.md).
 
 ## Repository structure
 
