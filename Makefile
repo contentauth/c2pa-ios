@@ -11,6 +11,10 @@ SDK := iphoneos
 DESTINATION ?= platform=iOS Simulator,name=iPhone 17 Pro
 MACOS_DESTINATION ?= platform=macOS
 
+# Disable code signing for unit-test invocations so CI runners without
+# a Mac Development certificate can still build and run the test bundles.
+TEST_CODE_SIGN_FLAGS := CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" CODE_SIGN_ENTITLEMENTS=""
+
 # Default target
 all: workspace-build
 
@@ -62,13 +66,14 @@ test-library: library
 		-scheme Library \
 		-destination '$(DESTINATION)' \
 		-resultBundlePath TestResults.xcresult \
-		-enableCodeCoverage YES
+		-enableCodeCoverage YES \
+		$(TEST_CODE_SIGN_FLAGS)
 	@echo "Library tests completed."
 
 # Run library tests on macOS
 test-library-macos:
 	@echo "Building C2PA library for macOS..."
-	@xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination '$(MACOS_DESTINATION)' build
+	@xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination '$(MACOS_DESTINATION)' $(TEST_CODE_SIGN_FLAGS) build
 	@echo "Running library unit tests on macOS..."
 	@rm -rf TestResults.xcresult
 	@xcodebuild test \
@@ -76,7 +81,8 @@ test-library-macos:
 		-scheme Library \
 		-destination '$(MACOS_DESTINATION)' \
 		-resultBundlePath TestResults.xcresult \
-		-enableCodeCoverage YES
+		-enableCodeCoverage YES \
+		$(TEST_CODE_SIGN_FLAGS)
 	@echo "macOS library tests completed."
 
 # Run all tests including unit and UI tests
@@ -88,7 +94,8 @@ tests: test-app
 		-scheme TestApp \
 		-destination '$(DESTINATION)' \
 		-resultBundlePath TestResults.xcresult \
-		-enableCodeCoverage YES
+		-enableCodeCoverage YES \
+		$(TEST_CODE_SIGN_FLAGS)
 
 # Quick test run (alias for test-library)
 test: test-library
