@@ -1,8 +1,9 @@
 .PHONY: all clean library test-shared test-app example-app publish tests coverage help \
         run-test-app run-example-app signing-server-start signing-server-stop signing-server-status \
         tests-with-server workspace-build test-library test-library-macos lint signing-server-wait signing-server-verify \
-        test-summary coverage-lcov swift-framework validate-version release-tests \
-        package-swift update-package-swift create-release-tag docs
+        test-summary coverage-lcov validate-version release-tests \
+        package-swift update-package-swift create-release-tag docs \
+        use-dev-package use-release-package
 
 # Build configuration
 CONFIGURATION := Release
@@ -25,10 +26,47 @@ lint:
 	@echo "Linting completed."
 
 
-# Build the C2PA library framework
+# Build the C2PA multi-platform library (iOS device + iOS simulator + macOS).
+# Produces Library/Frameworks/C2PAC.xcframework and output/C2PAC.xcframework.zip.
 library:
-	@echo "Building C2PA library framework..."
-	@xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination '$(DESTINATION)' build
+	@echo "Building C2PA multi-platform library (iOS device + iOS simulator + macOS)..."
+	@SYMROOT=$$(xcodebuild -workspace C2PA.xcworkspace -scheme Library -showBuildSettings 2>/dev/null | grep "^    SYMROOT = " | head -1 | sed 's/.*SYMROOT = //'); \
+	echo "Build root: $$SYMROOT"; \
+	echo "Building for iOS device..."; \
+	xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination "generic/platform=iOS" build; \
+	echo "Building for iOS simulator..."; \
+	xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination "generic/platform=iOS Simulator" build; \
+	echo "Building for macOS..."; \
+	xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination "generic/platform=macOS" build; \
+	echo "Creating XCFramework from all platform builds..."; \
+	DEVICE_DIR="$$SYMROOT/$(CONFIGURATION)-iphoneos"; \
+	SIMULATOR_DIR="$$SYMROOT/$(CONFIGURATION)-iphonesimulator"; \
+	MACOS_DIR="$$SYMROOT/$(CONFIGURATION)"; \
+	if [ -d "$$DEVICE_DIR/C2PAC.framework" ] && [ -d "$$SIMULATOR_DIR/C2PAC.framework" ] && [ -d "$$MACOS_DIR/C2PAC.framework" ]; then \
+		mkdir -p Library/Frameworks; \
+		rm -rf Library/Frameworks/C2PAC.xcframework; \
+		xcodebuild -create-xcframework \
+			-framework "$$DEVICE_DIR/C2PAC.framework" \
+			-framework "$$SIMULATOR_DIR/C2PAC.framework" \
+			-framework "$$MACOS_DIR/C2PAC.framework" \
+			-output Library/Frameworks/C2PAC.xcframework; \
+		echo "C2PAC.xcframework created in Library/Frameworks/"; \
+		echo "Packaging XCFramework for distribution..."; \
+		mkdir -p output; \
+		rm -rf output/C2PAC.xcframework output/C2PAC.xcframework.zip; \
+		cp -R Library/Frameworks/C2PAC.xcframework output/; \
+		cd output && zip -r C2PAC.xcframework.zip C2PAC.xcframework > /dev/null; \
+		echo "XCFramework packaged to output/C2PAC.xcframework.zip"; \
+	else \
+		echo "::error::Failed to find frameworks for all platforms"; \
+		echo "Device framework: $$DEVICE_DIR/C2PAC.framework"; \
+		ls -la "$$DEVICE_DIR" 2>/dev/null || echo "Device directory not found"; \
+		echo "Simulator framework: $$SIMULATOR_DIR/C2PAC.framework"; \
+		ls -la "$$SIMULATOR_DIR" 2>/dev/null || echo "Simulator directory not found"; \
+		echo "macOS framework: $$MACOS_DIR/C2PAC.framework"; \
+		ls -la "$$MACOS_DIR" 2>/dev/null || echo "macOS directory not found"; \
+		exit 1; \
+	fi
 	@echo "Library build completed."
 
 
@@ -133,53 +171,27 @@ publish: library
 	@xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration Release archive
 	@echo "Library archived. Ready for distribution."
 
-# Build multi-platform XCFramework for iOS (device + simulator) and macOS, then package for distribution
-swift-framework:
-	@echo "Building C2PA Swift XCFramework for iOS device, iOS simulator, and macOS..."
-	@# Get the build root before building
-	@SYMROOT=$$(xcodebuild -workspace C2PA.xcworkspace -scheme Library -showBuildSettings 2>/dev/null | grep "^    SYMROOT = " | head -1 | sed 's/.*SYMROOT = //'); \
-	echo "Build root: $$SYMROOT"; \
-	\
-	echo "Building for iOS device..."; \
-	$(MAKE) library CONFIGURATION=Release DESTINATION="generic/platform=iOS"; \
-	\
-	echo "Building for iOS simulator..."; \
-	$(MAKE) library CONFIGURATION=Release DESTINATION="generic/platform=iOS Simulator"; \
-	\
-	echo "Building for macOS..."; \
-	$(MAKE) library CONFIGURATION=Release DESTINATION="generic/platform=macOS"; \
-	\
-	echo "Creating XCFramework from all platform builds..."; \
-	DEVICE_DIR="$$SYMROOT/Release-iphoneos"; \
-	SIMULATOR_DIR="$$SYMROOT/Release-iphonesimulator"; \
-	MACOS_DIR="$$SYMROOT/Release"; \
-	\
-	if [ -d "$$DEVICE_DIR/C2PAC.framework" ] && [ -d "$$SIMULATOR_DIR/C2PAC.framework" ] && [ -d "$$MACOS_DIR/C2PAC.framework" ]; then \
-		mkdir -p Library/Frameworks; \
-		rm -rf Library/Frameworks/C2PAC.xcframework; \
-		xcodebuild -create-xcframework \
-			-framework "$$DEVICE_DIR/C2PAC.framework" \
-			-framework "$$SIMULATOR_DIR/C2PAC.framework" \
-			-framework "$$MACOS_DIR/C2PAC.framework" \
-			-output Library/Frameworks/C2PAC.xcframework; \
-		echo "C2PAC.xcframework created in Library/Frameworks/"; \
-		\
-		echo "Packaging XCFramework for distribution..."; \
-		mkdir -p output; \
-		cp -R Library/Frameworks/C2PAC.xcframework output/; \
-		cd output && zip -r C2PAC.xcframework.zip C2PAC.xcframework; \
-		echo "XCFramework packaged to output/C2PAC.xcframework.zip"; \
-	else \
-		echo "::error::Failed to find frameworks for all platforms"; \
-		echo "Device framework: $$DEVICE_DIR/C2PAC.framework"; \
-		ls -la "$$DEVICE_DIR" 2>/dev/null || echo "Device directory not found"; \
-		echo "Simulator framework: $$SIMULATOR_DIR/C2PAC.framework"; \
-		ls -la "$$SIMULATOR_DIR" 2>/dev/null || echo "Simulator directory not found"; \
-		echo "macOS framework: $$MACOS_DIR/C2PAC.framework"; \
-		ls -la "$$MACOS_DIR" 2>/dev/null || echo "macOS directory not found"; \
-		exit 1; \
+# Swap Package.swift to use the local Library/Frameworks/C2PAC.xcframework
+# (so a downstream Mac/iOS app can consume this checkout directly via SPM
+# "Add Local Package" without requiring a published release).
+use-dev-package:
+	@if [ ! -f Package.release.swift.bak ]; then \
+		cp Package.swift Package.release.swift.bak; \
+		echo "Backed up release Package.swift -> Package.release.swift.bak"; \
 	fi
-	@echo "C2PA Swift XCFramework build and packaging completed."
+	@cp Package.dev.swift Package.swift
+	@echo "Package.swift now points at local Library/Frameworks/C2PAC.xcframework"
+	@echo "Run 'make library' first if the XCFramework does not yet exist."
+	@echo "Run 'make use-release-package' to restore the release manifest."
+
+# Restore Package.swift to the release variant (URL-based binary target).
+use-release-package:
+	@if [ -f Package.release.swift.bak ]; then \
+		mv Package.release.swift.bak Package.swift; \
+		echo "Package.swift restored to release variant (URL-based binary target)"; \
+	else \
+		echo "No backup at Package.release.swift.bak; assuming Package.swift is already the release variant."; \
+	fi
 
 # Validate version format (expects VERSION environment variable)
 validate-version:
@@ -395,6 +407,8 @@ clean:
 	@xcodebuild -workspace C2PA.xcworkspace -scheme SigningServer clean
 	@rm -rf SigningServer/.build
 	@rm -rf build
+	@rm -rf Library/Frameworks/C2PAC.xcframework
+	@rm -rf output
 	@$(MAKE) clean-coverage
 	@echo "Clean complete."
 
@@ -415,8 +429,9 @@ help:
 	@echo "Available targets:"
 	@echo "  make              - Build the library (default)"
 	@echo "  make lint         - Run SwiftLint on the codebase"
-	@echo "  make library      - Build the C2PA library framework"
-	@echo "  make swift-framework - Build multi-platform XCFramework (iOS + macOS)"
+	@echo "  make library      - Build multi-platform XCFramework (iOS device + simulator + macOS)"
+	@echo "  make use-dev-package - Swap Package.swift to local-path variant (for testing this checkout as a SPM dependency)"
+	@echo "  make use-release-package - Restore Package.swift to URL-based release variant"
 	@echo "  make test-shared  - Build the TestShared framework"
 	@echo "  make test-app     - Build the TestApp"
 	@echo "  make example-app  - Build the ExampleApp"

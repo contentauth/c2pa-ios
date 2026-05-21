@@ -49,7 +49,7 @@ jobs:
         run: xcodebuild -version
 
       - name: Build C2PA Swift Framework
-        run: make swift-framework
+        run: make library
 
       - name: Compute checksum for XCFramework
         id: compute-checksum

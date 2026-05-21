@@ -64,11 +64,8 @@ c2pa-swift/
 ### Building the library
 
 ```bash
-# Build the complete library with XCFramework
+# Build the multi-platform XCFramework (iOS device + simulator + macOS)
 make library
-
-# Build multi-platform XCFramework (iOS + macOS)
-make swift-framework
 
 # Run all tests
 make test
@@ -212,8 +209,8 @@ let manifestData = try builder.sign(
 
 The project includes a comprehensive Makefile with various targets:
 
-- `library` - Build the C2PA library framework
-- `swift-framework` - Build multi-platform XCFramework (iOS + macOS)
+- `library` - Build multi-platform XCFramework (iOS device + simulator + macOS)
+- `use-dev-package` / `use-release-package` - Toggle Package.swift between local-path and URL-based binary target
 - `test` - Run all tests (alias for test-library)
 - `test-library` - Run library unit tests only (iOS)
 - `test-library-macos` - Run library unit tests on macOS
