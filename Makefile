@@ -26,28 +26,32 @@ lint:
 	@echo "Linting completed."
 
 
-# Build the C2PA multi-platform library (iOS device + iOS simulator + macOS).
+# Build the C2PA multi-platform library (iOS device + iOS simulator + Mac Catalyst + macOS).
 # Produces Library/Frameworks/C2PAC.xcframework and output/C2PAC.xcframework.zip.
 library:
-	@echo "Building C2PA multi-platform library (iOS device + iOS simulator + macOS)..."
+	@echo "Building C2PA multi-platform library (iOS device + iOS simulator + Mac Catalyst + macOS)..."
 	@SYMROOT=$$(xcodebuild -workspace C2PA.xcworkspace -scheme Library -showBuildSettings 2>/dev/null | grep "^    SYMROOT = " | head -1 | sed 's/.*SYMROOT = //'); \
 	echo "Build root: $$SYMROOT"; \
 	echo "Building for iOS device..."; \
 	xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination "generic/platform=iOS" build; \
 	echo "Building for iOS simulator..."; \
 	xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination "generic/platform=iOS Simulator" build; \
+	echo "Building for Mac Catalyst..."; \
+	xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination "generic/platform=macOS,variant=Mac Catalyst" build; \
 	echo "Building for macOS..."; \
 	xcodebuild -workspace C2PA.xcworkspace -scheme Library -configuration $(CONFIGURATION) -destination "generic/platform=macOS" build; \
 	echo "Creating XCFramework from all platform builds..."; \
 	DEVICE_DIR="$$SYMROOT/$(CONFIGURATION)-iphoneos"; \
 	SIMULATOR_DIR="$$SYMROOT/$(CONFIGURATION)-iphonesimulator"; \
+	CATALYST_DIR="$$SYMROOT/$(CONFIGURATION)-maccatalyst"; \
 	MACOS_DIR="$$SYMROOT/$(CONFIGURATION)"; \
-	if [ -d "$$DEVICE_DIR/C2PAC.framework" ] && [ -d "$$SIMULATOR_DIR/C2PAC.framework" ] && [ -d "$$MACOS_DIR/C2PAC.framework" ]; then \
+	if [ -d "$$DEVICE_DIR/C2PAC.framework" ] && [ -d "$$SIMULATOR_DIR/C2PAC.framework" ] && [ -d "$$CATALYST_DIR/C2PAC.framework" ] && [ -d "$$MACOS_DIR/C2PAC.framework" ]; then \
 		mkdir -p Library/Frameworks; \
 		rm -rf Library/Frameworks/C2PAC.xcframework; \
 		xcodebuild -create-xcframework \
 			-framework "$$DEVICE_DIR/C2PAC.framework" \
 			-framework "$$SIMULATOR_DIR/C2PAC.framework" \
+			-framework "$$CATALYST_DIR/C2PAC.framework" \
 			-framework "$$MACOS_DIR/C2PAC.framework" \
 			-output Library/Frameworks/C2PAC.xcframework; \
 		echo "C2PAC.xcframework created in Library/Frameworks/"; \
@@ -63,6 +67,8 @@ library:
 		ls -la "$$DEVICE_DIR" 2>/dev/null || echo "Device directory not found"; \
 		echo "Simulator framework: $$SIMULATOR_DIR/C2PAC.framework"; \
 		ls -la "$$SIMULATOR_DIR" 2>/dev/null || echo "Simulator directory not found"; \
+		echo "Catalyst framework: $$CATALYST_DIR/C2PAC.framework"; \
+		ls -la "$$CATALYST_DIR" 2>/dev/null || echo "Catalyst directory not found"; \
 		echo "macOS framework: $$MACOS_DIR/C2PAC.framework"; \
 		ls -la "$$MACOS_DIR" 2>/dev/null || echo "macOS directory not found"; \
 		exit 1; \
@@ -429,7 +435,7 @@ help:
 	@echo "Available targets:"
 	@echo "  make              - Build the library (default)"
 	@echo "  make lint         - Run SwiftLint on the codebase"
-	@echo "  make library      - Build multi-platform XCFramework (iOS device + simulator + macOS)"
+	@echo "  make library      - Build multi-platform XCFramework (iOS device + simulator + Mac Catalyst + macOS)"
 	@echo "  make use-dev-package - Swap Package.swift to local-path variant (for testing this checkout as a SPM dependency)"
 	@echo "  make use-release-package - Restore Package.swift to URL-based release variant"
 	@echo "  make test-shared  - Build the TestShared framework"
