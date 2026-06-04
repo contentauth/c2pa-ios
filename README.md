@@ -55,9 +55,7 @@ c2pa-swift/
 |----------|--------|-------|
 | iOS 16.0+ | Supported | Full support including Secure Enclave signing |
 | macOS 14.0+ | Supported | Full support; Secure Enclave on Apple Silicon only |
-| visionOS | Planned | Pending upstream binary support |
-| watchOS | Not supported | No upstream binary support |
-| tvOS | Not supported | No upstream binary support |
+| Mac Catalyst 16.0+ | Supported | iOS-style API surface; Secure Enclave on Apple Silicon only |
 
 ## Quick start
 
