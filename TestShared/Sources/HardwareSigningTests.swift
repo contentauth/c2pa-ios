@@ -328,6 +328,18 @@ public final class HardwareSigningTests: TestImplementation {
         var testSteps: [String] = []
 
         // Try to create test key in keychain
+        #if os(macOS)
+        // On macOS, create the key without kSecAttrAccessible (not supported)
+        // and store it with default Keychain access
+        let attributes: [String: Any] = [
+            kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
+            kSecAttrKeySizeInBits as String: 256,
+            kSecPrivateKeyAttrs as String: [
+                kSecAttrIsPermanent as String: true,
+                kSecAttrApplicationTag as String: keyTag
+            ] as [String: Any]
+        ]
+        #else
         let attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits as String: 256,
@@ -335,8 +347,9 @@ public final class HardwareSigningTests: TestImplementation {
                 kSecAttrIsPermanent as String: true,
                 kSecAttrApplicationTag as String: keyTag,
                 kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-            ]
+            ] as [String: Any]
         ]
+        #endif
 
         defer {
             deleteTestKeychainKey(keyTag: keyTag)
@@ -347,10 +360,10 @@ public final class HardwareSigningTests: TestImplementation {
             // Handle keychain access errors gracefully
             if let error = error?.takeRetainedValue() {
                 let nsError = error as Error as NSError
-                if nsError.code == -34018 {  // errSecMissingEntitlement
+                if nsError.code == -34018 || nsError.code == -2070 {
                     return .skipped(
                         "Keychain Signer Creation",
-                        "Keychain access not available in this test environment")
+                        "Keychain access not available in this test environment (error \(nsError.code))")
                 }
                 testSteps.append("Failed to create test key in keychain: \(error)")
             } else {

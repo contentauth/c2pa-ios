@@ -28,14 +28,28 @@ jobs:
         run: make lint
 
   test:
-    name: ${{ matrix.device }} Xcode ${{ matrix.xcode }}
+    name: ${{ matrix.name }} Xcode ${{ matrix.xcode }}
     runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
-        xcode: ["16.4"]
-        device: ["iPhone 16 Pro", "iPhone 16"]
-        ios: ["18.5"]
+        include:
+          - name: "iPhone 16 Pro"
+            platform: ios
+            device: "iPhone 16 Pro"
+            ios: "18.5"
+            xcode: "16.4"
+            destination: "platform=iOS Simulator,name=iPhone 16 Pro,OS=18.5"
+          - name: "iPhone 16"
+            platform: ios
+            device: "iPhone 16"
+            ios: "18.5"
+            xcode: "16.4"
+            destination: "platform=iOS Simulator,name=iPhone 16,OS=18.5"
+          - name: "macOS"
+            platform: macos
+            xcode: "16.4"
+            destination: "platform=macOS"
 
     steps:
       - uses: actions/checkout@v4
@@ -49,6 +63,7 @@ jobs:
         run: xcodebuild -version
 
       - name: Ensure Simulator is Available
+        if: matrix.platform == 'ios'
         run: |
           DEVICE_NAME="${{ matrix.device }}"
           IOS_VERSION="${{ matrix.ios }}"
@@ -117,7 +132,7 @@ jobs:
           xcrun simctl list devices | grep "$DEVICE_NAME"
 
       - name: Build Library
-        run: make library DESTINATION="platform=iOS Simulator,name=${{ matrix.device }},OS=${{ matrix.ios }}"
+        run: make library DESTINATION="${{ matrix.destination }}"
 
       - name: Start Signing Server
         run: |
@@ -135,7 +150,7 @@ jobs:
           set -o pipefail
           echo "CI environment variable: true"
           echo "Testing with server at http://127.0.0.1:8080"
-          TEST_RUNNER_CI=true make test-library DESTINATION="platform=iOS Simulator,name=${{ matrix.device }},OS=${{ matrix.ios }}"
+          TEST_RUNNER_CI=true make test-library DESTINATION="${{ matrix.destination }}"
 
       - name: Generate test summary
         if: always()
@@ -145,7 +160,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: TestSummary-${{ matrix.xcode }}-${{ matrix.device }}
+          name: TestSummary-${{ matrix.xcode }}-${{ matrix.name }}
           path: |
             TestResults.xcresult
           if-no-files-found: warn
@@ -160,16 +175,16 @@ jobs:
           fi
           if [ -f "coverage.lcov" ]; then
             echo "Coverage LCOV found ($(wc -c < coverage.lcov) bytes)"
-            # Create a copy with device/xcode info
-            SANITIZED_DEVICE=$(echo "${{ matrix.device }}" | tr ' ()' '---')
-            cp coverage.lcov "coverage-${{ matrix.xcode }}-${SANITIZED_DEVICE}.lcov"
+            # Create a copy with platform info
+            SANITIZED_NAME=$(echo "${{ matrix.name }}" | tr ' ()' '---')
+            cp coverage.lcov "coverage-${{ matrix.xcode }}-${SANITIZED_NAME}.lcov"
           fi
 
       - name: Upload coverage report to GitHub
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.xcode }}-${{ matrix.device }}
+          name: coverage-${{ matrix.xcode }}-${{ matrix.name }}
           path: |
             coverage.lcov
             coverage.json
@@ -181,10 +196,10 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: contentauth/c2pa-ios
+          slug: contentauth/c2pa-swift
           files: ./coverage.lcov,./coverage.json
           flags: unittests
-          name: c2pa-ios-${{ matrix.device }}
+          name: c2pa-swift-${{ matrix.name }}
           fail_ci_if_error: false
           verbose: true
 
@@ -196,5 +211,5 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: server-logs-${{ matrix.xcode }}-${{ matrix.device }}
+          name: server-logs-${{ matrix.xcode }}-${{ matrix.name }}
           path: signing-server.log

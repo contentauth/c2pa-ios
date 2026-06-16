@@ -9,12 +9,6 @@
 /* Begin PBXBuildFile section */
 		8A1234561234567890ABCDEF /* C2PA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1234551234567890ABCDEF /* C2PA.swift */; };
 		8A1234581234567890ABCDEF /* CertificateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1234571234567890ABCDEF /* CertificateManager.swift */; };
-		A0C2A0022E96B00100F2F938 /* C2PAError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0012E96B00100F2F938 /* C2PAError.swift */; };
-		A0C2A0042E96B00100F2F938 /* C2PAJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0032E96B00100F2F938 /* C2PAJson.swift */; };
-		A0C2A0062E96B00100F2F938 /* SignerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0052E96B00100F2F938 /* SignerInfo.swift */; };
-		A0C2A0082E96B00100F2F938 /* C2PASettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0072E96B00100F2F938 /* C2PASettings.swift */; };
-		A0C2A00A2E96B00100F2F938 /* SettingsDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0092E96B00100F2F938 /* SettingsDefinition.swift */; };
-		953415F32E6EB31400A97957 /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 953415F12E6EB31400A97957 /* Base.xcconfig */; };
 		9534697E2E4CB081003E83AD /* X509 in Frameworks */ = {isa = PBXBuildFile; productRef = 9534697D2E4CB081003E83AD /* X509 */; };
 		953469812E4CB0A8003E83AD /* Crypto in Frameworks */ = {isa = PBXBuildFile; productRef = 953469802E4CB0A8003E83AD /* Crypto */; };
 		953469832E4CB0A8003E83AD /* _CryptoExtras in Frameworks */ = {isa = PBXBuildFile; productRef = 953469822E4CB0A8003E83AD /* _CryptoExtras */; };
@@ -35,6 +29,11 @@
 		95A782452E6F06E4001E9748 /* SecureEnclaveSigner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A782372E6F06E4001E9748 /* SecureEnclaveSigner.swift */; };
 		95C99A6E2E69717700C54D0E /* LibraryTestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C99A6B2E69717700C54D0E /* LibraryTestRunner.swift */; };
 		95C99A6F2E69717700C54D0E /* LibraryTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95C99A6C2E69717700C54D0E /* LibraryTests.xctestplan */; };
+		A0C2A0022E96B00100F2F938 /* C2PAError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0012E96B00100F2F938 /* C2PAError.swift */; };
+		A0C2A0042E96B00100F2F938 /* C2PAJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0032E96B00100F2F938 /* C2PAJson.swift */; };
+		A0C2A0062E96B00100F2F938 /* SignerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0052E96B00100F2F938 /* SignerInfo.swift */; };
+		A0C2A0082E96B00100F2F938 /* C2PASettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0072E96B00100F2F938 /* C2PASettings.swift */; };
+		A0C2A00A2E96B00100F2F938 /* SettingsDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0092E96B00100F2F938 /* SettingsDefinition.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,11 +57,6 @@
 		8A1234501234567890ABCDEF /* C2PA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = C2PA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A1234551234567890ABCDEF /* C2PA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PA.swift; sourceTree = "<group>"; };
 		8A1234571234567890ABCDEF /* CertificateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateManager.swift; sourceTree = "<group>"; };
-		A0C2A0012E96B00100F2F938 /* C2PAError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAError.swift; sourceTree = "<group>"; };
-		A0C2A0032E96B00100F2F938 /* C2PAJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAJson.swift; sourceTree = "<group>"; };
-		A0C2A0052E96B00100F2F938 /* SignerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignerInfo.swift; sourceTree = "<group>"; };
-		A0C2A0072E96B00100F2F938 /* C2PASettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PASettings.swift; sourceTree = "<group>"; };
-		A0C2A0092E96B00100F2F938 /* SettingsDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDefinition.swift; sourceTree = "<group>"; };
 		953415F12E6EB31400A97957 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		953469D92E4D2578003E83AD /* C2PATests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = C2PATests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		953469E52E4D25C6003E83AD /* TestShared.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TestShared.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +73,11 @@
 		95A7823B2E6F06E4001E9748 /* WebServiceSigner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebServiceSigner.swift; sourceTree = "<group>"; };
 		95C99A6B2E69717700C54D0E /* LibraryTestRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryTestRunner.swift; sourceTree = "<group>"; };
 		95C99A6C2E69717700C54D0E /* LibraryTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = LibraryTests.xctestplan; sourceTree = "<group>"; };
+		A0C2A0012E96B00100F2F938 /* C2PAError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAError.swift; sourceTree = "<group>"; };
+		A0C2A0032E96B00100F2F938 /* C2PAJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAJson.swift; sourceTree = "<group>"; };
+		A0C2A0052E96B00100F2F938 /* SignerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignerInfo.swift; sourceTree = "<group>"; };
+		A0C2A0072E96B00100F2F938 /* C2PASettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PASettings.swift; sourceTree = "<group>"; };
+		A0C2A0092E96B00100F2F938 /* SettingsDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDefinition.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -266,7 +265,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1640;
-				LastUpgradeCheck = 1640;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					8A12344E1234567890ABCDEF = {
 						CreatedOnToolsVersion = 15.4;
@@ -312,7 +311,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				95C99A6F2E69717700C54D0E /* LibraryTests.xctestplan in Resources */,
-				953415F32E6EB31400A97957 /* Base.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,7 +335,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "#!/bin/bash\nset -e\n\necho \"C2PAC Framework Builder\"\necho \"================\"\n\n# Use build settings from Base.xcconfig (loaded by Xcode)\n# These are now available as environment variables\nGITHUB_ORG=\"${GITHUB_ORG:-contentauth}\"\nC2PA_VERSION=\"${C2PA_VERSION}\"\n\necho \"Version: ${C2PA_VERSION}\"\necho \"GitHub Org: ${GITHUB_ORG}\"\necho \"Platform: ${PLATFORM_NAME}\"\necho \"Target Build Dir: ${TARGET_BUILD_DIR}\"\n\n# Setup directories\nFRAMEWORK_DIR=\"${TARGET_BUILD_DIR}/${PRODUCT_NAME}.framework\"\nDOWNLOAD_DIR=\"${TEMP_DIR}/C2PAC-Downloads\"\nmkdir -p \"${DOWNLOAD_DIR}\"\nmkdir -p \"${FRAMEWORK_DIR}\"\n\n# Determine which library to download based on platform\nif [ \"${PLATFORM_NAME}\" = \"iphoneos\" ]; then\n    ARCH_SUFFIX=\"aarch64-apple-ios\"\n    ARCH_DIR=\"arm64\"\nelif [ \"${PLATFORM_NAME}\" = \"iphonesimulator\" ]; then\n    # For simulator, we need both x86_64 and arm64, then lipo them\n    NEEDS_LIPO=true\nelse\n    echo \"Unsupported platform: ${PLATFORM_NAME}\"\n    exit 1\nfi\n\n# Download function\ndownload_and_extract() {\n    local suffix=\"$1\"\n    local output_dir=\"$2\"\n    \n    echo \"  • Downloading ${suffix}...\"\n    curl -sL \"https://github.com/${GITHUB_ORG}/c2pa-rs/releases/download/c2pa-${C2PA_VERSION}/c2pa-${C2PA_VERSION}-${suffix}.zip\" \\\n        -o \"${DOWNLOAD_DIR}/${suffix}.zip\"\n    \n    mkdir -p \"${DOWNLOAD_DIR}/${suffix}\"\n    unzip -q -o \"${DOWNLOAD_DIR}/${suffix}.zip\" -d \"${DOWNLOAD_DIR}/${suffix}\"\n    \n    cp \"${DOWNLOAD_DIR}/${suffix}/lib/libc2pa_c.a\" \"${output_dir}/libc2pa_c.a\"\n    \n    # Copy and patch header\n    if [ ! -f \"${FRAMEWORK_DIR}/Headers/c2pa.h\" ]; then\n        mkdir -p \"${FRAMEWORK_DIR}/Headers\"\n        # Patch the header to fix Swift compatibility\n        sed 's/typedef struct C2paSigner C2paSigner;/typedef struct C2paSigner { } C2paSigner;/g' \\\n            \"${DOWNLOAD_DIR}/${suffix}/include/c2pa.h\" > \"${FRAMEWORK_DIR}/Headers/c2pa.h\"\n    fi\n}\n\n# Download appropriate libraries\nif [ \"${NEEDS_LIPO}\" = \"true\" ]; then\n    # Simulator needs both architectures\n    echo \"Building universal simulator library...\"\n    \n    mkdir -p \"${DOWNLOAD_DIR}/x86_64\"\n    mkdir -p \"${DOWNLOAD_DIR}/arm64-sim\"\n    \n    download_and_extract \"x86_64-apple-ios\" \"${DOWNLOAD_DIR}/x86_64\"\n    download_and_extract \"aarch64-apple-ios-sim\" \"${DOWNLOAD_DIR}/arm64-sim\"\n    \n    # Create fat library\n    lipo -create \\\n        \"${DOWNLOAD_DIR}/x86_64/libc2pa_c.a\" \\\n        \"${DOWNLOAD_DIR}/arm64-sim/libc2pa_c.a\" \\\n        -output \"${FRAMEWORK_DIR}/C2PAC\"\nelse\n    # Device - single architecture\n    echo \"Building device library...\"\n    mkdir -p \"${DOWNLOAD_DIR}/device\"\n    download_and_extract \"${ARCH_SUFFIX}\" \"${DOWNLOAD_DIR}/device\"\n    cp \"${DOWNLOAD_DIR}/device/libc2pa_c.a\" \"${FRAMEWORK_DIR}/C2PAC\"\nfi\n\n# Create module map\nmkdir -p \"${FRAMEWORK_DIR}/Modules\"\ncat > \"${FRAMEWORK_DIR}/Modules/module.modulemap\" << EOF\nframework module C2PAC {\n    header \"c2pa.h\"\n    export *\n}\nEOF\n\n# Create Info.plist\ncat > \"${FRAMEWORK_DIR}/Info.plist\" << EOF\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n    <key>CFBundleIdentifier</key>\n    <string>org.contentauth.C2PAC</string>\n    <key>CFBundleName</key>\n    <string>C2PAC</string>\n    <key>CFBundleExecutable</key>\n    <string>C2PAC</string>\n    <key>CFBundleVersion</key>\n    <string>1.0</string>\n    <key>CFBundleShortVersionString</key>\n    <string>1.0</string>\n    <key>MinimumOSVersion</key>\n    <string>16.0</string>\n</dict>\n</plist>\nEOF\n\n# Create stamp file for build system\ntouch \"${FRAMEWORK_DIR}/.stamp\"\n\necho \"✓ C2PAC framework built successfully at ${FRAMEWORK_DIR}\"\n";
+			shellScript = "#!/bin/bash\nset -e\n\necho \"C2PAC Framework Builder\"\necho \"================\"\n\n# Use build settings from Base.xcconfig (loaded by Xcode)\n# These are now available as environment variables\nGITHUB_ORG=\"${GITHUB_ORG:-contentauth}\"\nC2PA_VERSION=\"${C2PA_VERSION}\"\n\necho \"Version: ${C2PA_VERSION}\"\necho \"GitHub Org: ${GITHUB_ORG}\"\necho \"Platform: ${PLATFORM_NAME}\"\necho \"Target Build Dir: ${TARGET_BUILD_DIR}\"\n\n# Setup directories\nFRAMEWORK_DIR=\"${TARGET_BUILD_DIR}/${PRODUCT_NAME}.framework\"\nDOWNLOAD_DIR=\"${TEMP_DIR}/C2PAC-Downloads\"\nmkdir -p \"${DOWNLOAD_DIR}\"\nmkdir -p \"${FRAMEWORK_DIR}\"\n\n# Determine which library to download based on platform\n# Check IS_MACCATALYST first because Catalyst's PLATFORM_NAME is macosx.\nif [ \"${IS_MACCATALYST}\" = \"YES\" ]; then\n    # Mac Catalyst: ios-macabi triples; static .a; iOS-style flat framework layout\n    NEEDS_LIPO=true\n    LIPO_ARCH1_SUFFIX=\"x86_64-apple-ios-macabi\"\n    LIPO_ARCH2_SUFFIX=\"aarch64-apple-ios-macabi\"\nelif [ \"${PLATFORM_NAME}\" = \"iphoneos\" ]; then\n    ARCH_SUFFIX=\"aarch64-apple-ios\"\n    ARCH_DIR=\"arm64\"\nelif [ \"${PLATFORM_NAME}\" = \"iphonesimulator\" ]; then\n    # For simulator, we need both x86_64 and arm64, then lipo them\n    NEEDS_LIPO=true\n    LIPO_ARCH1_SUFFIX=\"x86_64-apple-ios\"\n    LIPO_ARCH2_SUFFIX=\"aarch64-apple-ios-sim\"\nelif [ \"${PLATFORM_NAME}\" = \"macosx\" ]; then\n    # For macOS, we need both x86_64 and arm64, then lipo them\n    NEEDS_LIPO=true\n    LIPO_ARCH1_SUFFIX=\"x86_64-apple-darwin\"\n    LIPO_ARCH2_SUFFIX=\"aarch64-apple-darwin\"\nelse\n    echo \"Unsupported platform: ${PLATFORM_NAME}\"\n    exit 1\nfi\n\n# Download function\ndownload_and_extract() {\n    local suffix=\"$1\"\n    local output_dir=\"$2\"\n    \n    echo \"  • Downloading ${suffix}...\"\n    curl -sL \"https://github.com/${GITHUB_ORG}/c2pa-rs/releases/download/c2pa-${C2PA_VERSION}/c2pa-${C2PA_VERSION}-${suffix}.zip\" \\\n        -o \"${DOWNLOAD_DIR}/${suffix}.zip\"\n    \n    mkdir -p \"${DOWNLOAD_DIR}/${suffix}\"\n    unzip -q -o \"${DOWNLOAD_DIR}/${suffix}.zip\" -d \"${DOWNLOAD_DIR}/${suffix}\"\n    \n    # Copy the library binary - iOS provides .a (static), macOS provides .dylib (dynamic)\n    if [ -f \"${DOWNLOAD_DIR}/${suffix}/lib/libc2pa_c.a\" ]; then\n        cp \"${DOWNLOAD_DIR}/${suffix}/lib/libc2pa_c.a\" \"${output_dir}/libc2pa_c\"\n    elif [ -f \"${DOWNLOAD_DIR}/${suffix}/lib/libc2pa_c.dylib\" ]; then\n        cp \"${DOWNLOAD_DIR}/${suffix}/lib/libc2pa_c.dylib\" \"${output_dir}/libc2pa_c\"\n    else\n        echo \"ERROR: No libc2pa_c.a or libc2pa_c.dylib found in ${DOWNLOAD_DIR}/${suffix}/lib/\"\n        ls -la \"${DOWNLOAD_DIR}/${suffix}/lib/\" 2>/dev/null\n        exit 1\n    fi\n    \n    # Copy and patch header\n    if [ ! -f \"${FRAMEWORK_DIR}/Headers/c2pa.h\" ]; then\n        mkdir -p \"${FRAMEWORK_DIR}/Headers\"\n        # Patch the header to fix Swift compatibility\n        sed 's/typedef struct C2paSigner C2paSigner;/typedef struct C2paSigner { } C2paSigner;/g' \\\n            \"${DOWNLOAD_DIR}/${suffix}/include/c2pa.h\" > \"${FRAMEWORK_DIR}/Headers/c2pa.h\"\n    fi\n}\n\n# Download appropriate libraries\nif [ \"${NEEDS_LIPO}\" = \"true\" ]; then\n    # Platform needs both architectures (simulator or macOS universal)\n    echo \"Building universal library for ${PLATFORM_NAME}...\"\n    \n    mkdir -p \"${DOWNLOAD_DIR}/arch1\"\n    mkdir -p \"${DOWNLOAD_DIR}/arch2\"\n    \n    download_and_extract \"${LIPO_ARCH1_SUFFIX}\" \"${DOWNLOAD_DIR}/arch1\"\n    download_and_extract \"${LIPO_ARCH2_SUFFIX}\" \"${DOWNLOAD_DIR}/arch2\"\n    \n    # Create fat library\n    lipo -create \\\n        \"${DOWNLOAD_DIR}/arch1/libc2pa_c\" \\\n        \"${DOWNLOAD_DIR}/arch2/libc2pa_c\" \\\n        -output \"${FRAMEWORK_DIR}/C2PAC\"\n    \n    # Fix dylib install name for native macOS (not Catalyst — Catalyst uses a static .a).\n    if [ \"${PLATFORM_NAME}\" = \"macosx\" ] && [ \"${IS_MACCATALYST}\" != \"YES\" ]; then\n        install_name_tool -id \"@rpath/C2PAC.framework/Versions/A/C2PAC\" \"${FRAMEWORK_DIR}/C2PAC\"\n    fi\nelse\n    # Device - single architecture\n    echo \"Building device library...\"\n    mkdir -p \"${DOWNLOAD_DIR}/device\"\n    download_and_extract \"${ARCH_SUFFIX}\" \"${DOWNLOAD_DIR}/device\"\n    cp \"${DOWNLOAD_DIR}/device/libc2pa_c\" \"${FRAMEWORK_DIR}/C2PAC\"\nfi\n\n# Native macOS frameworks use a versioned directory layout with symlinks.\n# Catalyst (PLATFORM_NAME=macosx, IS_MACCATALYST=YES) uses the iOS-style flat layout.\nif [ \"${PLATFORM_NAME}\" = \"macosx\" ] && [ \"${IS_MACCATALYST}\" != \"YES\" ]; then\n    echo \"Creating versioned macOS framework layout...\"\n    VDIR=\"${FRAMEWORK_DIR}/Versions/A\"\n    mkdir -p \"${VDIR}\"\n    \n    # Move binary, headers, modules into Versions/A\n    mv \"${FRAMEWORK_DIR}/C2PAC\" \"${VDIR}/C2PAC\"\n    mv \"${FRAMEWORK_DIR}/Headers\" \"${VDIR}/Headers\"\n    mkdir -p \"${VDIR}/Modules\"\n    \n    # Create module map\n    cat > \"${VDIR}/Modules/module.modulemap\" << EOF\nframework module C2PAC {\n    header \"c2pa.h\"\n    export *\n}\nEOF\n    \n    # Create Resources with Info.plist\n    mkdir -p \"${VDIR}/Resources\"\n    cat > \"${VDIR}/Resources/Info.plist\" << EOF\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n    <key>CFBundleIdentifier</key>\n    <string>org.contentauth.C2PAC</string>\n    <key>CFBundleName</key>\n    <string>C2PAC</string>\n    <key>CFBundleExecutable</key>\n    <string>C2PAC</string>\n    <key>CFBundleVersion</key>\n    <string>1.0</string>\n    <key>CFBundleShortVersionString</key>\n    <string>1.0</string>\n    <key>LSMinimumSystemVersion</key>\n    <string>14.0</string>\n</dict>\n</plist>\nEOF\n    \n    # Create Current symlink and top-level symlinks\n    cd \"${FRAMEWORK_DIR}/Versions\" && ln -sfh A Current\n    cd \"${FRAMEWORK_DIR}\" && ln -sfh Versions/Current/C2PAC C2PAC\n    cd \"${FRAMEWORK_DIR}\" && ln -sfh Versions/Current/Headers Headers\n    cd \"${FRAMEWORK_DIR}\" && ln -sfh Versions/Current/Modules Modules\n    cd \"${FRAMEWORK_DIR}\" && ln -sfh Versions/Current/Resources Resources\n\nelse\n    # iOS flat framework layout\n    mkdir -p \"${FRAMEWORK_DIR}/Modules\"\n    cat > \"${FRAMEWORK_DIR}/Modules/module.modulemap\" << EOF\nframework module C2PAC {\n    header \"c2pa.h\"\n    export *\n}\nEOF\n    \n    cat > \"${FRAMEWORK_DIR}/Info.plist\" << EOF\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n    <key>CFBundleIdentifier</key>\n    <string>org.contentauth.C2PAC</string>\n    <key>CFBundleName</key>\n    <string>C2PAC</string>\n    <key>CFBundleExecutable</key>\n    <string>C2PAC</string>\n    <key>CFBundleVersion</key>\n    <string>1.0</string>\n    <key>CFBundleShortVersionString</key>\n    <string>1.0</string>\n    <key>MinimumOSVersion</key>\n    <string>16.0</string>\n</dict>\n</plist>\nEOF\nfi\n\n# Create stamp file for build system\ntouch \"${FRAMEWORK_DIR}/.stamp\"\n\necho \"✓ C2PAC framework built successfully at ${FRAMEWORK_DIR}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -395,6 +393,7 @@
 			baseConfigurationReference = 953415F12E6EB31400A97957 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -424,6 +423,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -445,11 +445,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -460,6 +463,7 @@
 			baseConfigurationReference = 953415F12E6EB31400A97957 /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -489,6 +493,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -504,10 +509,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -518,9 +526,10 @@
 			baseConfigurationReference = 953415F12E6EB31400A97957 /* Base.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -541,6 +550,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.contentauth.C2PA;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 6.0;
@@ -555,9 +566,10 @@
 			baseConfigurationReference = 953415F12E6EB31400A97957 /* Base.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -578,6 +590,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.contentauth.C2PA;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 6.0;
@@ -595,6 +609,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = T3YGS3VRGN;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -617,6 +632,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = T3YGS3VRGN;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -637,9 +653,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -664,6 +681,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
@@ -680,9 +699,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -707,6 +727,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;

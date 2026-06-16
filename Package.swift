@@ -16,6 +16,7 @@ let package = Package(
     name: "C2PA",
     platforms: [
         .iOS(.v16),
+        .macCatalyst(.v16),
         .macOS(.v14)
     ],
     products: [
@@ -32,7 +33,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "C2PAC",
-            url: "https://github.com/contentauth/c2pa-ios/releases/download/v0.0.9/C2PAC.xcframework.zip",
+            url: "https://github.com/contentauth/c2pa-swift/releases/download/v0.0.9/C2PAC.xcframework.zip",
             checksum: "16626d062f08a1cde1adf76a324c7859c95270161fb0c6569434460b6703f135"
         ),
         .target(

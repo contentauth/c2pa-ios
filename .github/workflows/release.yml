@@ -1,4 +1,4 @@
-name: Release iOS Framework
+name: Release C2PA Swift
 
 on:
   workflow_dispatch:
@@ -36,7 +36,7 @@ jobs:
           echo "Branch: ${{ github.ref_name }}"
           echo "Pre-release: ${{ steps.prerelease.outputs.is_prerelease }}"
           echo "This workflow will:"
-          echo "1. Build iOS XCFramework"
+          echo "1. Build multi-platform XCFramework (iOS + macOS)"
           echo "2. Create and publish Swift Package"
           echo "3. Create GitHub release with artifacts"
 
@@ -48,8 +48,8 @@ jobs:
       - name: Verify Xcode version
         run: xcodebuild -version
 
-      - name: Build iOS Framework
-        run: make ios-framework
+      - name: Build C2PA Swift Framework
+        run: make library
 
       - name: Compute checksum for XCFramework
         id: compute-checksum
@@ -89,13 +89,18 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.event.inputs.version }}
-          name: C2PA iOS ${{ github.event.inputs.version }}
+          name: C2PA Swift ${{ github.event.inputs.version }}
           prerelease: ${{ steps.prerelease.outputs.is_prerelease == 'true' }}
           files: |
             output/C2PAC.xcframework.zip
             output/C2PA-Swift-Package.zip
           body: |
-            # C2PA iOS Release ${{ github.event.inputs.version }}
+            # C2PA Swift Release ${{ github.event.inputs.version }}
+
+            ## Supported Platforms
+
+            - iOS 16.0+
+            - macOS 14.0+
 
             ## Swift Package Manager Integration
 

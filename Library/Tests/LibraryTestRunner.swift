@@ -360,20 +360,31 @@ final class ComprehensiveTests: XCTestCase {
 }
 
 // MARK: - Hardware Signing Tests
-// These tests require real hardware (Secure Enclave) and will be skipped on simulator
+// These tests require real hardware (Secure Enclave) and keychain entitlements.
+// On macOS, the xctest runner lacks the entitlements to access the Secure Enclave
+// and Keychain, so these tests are skipped. They run via TestApp on iOS devices.
 
 final class HardwareSigningTests: XCTestCase {
     private let tests = TestShared.HardwareSigningTests()
 
+    private func skipOnMacOS() throws {
+        #if os(macOS)
+        throw XCTSkip("Hardware signing tests require a host app with Keychain entitlements")
+        #endif
+    }
+
     func testSecureEnclaveSignerCreation() throws {
+        try skipOnMacOS()
         try assertTestResult(tests.testSecureEnclaveSignerCreation())
     }
 
     func testSecureEnclaveCSRSigning() async throws {
+        try skipOnMacOS()
         try assertTestResult(await tests.testSecureEnclaveCSRSigning())
     }
 
     func testKeychainSignerCreation() throws {
+        try skipOnMacOS()
         try assertTestResult(tests.testKeychainSignerCreation())
     }
 }
@@ -603,10 +614,17 @@ final class KeychainSignerTests: XCTestCase {
 }
 
 // MARK: - Secure Enclave Signer Tests
-// These tests require real hardware and will be skipped on simulator
+// Tests that touch real Secure Enclave hardware are skipped on macOS xctest runner
+// (no Keychain entitlements). They run via TestApp on iOS devices.
 
 final class SecureEnclaveSignerTests: XCTestCase {
     private let tests = TestShared.SecureEnclaveSignerTests()
+
+    private func skipHardwareOnMacOS() throws {
+        #if os(macOS)
+        throw XCTSkip("Secure Enclave tests require a host app with Keychain entitlements")
+        #endif
+    }
 
     func testSecureEnclaveSignerConfigCreation() throws {
         try assertTestResult(tests.testSecureEnclaveSignerConfigCreation())
@@ -617,22 +635,27 @@ final class SecureEnclaveSignerTests: XCTestCase {
     }
 
     func testDeleteNonExistentKey() throws {
+        try skipHardwareOnMacOS()
         try assertTestResult(tests.testDeleteNonExistentKey())
     }
 
     func testDeleteKeyIdempotent() throws {
+        try skipHardwareOnMacOS()
         try assertTestResult(tests.testDeleteKeyIdempotent())
     }
 
     func testSecureEnclaveAvailabilityCheck() throws {
+        try skipHardwareOnMacOS()
         try assertTestResult(tests.testSecureEnclaveAvailabilityCheck())
     }
 
     func testCreateKeyAccessControlValidation() throws {
+        try skipHardwareOnMacOS()
         try assertTestResult(tests.testCreateKeyAccessControlValidation())
     }
 
     func testES256AcceptedBySecureEnclave() throws {
+        try skipHardwareOnMacOS()
         try assertTestResult(tests.testES256AcceptedBySecureEnclave())
     }
 }

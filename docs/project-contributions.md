@@ -1,14 +1,14 @@
 # Contributing to the project 
 
-The information in this page is primarily for those who wish to contribute to the c2pa-ios project itself, rather than those who simply wish to use it in an application.  For general contribution guidelines, see [CONTRIBUTING](../CONTRIBUTING.md).
+The information in this page is primarily for those who wish to contribute to the c2pa-swift project itself, rather than those who simply wish to use it in an application.  For general contribution guidelines, see [CONTRIBUTING](../CONTRIBUTING.md).
 
 ## Building from Source
 
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/contentauth/c2pa-ios.git
-   cd c2pa-ios
+   git clone https://github.com/contentauth/c2pa-swift.git
+   cd c2pa-swift
    ```
 
 2. Build the iOS framework:

@@ -73,7 +73,7 @@ struct TestResultsView: View {
             }
             .navigationTitle("C2PA Tests")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .automatic) {
                     Button("Clear") {
                         testSuites = []
                     }

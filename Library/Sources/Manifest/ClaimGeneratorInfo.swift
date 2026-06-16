@@ -13,7 +13,7 @@
 
 import Foundation
 
-#if !os(macOS)
+#if canImport(UIKit)
 import UIKit
 #endif
 
@@ -61,7 +61,7 @@ public struct ClaimGeneratorInfo: Codable, Equatable {
     public static var operatingSystem: String {
         "macOS \(ProcessInfo.processInfo.operatingSystemVersionString)"
     }
-#else
+#elseif canImport(UIKit)
     @MainActor
     public static var operatingSystem: String {
         "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
