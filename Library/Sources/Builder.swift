@@ -27,6 +27,8 @@ import Foundation
 /// - ``init(manifest:)``
 /// - ``init(manifestJSON:)``
 /// - ``init(archiveStream:)``
+/// - ``init(context:manifest:)``
+/// - ``init(context:manifestJSON:)``
 ///
 /// ### Configuring the Manifest
 /// - ``setIntent(_:)``
@@ -69,6 +71,11 @@ public final class Builder {
     /// Internal initializer that skips validation.
     private init(validatedJSON: String) throws {
         ptr = try guardNotNull(c2pa_builder_from_json(validatedJSON))
+    }
+
+    /// Internal initializer that adopts an already-configured native builder.
+    private init(adopting ptr: UnsafeMutablePointer<C2paBuilder>) {
+        self.ptr = ptr
     }
 
     /// Validates a ``ManifestValidationResult``, logging warnings and throwing on errors.
@@ -114,6 +121,43 @@ public final class Builder {
     /// - Throws: ``C2PAError`` if the archive is invalid or cannot be read.
     public init(archiveStream: Stream) throws {
         ptr = try guardNotNull(c2pa_builder_from_archive(archiveStream.rawPtr))
+    }
+
+    /// Creates a new builder from a ``C2PAContext`` and a manifest JSON definition.
+    ///
+    /// The builder inherits the context's configuration (settings), so values
+    /// such as created-assertion labels and trust configuration flow into the
+    /// signed manifest.
+    ///
+    /// - Parameters:
+    ///   - context: The ``C2PAContext`` providing shared configuration.
+    ///   - manifestJSON: A JSON string defining the C2PA manifest structure.
+    ///
+    /// - Throws: ``C2PAError`` if the builder cannot be created or the JSON is invalid.
+    ///
+    /// - SeeAlso: ``C2PAContext``
+    public convenience init(context: C2PAContext, manifestJSON: String) throws {
+        let base = try guardNotNull(c2pa_builder_from_context(context.ptr))
+        let configured = try guardNotNull(c2pa_builder_with_definition(base, manifestJSON))
+        self.init(adopting: configured)
+    }
+
+    /// Creates a new builder from a ``C2PAContext`` and a ``ManifestDefinition``.
+    ///
+    /// Validates the manifest before construction. Errors cause a throw;
+    /// warnings are logged via `NSLog`.
+    ///
+    /// - Parameters:
+    ///   - context: The ``C2PAContext`` providing shared configuration.
+    ///   - manifest: The manifest definition to build.
+    ///
+    /// - Throws: ``C2PAError/manifestValidationFailed(_:)`` if validation finds errors,
+    ///   or ``C2PAError`` if the JSON cannot be parsed by the C layer.
+    ///
+    /// - SeeAlso: ``C2PAContext``, ``ManifestDefinition``
+    public convenience init(context: C2PAContext, manifest: ManifestDefinition) throws {
+        try Self.enforce(ManifestValidator.validate(manifest))
+        try self.init(context: context, manifestJSON: manifest.toJSON())
     }
 
     deinit { c2pa_builder_free(ptr) }
