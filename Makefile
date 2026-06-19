@@ -59,7 +59,7 @@ library:
 		mkdir -p output; \
 		rm -rf output/C2PAC.xcframework output/C2PAC.xcframework.zip; \
 		cp -R Library/Frameworks/C2PAC.xcframework output/; \
-		cd output && zip -r C2PAC.xcframework.zip C2PAC.xcframework > /dev/null; \
+		cd output && zip -ry C2PAC.xcframework.zip C2PAC.xcframework > /dev/null; \
 		echo "XCFramework packaged to output/C2PAC.xcframework.zip"; \
 	else \
 		echo "::error::Failed to find frameworks for all platforms"; \
