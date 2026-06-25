@@ -59,6 +59,8 @@ public final class TestRunner: Sendable {
             return await AssertionDefinitionTests().runAllTests()
         case .settingsDefinition:
             return await SettingsDefinitionTests().runAllTests()
+        case .context:
+            return await ContextTests().runAllTests()
         case .convenience:
             return await ConvenienceTests().runAllTests()
         }
@@ -81,6 +83,7 @@ public enum TestSuite: String, CaseIterable, Sendable {
     case manifest = "Manifest"
     case assertionDefinition = "Assertion Definition"
     case settingsDefinition = "Settings Definition"
+    case context = "Context"
     case convenience = "Convenience"
 
     public var displayName: String {

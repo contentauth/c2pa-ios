@@ -32,6 +32,7 @@
 		95COV0102E9700000000008 /* SettingsDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95COV0112E9700000000008 /* SettingsDefinitionTests.swift */; };
 		95F2712B2E72CD5800A6A88D /* Base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 95F271292E72CD5800A6A88D /* Base.xcconfig */; };
 		A0B3CF4F2E96AC2C00F2F938 /* ManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */; };
+		C20AC07E97000000000B0003 /* ContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20AC07E97000000000B0004 /* ContextTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,6 +75,7 @@
 		95COV0112E9700000000008 /* SettingsDefinitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDefinitionTests.swift; sourceTree = "<group>"; };
 		95F271292E72CD5800A6A88D /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		A0B3CF4E2E96AC2C00F2F938 /* ManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestTests.swift; sourceTree = "<group>"; };
+		C20AC07E97000000000B0004 /* ContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 			children = (
 				95COV00E2E9700000000007 /* AssertionDefinitionTests.swift */,
 				95C99A4F2E695DF100C54D0E /* BuilderTests.swift */,
+				C20AC07E97000000000B0004 /* ContextTests.swift */,
 				95COV0082E9700000000004 /* ConvenienceTests.swift */,
 				95COV0022E9700000000001 /* CertificateManagerTests.swift */,
 				95C99A502E695DF100C54D0E /* ComprehensiveTests.swift */,
@@ -250,6 +253,7 @@
 			files = (
 				95COV00D2E9700000000007 /* AssertionDefinitionTests.swift in Sources */,
 				95C99A572E695DF100C54D0E /* BuilderTests.swift in Sources */,
+				C20AC07E97000000000B0003 /* ContextTests.swift in Sources */,
 				95COV0072E9700000000004 /* ConvenienceTests.swift in Sources */,
 				95COV0012E9700000000001 /* CertificateManagerTests.swift in Sources */,
 				95C99A562E695DF100C54D0E /* ComprehensiveTests.swift in Sources */,

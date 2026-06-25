@@ -888,6 +888,37 @@ final class AssertionDefinitionTests: XCTestCase {
     }
 }
 
+// MARK: - Context Tests
+
+final class ContextTests: XCTestCase {
+    private let tests = TestShared.ContextTests()
+
+    func testContextDefaultCreation() throws {
+        let result = tests.testContextDefaultCreation()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testContextFromSettings() throws {
+        let result = tests.testContextFromSettings()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testContextCancel() throws {
+        let result = tests.testContextCancel()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testBuilderFromContext() throws {
+        let result = tests.testBuilderFromContext()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testSettingsFlowRoundtrip() throws {
+        let result = tests.testSettingsFlowRoundtrip()
+        XCTAssertTrue(result.passed, result.message)
+    }
+}
+
 // MARK: - Settings Definition Tests
 
 final class SettingsDefinitionTests: XCTestCase {

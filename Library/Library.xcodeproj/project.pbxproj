@@ -34,6 +34,7 @@
 		A0C2A0062E96B00100F2F938 /* SignerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0052E96B00100F2F938 /* SignerInfo.swift */; };
 		A0C2A0082E96B00100F2F938 /* C2PASettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0072E96B00100F2F938 /* C2PASettings.swift */; };
 		A0C2A00A2E96B00100F2F938 /* SettingsDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C2A0092E96B00100F2F938 /* SettingsDefinition.swift */; };
+		C20AC07E97000000000B0001 /* C2PAContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20AC07E97000000000B0002 /* C2PAContext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 		A0C2A0052E96B00100F2F938 /* SignerInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignerInfo.swift; sourceTree = "<group>"; };
 		A0C2A0072E96B00100F2F938 /* C2PASettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PASettings.swift; sourceTree = "<group>"; };
 		A0C2A0092E96B00100F2F938 /* SettingsDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDefinition.swift; sourceTree = "<group>"; };
+		C20AC07E97000000000B0002 /* C2PAContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C2PAContext.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -146,6 +148,7 @@
 				A0C2A0032E96B00100F2F938 /* C2PAJson.swift */,
 				A0C2A0072E96B00100F2F938 /* C2PASettings.swift */,
 				A0C2A0092E96B00100F2F938 /* SettingsDefinition.swift */,
+				C20AC07E97000000000B0002 /* C2PAContext.swift */,
 				8A1234571234567890ABCDEF /* CertificateManager.swift */,
 				95A782342E6F06E4001E9748 /* Helpers.swift */,
 				95A782352E6F06E4001E9748 /* KeychainSigner.swift */,
@@ -349,6 +352,7 @@
 				A0C2A0042E96B00100F2F938 /* C2PAJson.swift in Sources */,
 				A0C2A0082E96B00100F2F938 /* C2PASettings.swift in Sources */,
 				A0C2A00A2E96B00100F2F938 /* SettingsDefinition.swift in Sources */,
+				C20AC07E97000000000B0001 /* C2PAContext.swift in Sources */,
 				95A7823E2E6F06E4001E9748 /* KeychainSigner.swift in Sources */,
 				95A7823F2E6F06E4001E9748 /* Signer.swift in Sources */,
 				95A782402E6F06E4001E9748 /* Reader.swift in Sources */,
