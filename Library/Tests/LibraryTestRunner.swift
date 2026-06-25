@@ -338,18 +338,8 @@ final class ComprehensiveTests: XCTestCase {
         XCTAssertTrue(result.passed, result.message)
     }
 
-    func testReadIngredient() throws {
-        let result = tests.testReadIngredient()
-        XCTAssertTrue(result.passed, result.message)
-    }
-
     func testInvalidFileHandling() throws {
         let result = tests.testInvalidFileHandling()
-        XCTAssertTrue(result.passed, result.message)
-    }
-
-    func testFileOperationsWithDataDir() throws {
-        let result = tests.testFileOperationsWithDataDir()
         XCTAssertTrue(result.passed, result.message)
     }
 
@@ -670,11 +660,6 @@ final class ConvenienceTests: XCTestCase {
         XCTAssertTrue(result.passed, result.message)
     }
 
-    func testReadFileWithDataDir() throws {
-        let result = tests.testReadFileWithDataDir()
-        XCTAssertTrue(result.passed, result.message)
-    }
-
     func testReadFileWithoutManifest() throws {
         let result = tests.testReadFileWithoutManifest()
         XCTAssertTrue(result.passed, result.message)
@@ -685,28 +670,13 @@ final class ConvenienceTests: XCTestCase {
         XCTAssertTrue(result.passed, result.message)
     }
 
-    func testReadIngredientWithManifest() throws {
-        let result = tests.testReadIngredientWithManifest()
-        XCTAssertTrue(result.passed, result.message)
-    }
-
-    func testReadIngredientWithoutManifest() throws {
-        let result = tests.testReadIngredientWithoutManifest()
-        XCTAssertTrue(result.passed, result.message)
-    }
-
-    func testReadIngredientWithoutDataDir() throws {
-        let result = tests.testReadIngredientWithoutDataDir()
+    func testReadFileUnknownExtension() throws {
+        let result = tests.testReadFileUnknownExtension()
         XCTAssertTrue(result.passed, result.message)
     }
 
     func testSignFile() throws {
         let result = tests.testSignFile()
-        XCTAssertTrue(result.passed, result.message)
-    }
-
-    func testSignFileWithDataDir() throws {
-        let result = tests.testSignFileWithDataDir()
         XCTAssertTrue(result.passed, result.message)
     }
 

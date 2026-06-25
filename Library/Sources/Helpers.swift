@@ -13,6 +13,7 @@
 
 import C2PAC
 import Foundation
+import UniformTypeIdentifiers
 
 @inline(__always)
 func stringFromC(_ p: UnsafeMutablePointer<CChar>?) throws -> String {
@@ -82,4 +83,16 @@ func withOptionalCString<R>(
 @inline(__always)
 func asStreamCtx(_ p: UnsafeMutableRawPointer) -> UnsafeMutablePointer<StreamContext> {
     UnsafeMutablePointer<StreamContext>(OpaquePointer(p))
+}
+
+/// Infers the MIME type for a file URL from its path extension.
+///
+/// - Parameter url: The file URL whose extension determines the MIME type.
+/// - Returns: The preferred MIME type (e.g. `"image/jpeg"`).
+/// - Throws: ``C2PAError`` if the extension maps to no known type.
+func inferredMIMEType(for url: URL) throws -> String {
+    guard let mime = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType else {
+        throw C2PAError.api("Unsupported or unknown file type for extension '\(url.pathExtension)'")
+    }
+    return mime
 }

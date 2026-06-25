@@ -273,8 +273,6 @@ public final class Builder {
     ///   - stream: A ``Stream`` containing the ingredient file data.
     ///
     /// - Throws: ``C2PAError`` if the ingredient cannot be added.
-    ///
-    /// - SeeAlso: ``C2PA/readIngredient(at:dataDir:)``
     public func addIngredient(json: String, format: String, from stream: Stream) throws {
         _ = try guardNonNegative(
             Int64(c2pa_builder_add_ingredient_from_stream(ptr, json, format, stream.rawPtr))
