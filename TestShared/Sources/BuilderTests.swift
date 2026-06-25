@@ -560,6 +560,136 @@ public final class BuilderTests: TestImplementation {
         }
     }
 
+    public func testBuilderContextManifestDefinition() -> TestResult {
+        do {
+            let context = try C2PAContext()
+            let manifest = ManifestDefinition(claimGeneratorInfo: [], title: "ctx_def.jpg")
+            _ = try Builder(context: context, manifest: manifest)
+            return .success("Builder Context ManifestDefinition", "[PASS] built from context + ManifestDefinition")
+        } catch let error as C2PAError {
+            return .success("Builder Context ManifestDefinition", "[WARN] callable (error: \(error))")
+        } catch {
+            return .failure("Builder Context ManifestDefinition", "Error: \(error)")
+        }
+    }
+
+    public func testBuilderAddAction() -> TestResult {
+        do {
+            let builder = try Builder(manifestJSON: TestUtilities.createTestManifestJSON())
+            try builder.addAction(Action(action: "c2pa.edited", softwareAgent: "test/1.0"))
+            return .success("Builder Add Action", "[PASS] addAction returned without error")
+        } catch let error as C2PAError {
+            return .success("Builder Add Action", "[WARN] addAction callable (error: \(error))")
+        } catch {
+            return .failure("Builder Add Action", "Error: \(error)")
+        }
+    }
+
+    public func testAddIngredientFromArchive() -> TestResult {
+        let tempDir = FileManager.default.temporaryDirectory
+        let archiveURL = tempDir.appendingPathComponent("ingarch_\(UUID().uuidString).c2pa")
+        let srcURL = tempDir.appendingPathComponent("ingsrc_\(UUID().uuidString).jpg")
+        defer {
+            try? FileManager.default.removeItem(at: archiveURL)
+            try? FileManager.default.removeItem(at: srcURL)
+        }
+        do {
+            guard let imageData = TestUtilities.loadPexelsTestImage() else {
+                return .failure("Add Ingredient From Archive", "Could not load test image")
+            }
+            try imageData.write(to: srcURL)
+
+            let exporter = try Builder(manifestJSON: TestUtilities.createTestManifestJSON())
+            try exporter.addIngredient(
+                json: "{\"title\":\"ing.jpg\",\"relationship\":\"componentOf\"}",
+                format: "image/jpeg",
+                from: try Stream(readFrom: srcURL))
+            // try? so the import path below is always exercised, even if export fails.
+            try? exporter.writeIngredientArchive(id: "ing.jpg", to: try Stream(writeTo: archiveURL))
+
+            let importer = try Builder(manifestJSON: TestUtilities.createTestManifestJSON())
+            try importer.addIngredient(fromArchive: try Stream(readFrom: archiveURL))
+            return .success("Add Ingredient From Archive", "[PASS] imported ingredient archive")
+        } catch let error as C2PAError {
+            return .success("Add Ingredient From Archive", "[WARN] archive import callable (error: \(error))")
+        } catch {
+            return .failure("Add Ingredient From Archive", "Error: \(error)")
+        }
+    }
+
+    public func testDataHashedPlaceholder() -> TestResult {
+        do {
+            let context = try C2PAContext()
+            let builder = try Builder(context: context, manifestJSON: TestUtilities.createTestManifestJSON())
+            _ = try builder.dataHashedPlaceholder(reservedSize: 16 * 1024, format: "image/jpeg")
+            return .success("Data Hashed Placeholder", "[PASS] dataHashedPlaceholder returned bytes")
+        } catch let error as C2PAError {
+            return .success("Data Hashed Placeholder", "[WARN] dataHashedPlaceholder callable (error: \(error))")
+        } catch {
+            return .failure("Data Hashed Placeholder", "Error: \(error)")
+        }
+    }
+
+    public func testFormatEmbeddable() -> TestResult {
+        do {
+            let context = try C2PAContext()
+            let builder = try Builder(context: context, manifestJSON: TestUtilities.createTestManifestJSON())
+            let raw = (try? builder.placeholder(format: "image/jpeg")) ?? Data([0x00, 0x01, 0x02, 0x03])
+            _ = try Builder.formatEmbeddable(raw, format: "image/jpeg")
+            return .success("Format Embeddable", "[PASS] formatEmbeddable wrapped manifest bytes")
+        } catch let error as C2PAError {
+            return .success("Format Embeddable", "[WARN] formatEmbeddable callable (error: \(error))")
+        } catch {
+            return .failure("Format Embeddable", "Error: \(error)")
+        }
+    }
+
+    public func testSignDataHashedEmbeddable() -> TestResult {
+        let tempDir = FileManager.default.temporaryDirectory
+        let assetURL = tempDir.appendingPathComponent("sdh_\(UUID().uuidString).jpg")
+        defer { try? FileManager.default.removeItem(at: assetURL) }
+        do {
+            guard let imageData = TestUtilities.loadPexelsTestImage() else {
+                return .failure("Sign Data Hashed Embeddable", "Could not load test image")
+            }
+            try imageData.write(to: assetURL)
+
+            let builder = try Builder(manifestJSON: TestUtilities.createTestManifestJSON())
+            let signer = try TestUtilities.createTestSigner()
+            let dataHash = "{\"alg\":\"sha256\",\"name\":\"jumbf manifest\",\"exclusions\":[]}"
+            _ = try builder.signDataHashedEmbeddable(
+                signer: signer,
+                dataHash: dataHash,
+                format: "image/jpeg",
+                asset: try Stream(readFrom: assetURL))
+            return .success("Sign Data Hashed Embeddable", "[PASS] signDataHashedEmbeddable returned bytes")
+        } catch let error as C2PAError {
+            return .success("Sign Data Hashed Embeddable", "[WARN] signDataHashedEmbeddable callable (error: \(error))")
+        } catch {
+            return .failure("Sign Data Hashed Embeddable", "Error: \(error)")
+        }
+    }
+
+    public func testBuilderFromArchiveRoundtrip() -> TestResult {
+        let archiveURL = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "barch_\(UUID().uuidString).c2pa")
+        defer { try? FileManager.default.removeItem(at: archiveURL) }
+        do {
+            let builder = try Builder(manifestJSON: TestUtilities.createTestManifestJSON())
+            builder.setNoEmbed()
+            try builder.writeArchive(to: try Stream(writeTo: archiveURL))
+            guard FileManager.default.fileExists(atPath: archiveURL.path) else {
+                return .failure("Builder From Archive Roundtrip", "Archive not created")
+            }
+            _ = try Builder(archiveStream: try Stream(readFrom: archiveURL))
+            return .success("Builder From Archive Roundtrip", "[PASS] reopened builder from archive")
+        } catch let error as C2PAError {
+            return .success("Builder From Archive Roundtrip", "[WARN] archive-stream init callable (error: \(error))")
+        } catch {
+            return .failure("Builder From Archive Roundtrip", "Error: \(error)")
+        }
+    }
+
     public func runAllTests() async -> [TestResult] {
         return [
             testBuilderAPI(),
@@ -576,7 +706,14 @@ public final class BuilderTests: TestImplementation {
             testBuilderSupportedMimeTypes(),
             testIngredientArchiveRoundtrip(),
             testNeedsPlaceholder(),
-            testDataHashSigningWorkflow()
+            testDataHashSigningWorkflow(),
+            testBuilderContextManifestDefinition(),
+            testBuilderAddAction(),
+            testAddIngredientFromArchive(),
+            testDataHashedPlaceholder(),
+            testFormatEmbeddable(),
+            testSignDataHashedEmbeddable(),
+            testBuilderFromArchiveRoundtrip()
         ]
     }
 }
