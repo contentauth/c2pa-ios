@@ -530,6 +530,17 @@ public final class ReaderTests: TestImplementation {
         }
     }
 
+    public func testReaderSupportedMimeTypes() -> TestResult {
+        let types = Reader.supportedMimeTypes
+        guard !types.isEmpty else {
+            return .failure("Reader Supported MIME Types", "Expected a non-empty list")
+        }
+        guard types.contains("image/jpeg") else {
+            return .failure("Reader Supported MIME Types", "Expected image/jpeg in \(types.prefix(10))")
+        }
+        return .success("Reader Supported MIME Types", "[PASS] \(types.count) types incl. image/jpeg")
+    }
+
     public func runAllTests() async -> [TestResult] {
         return [
             testReaderResourceErrorHandling(),
@@ -543,7 +554,8 @@ public final class ReaderTests: TestImplementation {
             testReaderRemoteURL(),
             testReaderIsEmbedded(),
             testReaderDetailedJSON(),
-            testReaderDetailedJSONComparison()
+            testReaderDetailedJSONComparison(),
+            testReaderSupportedMimeTypes()
         ]
     }
 }

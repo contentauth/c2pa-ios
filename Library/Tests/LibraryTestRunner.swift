@@ -128,6 +128,31 @@ final class BuilderTests: XCTestCase {
         let result = tests.testReadIngredient()
         XCTAssertTrue(result.passed, result.message)
     }
+
+    func testBuilderSetBasePath() throws {
+        let result = tests.testBuilderSetBasePath()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testBuilderSupportedMimeTypes() throws {
+        let result = tests.testBuilderSupportedMimeTypes()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testIngredientArchiveRoundtrip() throws {
+        let result = tests.testIngredientArchiveRoundtrip()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testNeedsPlaceholder() throws {
+        let result = tests.testNeedsPlaceholder()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testDataHashSigningWorkflow() throws {
+        let result = tests.testDataHashSigningWorkflow()
+        XCTAssertTrue(result.passed, result.message)
+    }
 }
 
 // MARK: - Reader Tests
@@ -192,6 +217,11 @@ final class ReaderTests: XCTestCase {
 
     func testReaderDetailedJSONComparison() throws {
         let result = tests.testReaderDetailedJSONComparison()
+        XCTAssertTrue(result.passed, result.message)
+    }
+
+    func testReaderSupportedMimeTypes() throws {
+        let result = tests.testReaderSupportedMimeTypes()
         XCTAssertTrue(result.passed, result.message)
     }
 }

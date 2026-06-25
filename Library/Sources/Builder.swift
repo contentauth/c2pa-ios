@@ -35,14 +35,30 @@ import Foundation
 /// - ``addAction(_:)``
 /// - ``setNoEmbed()``
 /// - ``setRemote(url:)``
+/// - ``setBasePath(_:)``
+///
+/// ### Introspection
+/// - ``supportedMimeTypes``
 ///
 /// ### Adding Content
 /// - ``addResource(uri:stream:)``
 /// - ``addIngredient(json:format:from:)``
+/// - ``addIngredient(fromArchive:)``
+/// - ``writeIngredientArchive(id:to:)``
 ///
 /// ### Signing and Output
 /// - ``sign(format:source:destination:signer:)``
 /// - ``writeArchive(to:)``
+///
+/// ### Embeddable & Data-Hash Signing
+/// - ``needsPlaceholder(format:)``
+/// - ``placeholder(format:)``
+/// - ``dataHashedPlaceholder(reservedSize:format:)``
+/// - ``setDataHashExclusions(_:)``
+/// - ``updateHashFromStream(format:stream:)``
+/// - ``signEmbeddable(format:)``
+/// - ``signDataHashedEmbeddable(signer:dataHash:format:asset:)``
+/// - ``formatEmbeddable(_:format:)``
 ///
 /// ## Example
 ///
@@ -245,6 +261,26 @@ public final class Builder {
         )
     }
 
+    /// Sets the base directory used to resolve relative resource paths in the manifest.
+    ///
+    /// - Parameter url: A directory URL used as the base path for resolving resources.
+    ///
+    /// - Throws: ``C2PAError`` if the base path cannot be set.
+    public func setBasePath(_ url: URL) throws {
+        _ = try guardNonNegative(
+            Int64(c2pa_builder_set_base_path(ptr, url.path))
+        )
+    }
+
+    /// The MIME types supported by the builder for signing.
+    ///
+    /// - Returns: An array of supported MIME type strings (e.g. `"image/jpeg"`).
+    public static var supportedMimeTypes: [String] {
+        var count: UInt = 0
+        let ptr = c2pa_builder_supported_mime_types(&count)
+        return stringArrayFromC(ptr, count: Int(count))
+    }
+
     /// Adds a resource to the manifest.
     ///
     /// Resources are auxiliary files (like thumbnails or metadata) that are
@@ -276,6 +312,34 @@ public final class Builder {
     public func addIngredient(json: String, format: String, from stream: Stream) throws {
         _ = try guardNonNegative(
             Int64(c2pa_builder_add_ingredient_from_stream(ptr, json, format, stream.rawPtr))
+        )
+    }
+
+    /// Adds an ingredient previously exported as a C2PA ingredient archive.
+    ///
+    /// - Parameter stream: A ``Stream`` containing a C2PA ingredient archive.
+    ///
+    /// - Throws: ``C2PAError`` if the archive cannot be read or added.
+    ///
+    /// - SeeAlso: ``writeIngredientArchive(id:to:)``
+    public func addIngredient(fromArchive stream: Stream) throws {
+        _ = try guardNonNegative(
+            Int64(c2pa_builder_add_ingredient_from_archive(ptr, stream.rawPtr))
+        )
+    }
+
+    /// Writes a previously added ingredient out as a standalone C2PA ingredient archive.
+    ///
+    /// - Parameters:
+    ///   - id: The identifier of the ingredient to export.
+    ///   - stream: A ``Stream`` where the ingredient archive will be written.
+    ///
+    /// - Throws: ``C2PAError`` if the ingredient cannot be written.
+    ///
+    /// - SeeAlso: ``addIngredient(fromArchive:)``
+    public func writeIngredientArchive(id: String, to stream: Stream) throws {
+        _ = try guardNonNegative(
+            Int64(c2pa_builder_write_ingredient_archive(ptr, id, stream.rawPtr))
         )
     }
 
@@ -348,5 +412,164 @@ public final class Builder {
         let data = Data(bytes: mp, count: Int(size))
         c2pa_manifest_bytes_free(mp)
         return data
+    }
+
+    // MARK: - Embeddable & Data-Hash Signing
+
+    /// Returns whether the given format requires a placeholder manifest before signing.
+    ///
+    /// Call this before ``placeholder(format:)`` to determine whether the two-pass
+    /// embeddable workflow is required for the target format.
+    ///
+    /// - Parameter format: The MIME type of the target asset (e.g. `"image/jpeg"`).
+    ///
+    /// - Returns: `true` if a placeholder is required; `false` otherwise.
+    ///
+    /// - Throws: ``C2PAError`` if the check fails or the format is unknown.
+    public func needsPlaceholder(format: String) throws -> Bool {
+        try guardNonNegative(Int64(c2pa_builder_needs_placeholder(ptr, format))) == 1
+    }
+
+    /// Generates a placeholder manifest of the exact final size for the given format.
+    ///
+    /// The placeholder must be embedded into the asset at the offset that will hold
+    /// the final manifest, before hashing and signing. Call ``setDataHashExclusions(_:)``
+    /// with the embedded range, then ``updateHashFromStream(format:stream:)`` over the
+    /// asset, then ``signEmbeddable(format:)`` to produce the final manifest bytes.
+    ///
+    /// - Parameter format: The MIME type of the target asset (e.g. `"image/jpeg"`).
+    ///
+    /// - Returns: The placeholder manifest bytes as `Data`.
+    ///
+    /// - Throws: ``C2PAError`` if placeholder generation fails.
+    public func placeholder(format: String) throws -> Data {
+        var out: UnsafePointer<UInt8>?
+        let len = try guardNonNegative(c2pa_builder_placeholder(ptr, format, &out))
+        return manifestData(length: len, pointer: out)
+    }
+
+    /// Generates a data-hash placeholder manifest with a caller-specified reserved size.
+    ///
+    /// Use this variant when you need to pre-reserve a fixed-size slot in the asset
+    /// before you know the exact placeholder content. The `reservedSize` must be at
+    /// least as large as the final signed manifest.
+    ///
+    /// - Parameters:
+    ///   - reservedSize: The number of bytes to reserve in the asset for the manifest.
+    ///   - format: The MIME type of the target asset (e.g. `"image/jpeg"`).
+    ///
+    /// - Returns: The placeholder manifest bytes as `Data`.
+    ///
+    /// - Throws: ``C2PAError`` if placeholder generation fails.
+    public func dataHashedPlaceholder(reservedSize: Int, format: String) throws -> Data {
+        var out: UnsafePointer<UInt8>?
+        let len = try guardNonNegative(
+            c2pa_builder_data_hashed_placeholder(ptr, UInt(reservedSize), format, &out))
+        return manifestData(length: len, pointer: out)
+    }
+
+    /// Registers the byte ranges that must be excluded from the data hash.
+    ///
+    /// Call this after embedding the placeholder into the asset to tell the hasher
+    /// which regions (i.e. the placeholder slot) should be skipped. Must be called
+    /// before ``updateHashFromStream(format:stream:)``.
+    ///
+    /// - Parameter exclusions: An array of `(start, length)` pairs identifying the
+    ///   byte ranges to exclude from hashing, expressed as absolute offsets into the asset.
+    ///
+    /// - Throws: ``C2PAError`` if the exclusions cannot be set.
+    public func setDataHashExclusions(_ exclusions: [(start: UInt64, length: UInt64)]) throws {
+        var flat: [UInt64] = []
+        flat.reserveCapacity(exclusions.count * 2)
+        for e in exclusions { flat.append(e.start); flat.append(e.length) }
+        try flat.withUnsafeBufferPointer { buf in
+            _ = try guardNonNegative(Int64(
+                c2pa_builder_set_data_hash_exclusions(ptr, buf.baseAddress, UInt(exclusions.count))))
+        }
+    }
+
+    /// Hashes the asset stream and records the result in the builder's data-hash assertion.
+    ///
+    /// Call this after ``setDataHashExclusions(_:)`` and before ``signEmbeddable(format:)``
+    /// to hash the full asset (minus the excluded placeholder range).
+    ///
+    /// - Parameters:
+    ///   - format: The MIME type of the asset (e.g. `"image/jpeg"`).
+    ///   - stream: A ``Stream`` positioned at the start of the asset to hash.
+    ///
+    /// - Throws: ``C2PAError`` if hashing fails.
+    public func updateHashFromStream(format: String, stream: Stream) throws {
+        _ = try guardNonNegative(Int64(
+            c2pa_builder_update_hash_from_stream(ptr, format, stream.rawPtr)))
+    }
+
+    /// Signs the manifest and returns the composed bytes ready for embedding into an asset.
+    ///
+    /// Operates in placeholder mode (after calling ``placeholder(format:)``) or in
+    /// data-hash mode (after ``setDataHashExclusions(_:)`` and
+    /// ``updateHashFromStream(format:stream:)``). The returned bytes are exactly the
+    /// same size as the placeholder, so they can be spliced into the asset at the
+    /// previously reserved offset.
+    ///
+    /// - Parameter format: The MIME type of the target asset (e.g. `"image/jpeg"`).
+    ///
+    /// - Returns: The signed embeddable manifest bytes as `Data`.
+    ///
+    /// - Throws: ``C2PAError`` if signing fails.
+    ///
+    /// - Note: This method requires the builder to have been configured with a signer
+    ///   via a ``C2PAContext`` — the context must carry the signing credentials.
+    @discardableResult
+    public func signEmbeddable(format: String) throws -> Data {
+        var out: UnsafePointer<UInt8>?
+        let len = try guardNonNegative(c2pa_builder_sign_embeddable(ptr, format, &out))
+        return manifestData(length: len, pointer: out)
+    }
+
+    /// Signs the manifest using a data hash and returns the composed embeddable bytes.
+    ///
+    /// This is the low-level data-hash signing path: the caller provides a pre-computed
+    /// `dataHash` JSON string and the original asset stream. The returned bytes are
+    /// suitable for direct embedding into the asset.
+    ///
+    /// - Parameters:
+    ///   - signer: The ``Signer`` instance providing the signing credentials.
+    ///   - dataHash: A JSON string containing `DataHash` information for the asset.
+    ///   - format: The MIME type of the asset (e.g. `"image/jpeg"`).
+    ///   - asset: A ``Stream`` containing the asset to be signed.
+    ///
+    /// - Returns: The signed embeddable manifest bytes as `Data`.
+    ///
+    /// - Throws: ``C2PAError`` if signing fails.
+    @discardableResult
+    public func signDataHashedEmbeddable(
+        signer: Signer, dataHash: String, format: String, asset: Stream
+    ) throws -> Data {
+        var out: UnsafePointer<UInt8>?
+        let len = try guardNonNegative(c2pa_builder_sign_data_hashed_embeddable(
+            ptr, signer.ptr, dataHash, format, asset.rawPtr, &out))
+        return manifestData(length: len, pointer: out)
+    }
+
+    /// Converts a raw C2PA manifest into an embeddable version for the given format.
+    ///
+    /// A raw manifest (in `application/c2pa` format) can be stored in the cloud but
+    /// cannot be embedded directly into an asset without format-specific framing.
+    /// This static method wraps the manifest bytes in the correct container for embedding.
+    ///
+    /// - Parameters:
+    ///   - manifest: The raw C2PA manifest bytes.
+    ///   - format: The MIME type of the target asset (e.g. `"image/jpeg"`).
+    ///
+    /// - Returns: The format-wrapped embeddable manifest bytes as `Data`.
+    ///
+    /// - Throws: ``C2PAError`` if the conversion fails.
+    public static func formatEmbeddable(_ manifest: Data, format: String) throws -> Data {
+        var out: UnsafePointer<UInt8>?
+        let len = try manifest.withUnsafeBytes { buf -> Int64 in
+            try guardNonNegative(c2pa_format_embeddable(
+                format, buf.bindMemory(to: UInt8.self).baseAddress, UInt(manifest.count), &out))
+        }
+        return manifestData(length: len, pointer: out)
     }
 }

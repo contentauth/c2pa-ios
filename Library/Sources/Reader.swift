@@ -37,6 +37,9 @@ import Foundation
 /// ### Extracting Resources
 /// - ``resource(uri:to:)``
 ///
+/// ### Introspection
+/// - ``supportedMimeTypes``
+///
 /// ## Example
 ///
 /// ```swift
@@ -206,5 +209,14 @@ public final class Reader {
         _ = try guardNonNegative(
             c2pa_reader_resource_to_stream(ptr, uri, dest.rawPtr)
         )
+    }
+
+    /// The MIME types supported by the reader for reading manifests.
+    ///
+    /// - Returns: An array of supported MIME type strings (e.g. `"image/jpeg"`).
+    public static var supportedMimeTypes: [String] {
+        var count: UInt = 0
+        let ptr = c2pa_reader_supported_mime_types(&count)
+        return stringArrayFromC(ptr, count: Int(count))
     }
 }
